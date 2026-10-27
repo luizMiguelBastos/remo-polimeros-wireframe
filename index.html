@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Remo Polímeros — Wireframe v0.7</title>
-  <meta name="description" content="Wireframe v0.7 da nova home da Remo Polímeros: identidade visual (Archivo + IBM Plex Mono), paleta e rolagens dinâmicas.">
+  <title>Remo Polímeros · Wireframe v0.8</title>
+  <meta name="description" content="Wireframe v0.8 da nova home da Remo Polímeros: identidade visual (Archivo + IBM Plex Mono), paleta e rolagens dinâmicas.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -21,18 +21,12 @@
     </svg>
     <div class="word"><span>r</span><span>e</span><span>m</span><span>o</span></div>
   </div>
-  <div class="tag">Logo provisória — substituir pelo SVG oficial</div>
+  <div class="tag">Logo provisória · substituir pelo SVG oficial</div>
   <div class="count"><span id="count">0</span>%</div>
 </div>
 
 <div class="progress" id="progress"></div>
 
-<nav class="rail" id="rail" aria-label="Progresso e seções da página">
-  <div class="track"></div><div class="fill" id="rail-fill"></div>
-  <div id="rail-ticks"></div>
-  <div class="marker" id="rail-marker"><i></i><span id="rail-label">Início</span></div>
-  <div class="count"><span id="rail-count">01</span> / 10</div>
-</nav>
 <div class="grain" aria-hidden="true"></div>
 <div class="sheet" id="sheet" aria-hidden="true">
   <div class="sheet-inner">
@@ -46,7 +40,7 @@
 <div class="cursor" id="cursor" aria-hidden="true"><span id="cursor-label"></span></div>
 
 <div class="wf-bar" role="region" aria-label="Controles do wireframe">
-  <strong>WIREFRAME v0.7</strong> · Grânulo 3D no laboratório · sem imagens
+  <strong>WIREFRAME v0.8</strong> · Seção Sobre + alinhamentos · sem imagens
   <a href="produto.html?linha=abs">Página de produto →</a>
   <a href="#mapa">Mapa do site</a>
   <span class="spacer"></span>
@@ -56,7 +50,7 @@
 
 <header class="site-header" id="header">
   <div class="wrap">
-    <a href="#topo" class="logo" aria-label="Remo Polímeros — início">
+    <a href="#topo" class="logo" aria-label="Remo Polímeros, início">
       <svg viewBox="0 0 64 64" aria-hidden="true"><g stroke="#A3ABBC" stroke-width="3"><line x1="14" y1="16" x2="40" y2="30"/><line x1="40" y1="30" x2="22" y2="50"/><line x1="40" y1="30" x2="54" y2="12"/></g><circle cx="14" cy="16" r="7" fill="#F4F5F7"/><circle cx="40" cy="30" r="9" fill="#FFD100"/><circle cx="22" cy="50" r="7" fill="#F4F5F7"/><circle cx="54" cy="12" r="6" fill="#F4F5F7"/></svg>
       remo<small>polímeros</small>
     </a>
@@ -65,7 +59,7 @@
       <a href="#materiais">Materiais</a>
       <a href="#laboratorio">Laboratório</a>
       <a href="#qualidade">Qualidade</a>
-      <a href="#sobre">Sobre</a>
+      <a href="#a-remo">Sobre</a>
       <a href="#contato">Contato</a>
     </nav>
     <a href="#qualidade" class="iso-badge" title="Certificação ISO"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22.5" fill="none" stroke="currentColor" stroke-opacity=".35"/><circle cx="24" cy="24" r="18" fill="none" stroke="#FFD100" stroke-width="1.5" stroke-dasharray="80 200" transform="rotate(-90 24 24)"/><circle cx="24" cy="6" r="1.6" fill="#FFD100"/><text x="24" y="28.5" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" font-weight="700" font-stretch="125%" fill="currentColor">ISO</text></svg><span><b>ISO 9001:2015*</b><small>Certificada</small></span></a>
@@ -114,18 +108,66 @@
   </div>
 </section>
 
-<!-- 04 · NÚMEROS -->
-<section class="divider" id="numeros" aria-label="A Remo em números">
+<!-- 03 · SOBRE A EMPRESA -->
+<section class="divider" id="a-remo" aria-labelledby="a-remo-t">
   <div class="wrap">
-    <div class="grid g4">
+    <div class="eyebrow">Sobre a Remo</div>
+    <div class="about-head">
+      <h2 id="a-remo-t" data-lines>
+        <span class="line"><span>Desde 1989,</span></span>
+        <span class="line"><span>química que vira <span class="hl">solução.</span></span></span>
+      </h2>
+      <p class="lead" data-reveal>De origem familiar e capital 100% nacional, a Remo fabrica e distribui polímeros especiais para as mais variadas aplicações e níveis de complexidade. Somos parte do dia a dia das pessoas.</p>
+    </div>
+    <div class="grid g4" style="margin-top:72px">
       <div class="stat" data-reveal><div class="n"><span data-count="37">0</span><small>anos</small></div><div class="l">de mercado, desde 1989</div></div>
       <div class="stat" data-reveal><div class="n"><span data-count="25">0</span><small>anos</small></div><div class="l">de parceria tecnológica com a LG Chem</div></div>
       <div class="stat" data-reveal><div class="n"><span data-count="9">0</span><small>linhas</small></div><div class="l">de resinas de engenharia</div></div>
       <div class="stat" data-reveal><div class="n"><span data-count="1">0</span><small>dia</small></div><div class="l">do padrão à amostra de cor, em casos especiais</div></div>
     </div>
-    <p class="note"><b>Pendência:</b> clientes ativos, estados atendidos, cores desenvolvidas, capacidade produtiva.</p>
+    <div class="about-values">
+      <div class="mv" data-reveal>
+        <div class="mv-item"><span class="mono">Missão</span><p>Oferecer soluções inteligentes em resinas plásticas, agregando valor ao produto final dos nossos clientes e otimizando recursos e processos da cadeia.</p></div>
+        <div class="mv-item"><span class="mono">Visão</span><p class="mv-big">Criar. Transformar. Evoluir.</p></div>
+      </div>
+      <ol class="values" data-reveal>
+        <li><span>01</span>Somos íntegros com todos e em todos os momentos</li>
+        <li><span>02</span>Acreditamos na indústria brasileira</li>
+        <li><span>03</span>Ética e transparência fazem parte do nosso dia a dia</li>
+        <li><span>04</span>Somos comprometidos e responsáveis</li>
+        <li><span>05</span>Respondemos os clientes com a máxima agilidade e atenção</li>
+        <li><span>06</span>Eficiência da equipe técnica e dos projetos executados</li>
+        <li><span>07</span>Transmitimos confiança nas relações profissionais</li>
+        <li><span>08</span>Somos flexíveis no relacionamento com os clientes</li>
+        <li><span>09</span>Qualidade, preços e prazos competitivos</li>
+        <li><span>10</span>Persistimos no que nos propomos a fazer</li>
+      </ol>
+    </div>
+    <p class="note"><b>Sobre:</b> números, missão, visão e os 10 valores numa seção só, seguida da linha do tempo. Pendência: clientes ativos, estados atendidos, cores desenvolvidas, capacidade produtiva.</p>
   </div>
 </section>
+
+<!-- 03b · SOBRE: LINHA DO TEMPO -->
+<section class="light tl-wrap" id="historia" style="padding-bottom:0">
+  <div id="tl-pin" style="padding-bottom:clamp(80px,12vw,160px)">
+    <div class="wrap">
+      <div class="eyebrow">Sobre a Remo · Linha do tempo</div>
+      <h2 data-reveal style="max-width:14ch;margin-bottom:64px">De origem familiar a referência do setor.</h2>
+    </div>
+    <div class="timeline" id="timeline">
+      <div class="tl-line"></div><div class="tl-fill" id="tl-fill"></div>
+      <div class="tl"><div class="y">1989</div><p>Fundação. Industrialização e comercialização de plásticos de engenharia.</p></div>
+      <div class="tl"><div class="y">2001</div><p>Parceria com a LG Chem e foco em mercados mais complexos.</p></div>
+      <div class="tl"><div class="y">2004</div><p>Novas instalações industriais em Guarulhos/SP.</p></div>
+      <div class="tl"><div class="y">2007</div><p>Novas instalações industriais no Rio de Janeiro/RJ.</p></div>
+      <div class="tl"><div class="y">2016</div><p>Novo centro de distribuição.</p></div>
+      <div class="tl iso-y"><div class="y">ISO</div><p>Certificação ISO 9001:2015*. <i>[ano a confirmar]</i></p></div>
+      <div class="tl"><div class="y">2026</div><p>37 anos, 9 linhas de resinas e desenvolvimento sob medida.</p></div>
+    </div>
+    <div class="wrap"><p class="note"><b>Movimento:</b> a linha do tempo desliza na horizontal e a barra azul preenche conforme a rolagem. Pendência: marcos de 2016 até hoje.</p></div>
+  </div>
+</section>
+
 
 <!-- 05 · COMO TRABALHAMOS (horizontal fixo) -->
 <section class="hscroll" id="solucoes">
@@ -151,11 +193,12 @@
 <section class="light" id="laboratorio">
   <div class="wrap">
     <div class="eyebrow">Laboratório de cores</div>
-    <div class="lab-grid">
-      <div>
-        <h2 data-reveal>Qualquer cor.<br>Qualquer efeito.</h2>
-        <p class="lead" data-reveal>Uma nova cor desenvolvida a cada dia. Monte a sua abaixo — em casos especiais, o padrão enviado pela manhã vira amostra no fim da tarde.</p>
-        <div class="picker" data-reveal style="margin-top:32px">
+    <div class="sec-head">
+      <h2 data-reveal>Qualquer cor.<br>Qualquer efeito.</h2>
+      <p class="lead" data-reveal>Uma nova cor desenvolvida a cada dia. Monte a sua abaixo. Em casos especiais, o padrão enviado pela manhã vira amostra no fim da tarde.</p>
+    </div>
+    <div class="lab-card lab-grid" data-reveal>
+        <div class="picker">
           <div class="sv" id="sv" data-cursor="Escolher" role="slider" aria-label="Saturação e brilho da cor" tabindex="0"><div class="knob" id="knob"></div></div>
           <div class="slider-row"><label for="hue">Matiz</label><input type="range" class="bar" id="hue" min="0" max="360" step="1" value="221"><output id="hue-o">221°</output></div>
           <div class="slider-row"><label for="alpha">Opacidade</label><input type="range" class="bar" id="alpha" min="0" max="100" step="1" value="100"><output id="alpha-o">100%</output></div>
@@ -174,9 +217,7 @@
             <button aria-pressed="true" data-fx="solido">Sólido</button><button aria-pressed="false" data-fx="metalico">Metálico</button><button aria-pressed="false" data-fx="fluorescente">Fluorescente</button><button aria-pressed="false" data-fx="fosforescente">Fosforescente</button><button aria-pressed="false" data-fx="madeira">Madeira</button><button aria-pressed="false" data-fx="granito">Granito</button>
           </div>
         </div>
-      </div>
-      <div>
-        <div class="lab-panel" data-reveal>
+      <div class="lab-preview">
           <div class="stage" data-cursor="Girar">
             <span class="stage-tag">Pré-visualização 3D · arraste para girar</span>
             <canvas id="lab-canvas"></canvas>
@@ -187,7 +228,6 @@
             <p class="disclaimer" style="margin:0;max-width:30ch">Cores em tela são aproximadas. A cor final é validada por espectrofotômetro.</p>
             <button class="btn" type="button" id="send-color" data-cursor="Enviar">Desenvolver esta cor <span class="arr">→</span></button>
           </div>
-        </div>
       </div>
     </div>
     <div class="lab-bar" id="lab-bar"><i id="lab-bar-sw"></i><span id="lab-bar-txt">#001F5F</span><button class="btn sm" type="button" id="send-color-m">Desenvolver esta cor</button></div>
@@ -206,7 +246,7 @@
     <ol class="mat-index" id="mat-index" aria-label="Linhas de produto"></ol>
     <p class="note"><b>Índice interativo:</b> ao passar o mouse, um card com o grânulo da resina segue o cursor; ao clicar, a linha abre com os grades. <b>Nielsen #4 e #7:</b> um único caminho para produtos e ficha técnica em 1 clique.</p>
   </div>
-<div class="mat-float" id="mat-float" aria-hidden="true"><div class="mf-stage"><div class="pellet" id="mf-pellet"></div></div><div class="mf-txt"><b id="mf-name"></b><div id="mf-props"></div></div></div>
+<div class="mat-float" id="mat-float" aria-hidden="true"><div class="mf-stage"><canvas id="mf-canvas"></canvas><div class="pellet" id="mf-pellet"></div></div><div class="mf-txt"><b id="mf-name"></b><div id="mf-props"></div></div></div>
 </section>
 
 <!-- 08 · GUIA DE SELEÇÃO -->
@@ -254,70 +294,55 @@
         <a href="#" class="btn">Baixar certificado (PDF) <span class="arr">↓</span></a>
         <a href="#contato" class="btn ghost">Falar com a Qualidade</a>
       </div>
-      <div class="pillars" data-reveal>
-        <div class="pillar">
-          <h3>Política da Qualidade</h3>
-          <ol>
+      <div class="q-cards" data-reveal>
+        <article class="q-card" data-cursor="Ver">
+          <span class="gi">01 · Política da Qualidade</span>
+          <b class="q-big">5 compromissos</b>
+          <ol class="q-more">
             <li>Qualidade, preços e prazos competitivos</li>
             <li>Colaboradores valorizados e capacitados</li>
             <li>Persistência e continuidade</li>
             <li>Melhoria contínua e novas tecnologias</li>
             <li>Não aceitação de erros</li>
           </ol>
-        </div>
-        <div class="pillar">
-          <h3>Parceria LG Chem</h3>
-          <p>Desde 2001, tecnologia da líder química da Coreia aplicada ao mercado brasileiro.</p>
-          <a href="#">Entenda a parceria →</a>
-        </div>
-        <div class="pillar">
-          <h3>Missão e valores</h3>
-          <p>Soluções inteligentes em resinas que agregam valor ao produto final. Criar. Transformar. Evoluir.</p>
-          <a href="#">Ver os 10 valores →</a>
-        </div>
+        </article>
+        <article class="q-card" data-cursor="Ver">
+          <span class="gi">02 · Parceria LG Chem</span>
+          <b class="q-big">Desde 2001</b>
+          <p class="q-more">Tecnologia da líder da indústria química da Coreia aplicada ao mercado brasileiro, com portfólio e suporte de padrão global.</p>
+        </article>
+        <article class="q-card" data-cursor="Ver">
+          <span class="gi">03 · Rastreabilidade</span>
+          <b class="q-big">Lote a lote</b>
+          <p class="q-more">Normas e procedimentos documentados em cada etapa, da formulação à entrega, com melhoria contínua dos processos.</p>
+        </article>
       </div>
       <p class="note"><b>Destaque da ISO:</b> header, 1º selo do hero, esta seção (fixa na tela enquanto o selo gira) e rodapé. * Número provisório; certificado em PDF pendente.</p>
     </div>
   </div>
 </section>
 
-<!-- 10 · LINHA DO TEMPO -->
-<section class="light tl-wrap" id="historia" style="padding-bottom:0">
-  <div id="tl-pin" style="padding-bottom:clamp(80px,12vw,160px)">
-    <div class="wrap">
-      <div class="eyebrow">Linha do tempo</div>
-      <h2 data-reveal style="max-width:14ch;margin-bottom:64px">De origem familiar a referência do setor.</h2>
-    </div>
-    <div class="timeline" id="timeline">
-      <div class="tl-line"></div><div class="tl-fill" id="tl-fill"></div>
-      <div class="tl"><div class="y">1989</div><p>Fundação. Industrialização e comercialização de plásticos de engenharia.</p></div>
-      <div class="tl"><div class="y">2001</div><p>Parceria com a LG Chem e foco em mercados mais complexos.</p></div>
-      <div class="tl"><div class="y">2004</div><p>Novas instalações industriais em Guarulhos/SP.</p></div>
-      <div class="tl"><div class="y">2007</div><p>Novas instalações industriais no Rio de Janeiro/RJ.</p></div>
-      <div class="tl"><div class="y">2016</div><p>Novo centro de distribuição.</p></div>
-      <div class="tl iso-y"><div class="y">ISO</div><p>Certificação ISO 9001:2015*. <i>[ano a confirmar]</i></p></div>
-      <div class="tl"><div class="y">2026</div><p>37 anos, 9 linhas de resinas e desenvolvimento sob medida.</p></div>
-    </div>
-    <div class="wrap"><p class="note"><b>Movimento:</b> a linha do tempo desliza na horizontal e a barra azul preenche conforme a rolagem. Pendência: marcos de 2016 até hoje.</p></div>
-  </div>
-</section>
 
 <!-- 11 · DEPOIMENTO -->
 <section aria-label="Depoimento de cliente">
   <div class="wrap">
     <div class="eyebrow">Clientes</div>
     <p class="quote" data-reveal>“[Depoimento de um cliente sobre agilidade no desenvolvimento, qualidade do material ou atendimento técnico.]”</p>
-    <p class="quote-by">Nome · Cargo · Empresa — pendente de autorização</p>
+    <p class="quote-by">Nome · Cargo · Empresa · pendente de autorização</p>
   </div>
 </section>
 
 <!-- 12 · CONTATO -->
 <section id="contato" class="divider">
-  <div class="wrap contact">
-    <div>
-      <div class="eyebrow">Fale com um especialista</div>
+  <div class="wrap">
+    <div class="eyebrow">Fale com um especialista</div>
+    <div class="sec-head">
       <h2 data-reveal>Vamos desenvolver o seu material.</h2>
       <p class="lead">Resposta da equipe técnica em até 1 dia útil.</p>
+    </div>
+  </div>
+  <div class="wrap contact">
+    <div>
       <ul class="contact-list">
         <li><span>Telefone</span>+55 (11) 2175-1000</li>
         <li><span>WhatsApp</span>[número a definir]</li>
@@ -354,7 +379,7 @@
       <div class="field"><label for="msg">Mensagem</label><textarea id="msg" placeholder="Aplicação, processo, resina atual, cor de referência…"></textarea></div>
       <label class="consent"><input type="checkbox" id="lgpd" required> Li e concordo com a <a href="#" style="color:var(--white)">Política de Privacidade</a> (LGPD).</label>
       <button class="btn" type="submit">Enviar solicitação <span class="arr">→</span></button>
-      <div class="form-ok" id="form-ok" role="status">Recebemos sua solicitação. Nossa equipe técnica responde em até 1 dia útil. (simulação do wireframe — nada foi enviado)</div>
+      <div class="form-ok" id="form-ok" role="status">Recebemos sua solicitação. Nossa equipe técnica responde em até 1 dia útil. (simulação do wireframe, nada foi enviado)</div>
     </form>
   </div>
   <div class="wrap"><p class="note"><b>Nielsen #5 / Norman (restrições):</b> tipo de pedido direciona o atendimento; erros aparecem no próprio campo; confirmação clara; consentimento LGPD.</p></div>
@@ -372,7 +397,7 @@
       <details><summary>Quanto tempo leva para receber uma amostra de cor?</summary><p>Em casos especiais, o padrão enviado pela manhã vira amostra no fim da tarde do mesmo dia.</p></details>
       <details><summary>A partir de quais padrões vocês desenvolvem cores?</summary><p>Peças, padrão Pantone ou RAL, leituras colorimétricas, entre outros.</p></details>
       <details><summary>Quais aditivos estão disponíveis?</summary><p>Resistência às intempéries (UV), anti-chama, antiestático, condutivo, entre outros.</p></details>
-      <details><summary>A Remo é certificada?</summary><p>Sim. Certificação ISO 9001:2015* — padrão internacional de produção.</p></details>
+      <details><summary>A Remo é certificada?</summary><p>Sim. Certificação ISO 9001:2015*, padrão internacional de produção.</p></details>
     </div>
   </div>
 </section>
@@ -398,7 +423,7 @@
     <div class="eyebrow">Arquitetura de informação proposta</div>
     <h2 style="font-size:clamp(28px,3vw,44px)">Mapa do site</h2>
     <div class="sitemap" style="margin-top:24px">
-      <div class="col"><b>Home</b><ul><li>Seções 01–13</li></ul></div>
+      <div class="col"><b>Home</b><ul><li>Seções 01 a 13</li></ul></div>
       <div class="col"><b>Soluções</b><ul><li>Desenvolvimento de produtos</li><li>Laboratório de cores</li><li>Aditivação</li><li>Segmentos (9)</li></ul></div>
       <div class="col"><b>Materiais</b><ul><li>Visão geral + guia</li><li>9 linhas</li><li>Fichas técnicas</li></ul></div>
       <div class="col"><b>Qualidade</b><ul><li>Certificação ISO</li><li>Política da Qualidade</li><li>Parceria LG Chem</li><li>Privacidade (LGPD)</li></ul></div>
@@ -418,7 +443,7 @@
         <p style="margin-top:16px;max-width:34ch">Fabricação e distribuição de polímeros especiais. Capital 100% nacional desde 1989.</p>
         <div class="iso-seal-foot"><svg viewBox="0 0 48 48" class="big" aria-hidden="true"><circle cx="24" cy="24" r="22.5" fill="none" stroke="currentColor" stroke-opacity=".35"/><circle cx="24" cy="24" r="18" fill="none" stroke="#FFD100" stroke-width="1.5" stroke-dasharray="80 200" transform="rotate(-90 24 24)"/><circle cx="24" cy="6" r="1.6" fill="#FFD100"/><text x="24" y="28.5" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" font-weight="700" font-stretch="125%" fill="currentColor">ISO</text></svg><span><b>ISO 9001:2015*</b><small>Padrão internacional de produção · Certificada</small></span></div>
       </div>
-      <div><h4>Empresa</h4><ul><li><a href="#sobre">Sobre</a></li><li><a href="#qualidade">Qualidade</a></li><li><a href="#">Notícias</a></li><li><a href="#">Carreiras</a></li></ul></div>
+      <div><h4>Empresa</h4><ul><li><a href="#a-remo">Sobre</a></li><li><a href="#qualidade">Qualidade</a></li><li><a href="#">Notícias</a></li><li><a href="#">Carreiras</a></li></ul></div>
       <div><h4>Materiais</h4><ul><li><a href="produto.html?linha=abs">ABS</a></li><li><a href="produto.html?linha=pc">PC</a></li><li><a href="produto.html?linha=pmma">PMMA</a></li><li><a href="#materiais">Todas as linhas</a></li></ul></div>
       <div><h4>Contato</h4><ul><li>+55 (11) 2175-1000</li><li>remo@remopolimeros.com.br</li><li>Rod. Pres. Dutra, km 207,8<br>Guarulhos/SP</li></ul></div>
     </div>

@@ -1,4 +1,4 @@
-// Interações e rolagens do wireframe v0.7 (GSAP + ScrollTrigger + Lenis)
+// Interações e rolagens do wireframe v0.8 (GSAP + ScrollTrigger + Lenis)
 (function () {
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -134,8 +134,6 @@
   const endIntro = () => {
     document.body.classList.remove("is-loading");
     if (lenis) { lenis.start(); if (heroGate) heroGate.arm(); }
-    const rail = $("#rail");
-    if (rail) rail.classList.add("on");
     if (hasGsap) ScrollTrigger.refresh();
   };
   if (pre) {
@@ -157,8 +155,6 @@
         .add(heroIn, "-=0.45");
     }
   } else {
-    const rail = $("#rail");
-    if (rail) rail.classList.add("on");
   }
   const replay = $("#replay");
   if (replay) replay.addEventListener("click", () => { try { sessionStorage.removeItem("remo-intro"); } catch (e) {} scrollTo(0, 0); location.reload(); });
@@ -234,6 +230,13 @@
     // Seções horizontais fixas (somente desktop)
     const mm = gsap.matchMedia();
     mm.add("(min-width: 901px)", () => {
+      const tlEl = $("#timeline");
+      if (tlEl) {
+        const dist = () => Math.max(0, tlEl.scrollWidth - innerWidth);
+        const st = { trigger: "#tl-pin", start: "top top", end: () => "+=" + dist(), pin: true, scrub: 1, invalidateOnRefresh: true };
+        gsap.to(tlEl, { x: () => -dist(), ease: "none", scrollTrigger: st });
+        gsap.to("#tl-fill", { scaleX: 1, ease: "none", scrollTrigger: { ...st, pin: false } });
+      }
       const steps = $("#steps");
       if (steps) {
         const dist = () => steps.scrollWidth - innerWidth;
@@ -259,13 +262,6 @@
         };
         steps.addEventListener("click", onClick);
       }
-      const tlEl = $("#timeline");
-      if (tlEl) {
-        const dist = () => Math.max(0, tlEl.scrollWidth - innerWidth);
-        const st = { trigger: "#tl-pin", start: "top top", end: () => "+=" + dist(), pin: true, scrub: 1, invalidateOnRefresh: true };
-        gsap.to(tlEl, { x: () => -dist(), ease: "none", scrollTrigger: st });
-        gsap.to("#tl-fill", { scaleX: 1, ease: "none", scrollTrigger: { ...st, pin: false } });
-      }
     });
 
     mm.add("(max-width: 900px)", () => {
@@ -280,40 +276,6 @@
     $$("[data-count]").forEach(el => { el.textContent = el.dataset.count; });
   }
 
-  // ---------- Barra de progresso lateral (ponta a ponta) ----------
-  const rail = $("#rail");
-  if (rail && hasGsap) {
-    const SECS = [["topo", "Início"], ["sobre", "Manifesto"], ["numeros", "Números"], ["solucoes", "Como trabalhamos"], ["laboratorio", "Laboratório"], ["materiais", "Materiais"], ["guia", "Guia de seleção"], ["qualidade", "Qualidade ISO"], ["historia", "História"], ["contato", "Contato"]]
-      .map(([id, label]) => ({ id, label, el: $("#" + id), p: 0 })).filter(x => x.el);
-    const ticksEl = $("#rail-ticks"), fill = $("#rail-fill"), marker = $("#rail-marker");
-    ticksEl.innerHTML = SECS.map(x => `<button type="button" class="tick" data-sec="${x.id}" aria-label="Ir para ${x.label}"><span>${x.label}</span></button>`).join("");
-    const ticks = $$(".tick", ticksEl);
-    ticks.forEach((t, i) => t.addEventListener("click", () => scrollToEl(SECS[i].el)));
-    let progress = 0;
-    const layout = () => {
-      const max = ScrollTrigger.maxScroll(window) || 1, H = rail.clientHeight;
-      SECS.forEach((x, i) => {
-        const box = x.el.parentElement.classList.contains("pin-spacer") ? x.el.parentElement : x.el;
-        x.p = Math.min(1, Math.max(0, (box.getBoundingClientRect().top + scrollY) / max));
-        ticks[i].style.top = 12 + x.p * (H - 48) + "px";
-      });
-      update(progress);
-    };
-    const update = pr => {
-      progress = pr;
-      const H = rail.clientHeight;
-      fill.style.transform = `scaleY(${pr})`;
-      marker.style.transform = `translateY(${12 + pr * (H - 48)}px)`;
-      let a = 0;
-      SECS.forEach((x, i) => { if (x.p <= pr + 0.002) a = i; });
-      ticks.forEach((t, i) => t.classList.toggle("passed", SECS[i].p <= pr + 0.002));
-      $("#rail-label").textContent = SECS[a].label;
-      $("#rail-count").textContent = String(a + 1).padStart(2, "0");
-    };
-    ScrollTrigger.addEventListener("refresh", layout);
-    ScrollTrigger.create({ start: 0, end: "max", onUpdate: s => update(s.progress) });
-    layout();
-  } else if (rail) rail.remove();
 
   // ---------- Grânulo 3D (Three.js): usado no laboratório de cores e no guia ----------
   // Devolve null sem WebGL; quem chama mantém o fallback.
@@ -381,7 +343,7 @@
     new IntersectionObserver(([en]) => { visible = en.isIntersecting; if (visible) resize(); }).observe(box);
     const frame = now => {
       requestAnimationFrame(frame);
-      if (!visible) return;
+      if (!visible || api.paused) return;
       const dt = Math.min(0.05, (now - t0) / 1000); t0 = now;
       if (!dragging && !reduced) { vx += (0.004 - vx) * 0.04; vy *= 0.92; rotY += vx; }
       if (spin > 0.001) { const d = spin * 0.08; rotY += d; spin -= d; }
@@ -553,8 +515,8 @@
     const labBar = $("#lab-bar");
     if (labBar) new IntersectionObserver(([en]) => labBar.classList.toggle("show", en.isIntersecting), { threshold: 0.15 }).observe($(".lab-grid"));
     render();
-    // reaplica o estado quando o 3D entra na tela (o primeiro quadro do WebGL pode ignorar o estado inicial)
-    if (lab3d) new IntersectionObserver(([en]) => { if (en.isIntersecting) render(); }).observe($(".stage"));
+    // estado inicial aplicado direto, sem esperar a transição de cor
+    if (lab3d) lab3d.mat.color.copy(lab3d.target.color);
   }
 
   // ---------- Materiais: índice interativo ----------
@@ -608,12 +570,15 @@
     // overwrite evita que a animação de entrada vença a de saída.
     const fl = $("#mat-float");
     if (fl && finePointer && motion) {
+      const mf3d = makePellet3D($(".mf-stage", fl), $("#mf-canvas"), { distance: 5.6 });
+      if (mf3d) { $(".mf-stage", fl).classList.add("has3d"); mf3d.paused = true; }
       const xTo = gsap.quickTo(fl, "x", { duration: 0.5, ease: "power3" });
       const yTo = gsap.quickTo(fl, "y", { duration: 0.5, ease: "power3" });
       let px = -1, py = -1, shown = null;
       const hide = () => {
         if (shown === null) return;
         shown = null;
+        if (mf3d) setTimeout(() => { if (shown === null) mf3d.paused = true; }, 300);
         gsap.to(fl, { opacity: 0, scale: 0.8, duration: 0.25, ease: "power2.out", overwrite: "auto" });
       };
       const sync = () => {
@@ -628,6 +593,12 @@
         $("#mf-props").textContent = m.traits.slice(0, 3).join(" · ");
         $("#mf-pellet").style.setProperty("--c", LOOK[m.id] || "#888");
         $("#mf-pellet").style.setProperty("--gloss", 0.8);
+        if (mf3d) {
+          const v = (LOOK[m.id] || LOOK.abs).match(/[\d.]+/g).map(Number);
+          mf3d.target.color.setRGB(v[0] / 255, v[1] / 255, v[2] / 255).convertSRGBToLinear(); mf3d.target.a = v[3];
+          mf3d.mat.roughness = v[3] < 0.6 ? 0.05 : 0.28;
+          mf3d.paused = false; mf3d.spin();
+        }
         gsap.to(fl, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.6)", overwrite: "auto" });
       };
       addEventListener("pointermove", e => { px = e.clientX; py = e.clientY; xTo(px + 28); yTo(py - 140); sync(); }, { passive: true });
@@ -641,7 +612,7 @@
   // Grânulo 3D do guia: vira a resina sugerida a cada resposta
   const pellet3d = (() => {
     const box = $("#g3d");
-    const p = makePellet3D(box, $("#g3d-canvas"), { orbit: true });
+    const p = makePellet3D(box, $("#g3d-canvas"), { orbit: true, distance: 8.8 });
     if (!p) { if (box) box.remove(); return null; }
     const set = (id, burst) => {
       const m = (LOOK[id] || LOOK.abs).match(/[\d.]+/g).map(Number);
@@ -739,7 +710,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} — Remo Polímeros · Wireframe v0.7`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v0.8`;
     $$("[data-f]").forEach(el => {
       const k = el.dataset.f;
       if (k === "apps") el.innerHTML = m.apps.map(a => `<li>${a}</li>`).join("");

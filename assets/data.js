@@ -1,4 +1,4 @@
-// Conteúdo extraído do site atual (remopolimeros.com.br) — linhas de produto
+// Conteúdo extraído do site atual (remopolimeros.com.br): linhas de produto
 // "props" alimenta os filtros do guia de seleção.
 window.REMO_MATERIALS = [
   {
