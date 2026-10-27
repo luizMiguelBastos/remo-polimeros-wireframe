@@ -1,6 +1,15 @@
-# Remo Polímeros — Wireframe v0.1
+# Remo Polímeros — Wireframe v0.2
 
-Wireframe de baixa fidelidade da nova home da Remo Polímeros, para validar **usabilidade** e **onde fica cada informação** antes do design final.
+Wireframe da nova home da Remo Polímeros para validar **usabilidade**, **onde fica cada informação** e, nesta versão, a **identidade visual** (tipografia, paleta e rolagens dinâmicas) antes de entrarem imagens, vídeos e os movimentos finais.
+
+**Link:** https://luizmiguelbastos.github.io/remo-polimeros-wireframe/
+
+## Identidade visual (v0.2)
+- **Tipografia:** Archivo (títulos em largura expandida, textos em largura normal) + IBM Plex Mono (dados técnicos)
+- **Paleta:** Night `#050B1A` · Navy `#001F5F` · Signal Yellow `#FFD100` (só destaque) · Slate `#4A5468` · Steel `#A3ABBC` · Polymer White `#F4F5F7`
+- **Movimento:** abertura com a logo, rolagem suave (Lenis), animações ligadas à rolagem (GSAP ScrollTrigger), seções horizontais fixas no desktop. Respeita "reduzir movimento" do sistema.
+- **Laboratório de cores:** seletor completo (saturação/brilho, matiz, opacidade, brilho da superfície, HEX/RGB, Pantone/RAL, efeitos) que pré-preenche o pedido de amostra.
+- A logo usada é **provisória** (desenho aproximado); será trocada pelo SVG oficial.
 
 ## Como abrir
 Abra `index.html` no navegador (não precisa de servidor).
