@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Remo Polímeros — Wireframe v0.2</title>
-  <meta name="description" content="Wireframe v0.2 da nova home da Remo Polímeros: identidade visual (Archivo + IBM Plex Mono), paleta e rolagens dinâmicas.">
+  <title>Remo Polímeros — Wireframe v0.3</title>
+  <meta name="description" content="Wireframe v0.3 da nova home da Remo Polímeros: identidade visual (Archivo + IBM Plex Mono), paleta e rolagens dinâmicas.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -27,8 +27,25 @@
 
 <div class="progress" id="progress"></div>
 
+<nav class="rail" id="rail" aria-label="Seções da página">
+  <ol>
+    <i class="rl"><b id="rail-fill"></b></i>
+    <li><a href="#topo" data-sec="topo">01<span>Início</span></a></li>
+    <li><a href="#sobre" data-sec="sobre">02<span>Manifesto</span></a></li>
+    <li><a href="#numeros" data-sec="numeros">03<span>Números</span></a></li>
+    <li><a href="#solucoes" data-sec="solucoes">04<span>Como trabalhamos</span></a></li>
+    <li><a href="#laboratorio" data-sec="laboratorio">05<span>Laboratório de cores</span></a></li>
+    <li><a href="#materiais" data-sec="materiais">06<span>Materiais</span></a></li>
+    <li><a href="#guia" data-sec="guia">07<span>Guia de seleção</span></a></li>
+    <li><a href="#qualidade" data-sec="qualidade">08<span>Qualidade ISO</span></a></li>
+    <li><a href="#historia" data-sec="historia">09<span>História</span></a></li>
+    <li><a href="#contato" data-sec="contato">10<span>Contato</span></a></li>
+  </ol>
+</nav>
+<div class="cursor" id="cursor" aria-hidden="true"><span id="cursor-label"></span></div>
+
 <div class="wf-bar" role="region" aria-label="Controles do wireframe">
-  <strong>WIREFRAME v0.2</strong> · Identidade visual + rolagens · sem imagens
+  <strong>WIREFRAME v0.3</strong> · Ajustes de dinamismo · sem imagens
   <a href="produto.html?linha=abs">Página de produto →</a>
   <a href="#mapa">Mapa do site</a>
   <span class="spacer"></span>
@@ -85,25 +102,19 @@
   </div>
 </section>
 
-<!-- 02 · SEGMENTOS -->
-<div class="marquee" aria-label="Segmentos atendidos">
-  <div class="marquee-track" id="marquee">
-    <span>Automobilístico</span><span>Construção civil</span><span>Linha branca</span><span>Eletroeletrônicos</span><span>Calçadista</span><span>Médico hospitalar</span><span>Esporte e lazer</span><span>Embalagens</span>
-    <span>Automobilístico</span><span>Construção civil</span><span>Linha branca</span><span>Eletroeletrônicos</span><span>Calçadista</span><span>Médico hospitalar</span><span>Esporte e lazer</span><span>Embalagens</span>
-  </div>
-</div>
-
-<!-- 03 · MANIFESTO -->
+<!-- 02 · MANIFESTO (fixo até a leitura completa) -->
 <section class="manifesto" id="sobre">
+  <div class="texture">[textura de fundo · fase de imagens]</div>
   <div class="wrap">
     <div class="eyebrow">Manifesto</div>
-    <p id="manifesto">Nada aqui é padrão. Cada grade nasce da necessidade de um cliente — da dureza à cor, do aditivo ao acabamento. O plástico e a química são o nosso DNA.</p>
-    <p class="note"><b>Movimento:</b> palavras acendem uma a uma, presas à rolagem.</p>
+    <p id="manifesto">Nada aqui é padrão. Cada grade nasce da necessidade de um cliente, da dureza à cor, do aditivo ao acabamento. O plástico e a química são o nosso DNA.</p>
+    <div class="m-progress"><i><b id="m-bar"></b></i><span>Role para ler</span></div>
+    <p class="note"><b>Movimento:</b> a seção fica travada e só libera a rolagem quando a última palavra acende.</p>
   </div>
 </section>
 
 <!-- 04 · NÚMEROS -->
-<section class="divider" aria-label="A Remo em números" style="padding-top:0">
+<section class="divider" id="numeros" aria-label="A Remo em números">
   <div class="wrap">
     <div class="grid g4">
       <div class="stat" data-reveal><div class="n"><span data-count="37">0</span><small>anos</small></div><div class="l">de mercado, desde 1989</div></div>
@@ -144,7 +155,7 @@
         <h2 data-reveal>Qualquer cor.<br>Qualquer efeito.</h2>
         <p class="lead" data-reveal>Uma nova cor desenvolvida a cada dia. Monte a sua abaixo — em casos especiais, o padrão enviado pela manhã vira amostra no fim da tarde.</p>
         <div class="picker" data-reveal style="margin-top:32px">
-          <div class="sv" id="sv" role="slider" aria-label="Saturação e brilho da cor" tabindex="0"><div class="knob" id="knob"></div></div>
+          <div class="sv" id="sv" data-cursor="Escolher" role="slider" aria-label="Saturação e brilho da cor" tabindex="0"><div class="knob" id="knob"></div></div>
           <div class="slider-row"><label for="hue">Matiz</label><input type="range" class="bar" id="hue" min="0" max="360" step="1" value="221"><output id="hue-o">221°</output></div>
           <div class="slider-row"><label for="alpha">Opacidade</label><input type="range" class="bar" id="alpha" min="0" max="100" step="1" value="100"><output id="alpha-o">100%</output></div>
           <div class="slider-row"><label for="gloss">Brilho</label><input type="range" class="bar" id="gloss" min="0" max="100" step="1" value="60"><output id="gloss-o">60%</output></div>
@@ -164,17 +175,20 @@
         </div>
       </div>
       <div>
-        <div class="stage" data-reveal>
-          <span class="stage-tag">Pré-visualização · grânulo</span>
-          <div class="pellet" id="pellet" data-fx="solido"></div>
+        <div class="lab-panel" data-reveal>
+          <div class="stage">
+            <span class="stage-tag">Pré-visualização · grânulo</span>
+            <div class="pellet" id="pellet" data-fx="solido"></div>
+          </div>
+          <div class="spec" id="spec"></div>
+          <div class="lab-cta">
+            <p class="disclaimer" style="margin:0;max-width:30ch">Cores em tela são aproximadas. A cor final é validada por espectrofotômetro.</p>
+            <button class="btn" type="button" id="send-color" data-cursor="Enviar">Desenvolver esta cor <span class="arr">→</span></button>
+          </div>
         </div>
-        <div class="spec" id="spec"></div>
-        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px">
-          <button class="btn navy" type="button" id="send-color">Desenvolver esta cor <span class="arr">→</span></button>
-        </div>
-        <p class="disclaimer">Cores em tela são aproximadas. A cor final é validada por espectrofotômetro no nosso laboratório.</p>
       </div>
     </div>
+    <div class="lab-bar" id="lab-bar"><i id="lab-bar-sw"></i><span id="lab-bar-txt">#001F5F</span><button class="btn sm" type="button" id="send-color-m">Desenvolver esta cor</button></div>
     <p class="note"><b>Norman (feedback):</b> cada ajuste muda o grânulo na hora. Opacidade = translucidez real das resinas PC, PMMA e SAN; brilho = grades de baixo/alto brilho. "Desenvolver esta cor" pré-preenche o formulário com a especificação.</p>
   </div>
 </section>
@@ -187,42 +201,24 @@
       <h2 data-reveal style="max-width:13ch">Portfólio de resinas de engenharia.</h2>
       <p class="lead" data-reveal style="max-width:420px">Produtos aprovados em diversos segmentos, com ficha técnica de cada grade a um clique.</p>
     </div>
-    <div class="tabs" role="tablist" id="mat-tabs" aria-label="Linhas de produto" style="margin-top:24px"></div>
-    <div id="mat-panel" role="tabpanel"></div>
-    <p class="note"><b>Nielsen #4 e #7:</b> um único caminho para produtos; cada grade em linguagem simples + ficha técnica em 1 clique.</p>
+    <ol class="mat-index" id="mat-index" aria-label="Linhas de produto"></ol>
+    <p class="note"><b>Índice interativo:</b> ao passar o mouse, um card com o grânulo da resina segue o cursor; ao clicar, a linha abre com os grades. <b>Nielsen #4 e #7:</b> um único caminho para produtos e ficha técnica em 1 clique.</p>
   </div>
+<div class="mat-float" id="mat-float" aria-hidden="true"><div class="mf-stage"><div class="pellet" id="mf-pellet"></div></div><div class="mf-txt"><b id="mf-name"></b><div id="mf-props"></div></div></div>
 </section>
 
 <!-- 08 · GUIA DE SELEÇÃO -->
-<section id="guia" class="navy-bg">
+<section id="guia" class="divider">
   <div class="wrap">
-    <div class="eyebrow">Guia de seleção</div>
-    <h2 data-reveal style="max-width:16ch">Não sabe qual resina usar? Responda 3 perguntas.</h2>
-    <form class="quiz" id="quiz" style="margin-top:40px" onsubmit="return false">
-      <fieldset data-reveal>
-        <legend>01 · Segmento</legend>
-        <label><input type="radio" name="seg" value="automotivo" checked> Automotivo</label>
-        <label><input type="radio" name="seg" value="eletro"> Eletroeletrônicos</label>
-        <label><input type="radio" name="seg" value="linha-branca"> Linha branca</label>
-        <label><input type="radio" name="seg" value="construcao"> Construção civil</label>
-        <label><input type="radio" name="seg" value="embalagens"> Embalagens / cosméticos</label>
-      </fieldset>
-      <fieldset data-reveal>
-        <legend>02 · Exigência principal</legend>
-        <label><input type="radio" name="prop" value="impacto" checked> Resistência ao impacto</label>
-        <label><input type="radio" name="prop" value="chama"> Anti-chama (V0 / RoHS)</label>
-        <label><input type="radio" name="prop" value="transparencia"> Transparência</label>
-        <label><input type="radio" name="prop" value="temperatura"> Alta temperatura</label>
-        <label><input type="radio" name="prop" value="rigidez"> Rigidez / mecânica</label>
-      </fieldset>
-      <fieldset data-reveal>
-        <legend>03 · Ambiente de uso</legend>
-        <label><input type="radio" name="env" value="interno" checked> Interno</label>
-        <label><input type="radio" name="env" value="uv"> Externo (sol e chuva)</label>
-      </fieldset>
-    </form>
-    <div class="result" id="quiz-result" aria-live="polite"></div>
-    <p class="note"><b>Nielsen #2 e #6:</b> o comprador pensa em aplicação, não em sigla; resultado instantâneo, sempre com validação técnica.</p>
+    <div class="guide-top">
+      <div>
+        <div class="eyebrow">Guia de seleção</div>
+        <h2 data-reveal style="max-width:16ch;margin:0">Não sabe qual resina usar? Responda 3 perguntas.</h2>
+      </div>
+    </div>
+    <div class="g-progress"><button class="g-back" id="g-back" type="button" hidden>← Voltar</button><span id="g-step">01 / 03</span><div class="bar"><b id="g-bar"></b></div></div>
+    <div id="g-stage" aria-live="polite"></div>
+    <p class="note"><b>Nielsen #2 e #6:</b> uma pergunta por vez, em linguagem de aplicação; resultado imediato, sempre com validação técnica.</p>
   </div>
 </section>
 

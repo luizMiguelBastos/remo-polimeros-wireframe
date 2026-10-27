@@ -1,12 +1,20 @@
-// Interações e rolagens do wireframe v0.2 (GSAP + ScrollTrigger + Lenis)
+// Interações e rolagens do wireframe v0.3 (GSAP + ScrollTrigger + Lenis)
 (function () {
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const M = window.REMO_MATERIALS || [];
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const finePointer = matchMedia("(hover: hover) and (pointer: fine)").matches;
   const hasGsap = !!(window.gsap && window.ScrollTrigger);
   const motion = hasGsap && !reduced;
   if (hasGsap) gsap.registerPlugin(ScrollTrigger);
+
+  // Aparência de cada resina no card flutuante do índice (sem imagens nesta fase)
+  const LOOK = {
+    "abs": "rgba(232,228,216,1)", "abs-pc": "rgba(58,63,74,1)", "asa": "rgba(214,209,196,1)",
+    "pbt": "rgba(30,30,32,1)", "pc": "rgba(200,225,255,.32)", "pc-compostos": "rgba(91,98,112,1)",
+    "pmma": "rgba(255,255,255,.22)", "pom": "rgba(242,242,242,1)", "san": "rgba(190,230,255,.3)"
+  };
 
   // ---------- Notas de UX ----------
   const tn = $("#toggle-notes");
@@ -39,14 +47,16 @@
     if (lenis) lenis.scrollTo(el, { offset: -72, duration: 1.4 });
     else el.scrollIntoView({ behavior: reduced ? "auto" : "smooth" });
   };
-  $$('a[href^="#"]').forEach(a => a.addEventListener("click", e => {
+  document.addEventListener("click", e => {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
     const id = a.getAttribute("href");
     if (id.length < 2) return;
     const el = $(id);
     if (!el) return;
     e.preventDefault();
     scrollToEl(el);
-  }));
+  });
 
   // ---------- Header que some ao descer ----------
   const header = $("#header");
@@ -58,10 +68,21 @@
   if (lenis) lenis.on("scroll", e => onScroll(e.scroll));
   else addEventListener("scroll", () => onScroll(scrollY), { passive: true });
 
-  // ---------- Progresso ----------
-  if (motion && $("#progress")) {
-    gsap.to("#progress", { scaleX: 1, ease: "none", scrollTrigger: { start: 0, end: "max", scrub: 0.3 } });
-  }
+  // ---------- Cursor personalizado ----------
+  const cur = $("#cursor"), curLabel = $("#cursor-label");
+  if (cur && finePointer && hasGsap && !reduced) {
+    const xTo = gsap.quickTo(cur, "x", { duration: 0.35, ease: "power3" });
+    const yTo = gsap.quickTo(cur, "y", { duration: 0.35, ease: "power3" });
+    addEventListener("pointermove", e => { xTo(e.clientX); yTo(e.clientY); });
+    document.addEventListener("pointerover", e => {
+      const t = e.target.closest("[data-cursor]");
+      if (t) { curLabel.textContent = t.dataset.cursor; cur.classList.add("big"); }
+    });
+    document.addEventListener("pointerout", e => {
+      const t = e.target.closest("[data-cursor]");
+      if (t && !t.contains(e.relatedTarget)) cur.classList.remove("big");
+    });
+  } else if (cur) cur.remove();
 
   // ---------- Abertura ----------
   const pre = $("#preloader");
@@ -73,6 +94,8 @@
   const endIntro = () => {
     document.body.classList.remove("is-loading");
     if (lenis) lenis.start();
+    const rail = $("#rail");
+    if (rail) rail.classList.add("on");
     if (hasGsap) ScrollTrigger.refresh();
   };
   if (pre) {
@@ -93,6 +116,9 @@
         .to(pre, { yPercent: -100, duration: 0.9, ease: "expo.inOut" }, "+=0.15")
         .add(heroIn, "-=0.45");
     }
+  } else {
+    const rail = $("#rail");
+    if (rail) rail.classList.add("on");
   }
   const replay = $("#replay");
   if (replay) replay.addEventListener("click", () => { try { sessionStorage.removeItem("remo-intro"); } catch (e) {} scrollTo(0, 0); location.reload(); });
@@ -133,52 +159,41 @@
     if (reduced) draw(); else loop();
   }
 
+  // ---------- Rolagens (em ordem de página, para os pins calcularem certo) ----------
   if (motion) {
-    // Hero se afasta ao rolar
-    gsap.to("#hero-inner", { yPercent: -18, opacity: 0.1, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
-    gsap.to("#field", { opacity: 0.25, scale: 1.08, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+    // Progresso (barra superior no celular + trilho lateral no desktop)
+    if ($("#progress")) gsap.to("#progress", { scaleX: 1, ease: "none", scrollTrigger: { start: 0, end: "max", scrub: 0.3 } });
+    if ($("#rail-fill")) gsap.to("#rail-fill", { scaleY: 1, ease: "none", scrollTrigger: { start: 0, end: "max", scrub: 0.3 } });
 
-    // Títulos em linhas (fora do hero)
+    // Hero se afasta ao rolar
+    if ($(".hero")) gsap.to("#hero-inner", { yPercent: -18, opacity: 0.1, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+    if ($(".hero")) gsap.to("#field", { opacity: 0.25, scale: 1.08, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+
+    // Manifesto: travado até a última palavra acender
+    const mf = $("#manifesto");
+    if (mf) {
+      mf.innerHTML = mf.textContent.trim().split(/\s+/).map(w => `<span class="w">${w}</span>`).join(" ");
+      const words = $$(".w", mf);
+      gsap.timeline({ scrollTrigger: { trigger: "#sobre", start: "top top", end: () => "+=" + innerHeight * 1.4, pin: true, scrub: 0.6, invalidateOnRefresh: true } })
+        .to(words, { opacity: 1, stagger: 0.1, ease: "none" })
+        .to("#m-bar", { scaleX: 1, ease: "none", duration: words.length * 0.1 }, 0);
+    }
+
+    // Títulos em linhas e revelação genérica (fora do hero)
     $$("[data-lines]").forEach(h => {
       if (h.closest(".hero")) return;
       gsap.from($$(".line > span", h), { yPercent: 110, duration: 1.1, ease: "expo.out", stagger: 0.08, scrollTrigger: { trigger: h, start: "top 85%" } });
     });
-
-    // Revelação genérica
     $$("[data-reveal]").forEach(el => {
       if (el.closest(".hero")) return;
       gsap.from(el, { y: 40, opacity: 0, duration: 1, ease: "expo.out", scrollTrigger: { trigger: el, start: "top 88%" } });
     });
-
-    // Faixa de segmentos reage à velocidade da rolagem
-    const mq = $("#marquee");
-    if (mq) {
-      const loopTw = gsap.to(mq, { xPercent: -50, duration: 38, ease: "none", repeat: -1 });
-      ScrollTrigger.create({
-        onUpdate: self => {
-          const v = Math.min(Math.abs(self.getVelocity()) / 300, 6);
-          gsap.to(loopTw, { timeScale: (self.direction > 0 ? 1 : -1) * (1 + v), duration: 0.3, overwrite: true });
-          gsap.to(loopTw, { timeScale: self.direction > 0 ? 1 : -1, duration: 1.2, delay: 0.3 });
-        }
-      });
-    }
-
-    // Manifesto palavra por palavra
-    const mf = $("#manifesto");
-    if (mf) {
-      mf.innerHTML = mf.textContent.trim().split(/\s+/).map(w => `<span class="w">${w}</span>`).join(" ");
-      gsap.to($$(".w", mf), { opacity: 1, stagger: 0.05, ease: "none", scrollTrigger: { trigger: mf, start: "top 80%", end: "bottom 40%", scrub: true } });
-    }
 
     // Contadores
     $$("[data-count]").forEach(el => {
       const o = { v: 0 };
       gsap.to(o, { v: +el.dataset.count, duration: 1.8, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 85%" }, onUpdate: () => { el.textContent = Math.round(o.v); } });
     });
-
-    // Selo ISO gira com a rolagem
-    gsap.to("#ring-g", { rotation: 200, transformOrigin: "50% 50%", ease: "none", scrollTrigger: { trigger: "#qualidade", start: "top bottom", end: "bottom top", scrub: true } });
-    gsap.from("#seal .core", { scale: 0.7, opacity: 0, duration: 1.2, ease: "expo.out", scrollTrigger: { trigger: "#seal", start: "top 75%" } });
 
     // Seções horizontais fixas (somente desktop)
     const mm = gsap.matchMedia();
@@ -202,8 +217,27 @@
         gsap.to("#tl-fill", { scaleX: 1, ease: "none", scrollTrigger: { ...st, pin: false } });
       }
     });
+
+    // Selo ISO gira com a rolagem
+    if ($("#qualidade")) gsap.to("#ring-g", { rotation: 200, transformOrigin: "50% 50%", ease: "none", scrollTrigger: { trigger: "#qualidade", start: "top bottom", end: "bottom top", scrub: true } });
+    if ($("#seal")) gsap.from("#seal .core", { scale: 0.7, opacity: 0, duration: 1.2, ease: "expo.out", scrollTrigger: { trigger: "#seal", start: "top 75%" } });
+
   } else {
     $$("[data-count]").forEach(el => { el.textContent = el.dataset.count; });
+  }
+
+  // ---------- Trilho lateral: seção ativa ----------
+  const railLinks = $$("#rail a");
+  if (railLinks.length) {
+    const setActive = id => railLinks.forEach(a => a.classList.toggle("active", a.dataset.sec === id));
+    const secs = railLinks.map(a => $("#" + a.dataset.sec)).filter(Boolean);
+    if (hasGsap) {
+      secs.forEach(sec => ScrollTrigger.create({ trigger: sec, start: "top 50%", end: "bottom 50%", onToggle: s => { if (s.isActive) setActive(sec.id); } }));
+    } else {
+      const io = new IntersectionObserver(ens => ens.forEach(en => { if (en.isIntersecting) setActive(en.target.id); }), { rootMargin: "-50% 0px -50% 0px" });
+      secs.forEach(s => io.observe(s));
+    }
+    setActive("topo");
   }
 
   // ---------- Laboratório de cores ----------
@@ -237,17 +271,20 @@
       $("#gloss").value = Math.round(S.gloss * 100); $("#gloss-o").textContent = Math.round(S.gloss * 100) + "%";
       if (skip !== "hex") $("#hex").value = hex(rgb);
       if (skip !== "rgb") { $("#r").value = rgb[0]; $("#g").value = rgb[1]; $("#b").value = rgb[2]; }
-      pellet.style.setProperty("--c", `rgba(${rgb.join(",")},${S.a})`);
+      const rgba = `rgba(${rgb.join(",")},${S.a})`;
+      pellet.style.setProperty("--c", rgba);
       pellet.style.setProperty("--gloss", S.gloss);
       pellet.style.setProperty("--glow", S.fx === "fluorescente" ? 0.9 : S.fx === "fosforescente" ? 0.5 : 0);
       pellet.dataset.fx = S.fx;
       const ref = $("#ref-code").value.trim();
       $("#spec").innerHTML =
         `<span>HEX</span><b>${hex(rgb)}</b><span>RGB</span><b>${rgb.join(" · ")}</b>` +
-        `<span>Opacidade</span><b>${Math.round(S.a * 100)}%${S.a < 1 ? " (translúcido)" : ""}</b>` +
-        `<span>Brilho</span><b>${Math.round(S.gloss * 100)}% · ${S.gloss < 0.35 ? "fosco" : S.gloss > 0.7 ? "alto brilho" : "acetinado"}</b>` +
+        `<span>Opacidade</span><b>${Math.round(S.a * 100)}%${S.a < 1 ? " transl." : ""}</b>` +
+        `<span>Brilho</span><b>${S.gloss < 0.35 ? "Fosco" : S.gloss > 0.7 ? "Alto brilho" : "Acetinado"}</b>` +
         `<span>Efeito</span><b>${fxNames[S.fx]}</b>` +
-        (ref ? `<span>Referência</span><b>${$("#ref-type").value} ${ref}</b>` : "");
+        (ref ? `<span>Ref.</span><b>${$("#ref-type").value} ${ref}</b>` : "");
+      const bar = $("#lab-bar-sw");
+      if (bar) { bar.style.background = rgba; $("#lab-bar-txt").textContent = `${hex(rgb)} · ${fxNames[S.fx]}`; }
     };
 
     const pick = e => {
@@ -291,7 +328,7 @@
     }));
 
     // Leva a especificação para o formulário
-    $("#send-color").addEventListener("click", () => {
+    const sendColor = () => {
       const rgb = hsv2rgb(S.h, S.s, S.v);
       const ref = $("#ref-code").value.trim();
       const spec = `Cor ${hex(rgb)} (RGB ${rgb.join(", ")}) · opacidade ${Math.round(S.a * 100)}% · brilho ${Math.round(S.gloss * 100)}% · efeito ${fxNames[S.fx]}` + (ref ? ` · ref. ${$("#ref-type").value} ${ref}` : "");
@@ -301,71 +338,143 @@
       $("#prefill-sw").style.background = `rgba(${rgb.join(",")},${S.a})`;
       $("#prefill-txt").textContent = "Especificação da cor anexada ao pedido";
       scrollToEl($("#contato"));
-    });
+    };
+    $("#send-color").addEventListener("click", sendColor);
+    if ($("#send-color-m")) $("#send-color-m").addEventListener("click", sendColor);
+
+    // Barra fixa do laboratório no celular
+    const labBar = $("#lab-bar");
+    if (labBar) new IntersectionObserver(([en]) => labBar.classList.toggle("show", en.isIntersecting), { threshold: 0.15 }).observe($(".lab-grid"));
     render();
   }
 
-  // ---------- Materiais ----------
-  const panelHTML = m => `
-    <div class="material-panel">
-      <div>
-        <div class="big">${m.name}</div>
-        <div class="full">${m.full}</div>
-        <p style="font-size:18px;max-width:52ch">${m.desc}</p>
-        <b style="font:12px var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--slate)">Principais aplicações</b>
-        <ul>${m.apps.map(a => `<li>${a}</li>`).join("")}</ul>
-        <div>${m.traits.map(t => `<span class="chip">${t}</span>`).join("")}</div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:24px">
-          <a class="btn navy" href="produto.html?linha=${m.id}">Ver linha ${m.name} <span class="arr">→</span></a>
-          <a class="btn ghost" href="#contato">Solicitar amostra</a>
-        </div>
-      </div>
-      <div>
-        <div class="mono" style="color:var(--slate);margin-bottom:8px">GRADES EM DESTAQUE · ${m.sheets} FICHAS TÉCNICAS</div>
-        <div class="grade-list">
-          ${m.grades.slice(0, 5).map(g => `<div class="grade"><div><b>${g[0]}</b><small>${g[1]}</small></div><a href="#">Ficha PDF ↓</a></div>`).join("")}
-        </div>
-      </div>
-    </div>`;
-  const tabs = $("#mat-tabs"), panel = $("#mat-panel");
-  if (tabs && panel) {
-    tabs.innerHTML = M.map((m, i) => `<button role="tab" id="tab-${m.id}" aria-selected="${i === 0}" data-id="${m.id}">${m.name}</button>`).join("");
-    const show = id => {
-      $$("button", tabs).forEach(b => b.setAttribute("aria-selected", String(b.dataset.id === id)));
-      panel.innerHTML = panelHTML(M.find(m => m.id === id));
-      panel.setAttribute("aria-labelledby", "tab-" + id);
-      $$('a[href="#contato"]', panel).forEach(a => a.addEventListener("click", e => { e.preventDefault(); scrollToEl($("#contato")); }));
-      if (motion) {
-        gsap.from(".material-panel .big", { yPercent: 40, opacity: 0, duration: 0.8, ease: "expo.out" });
-        gsap.from(".material-panel .grade", { y: 16, opacity: 0, duration: 0.6, ease: "expo.out", stagger: 0.05 });
-      }
+  // ---------- Materiais: índice interativo ----------
+  const idx = $("#mat-index");
+  if (idx) {
+    idx.innerHTML = M.map((m, i) => `
+      <li class="mat-row" data-id="${m.id}">
+        <button class="mat-head" type="button" aria-expanded="false">
+          <span class="no">0${i + 1}</span><span class="nm">${m.name}</span><span class="fl">${m.full}</span>
+          <span class="gc">${m.sheets} fichas</span><span class="pl">+</span>
+        </button>
+        <div class="mat-body"><div class="mat-inner">
+          <div>
+            <p>${m.desc}</p>
+            <b style="font:12px var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--slate)">Principais aplicações</b>
+            <ul>${m.apps.map(a => `<li>${a}</li>`).join("")}</ul>
+            <div>${m.traits.map(t => `<span class="chip">${t}</span>`).join("")}</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:24px">
+              <a class="btn" href="produto.html?linha=${m.id}" data-cursor="Ver">Ver linha ${m.name} <span class="arr">→</span></a>
+              <a class="btn ghost" href="#contato">Solicitar amostra</a>
+            </div>
+          </div>
+          <div>
+            <div class="mono" style="color:var(--slate);margin-bottom:8px">GRADES EM DESTAQUE</div>
+            <div class="grade-list">${m.grades.slice(0, 5).map(g => `<div class="grade"><div><b>${g[0]}</b><small>${g[1]}</small></div><a href="#">Ficha PDF ↓</a></div>`).join("")}</div>
+          </div>
+        </div></div>
+      </li>`).join("");
+
+    if (motion) gsap.from($$(".mat-row", idx), { y: 50, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.06, scrollTrigger: { trigger: idx, start: "top 85%" } });
+    const refresh = () => { if (hasGsap) ScrollTrigger.refresh(); };
+    const toggle = row => {
+      const body = $(".mat-body", row), btn = $(".mat-head", row);
+      const open = !row.classList.contains("open");
+      $$(".mat-row.open", idx).forEach(r => {
+        if (r === row) return;
+        r.classList.remove("open"); $(".mat-head", r).setAttribute("aria-expanded", "false");
+        if (motion) gsap.to($(".mat-body", r), { height: 0, duration: 0.6, ease: "expo.inOut" }); else $(".mat-body", r).style.height = "0";
+      });
+      row.classList.toggle("open", open); btn.setAttribute("aria-expanded", String(open));
+      if (!motion) { body.style.height = open ? "auto" : "0"; return; }
+      if (open) {
+        gsap.fromTo(body, { height: 0 }, { height: "auto", duration: 0.8, ease: "expo.inOut", onComplete: refresh });
+        gsap.from($$(".grade, p, ul, .chip, .btn", body), { y: 24, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.03, delay: 0.2 });
+      } else gsap.to(body, { height: 0, duration: 0.6, ease: "expo.inOut", onComplete: refresh });
     };
-    tabs.addEventListener("click", e => { const b = e.target.closest("button"); if (b) show(b.dataset.id); });
-    show(M[0].id);
+    idx.addEventListener("click", e => { const h = e.target.closest(".mat-head"); if (h) toggle(h.closest(".mat-row")); });
+
+    // Card flutuante que segue o cursor
+    const fl = $("#mat-float");
+    if (fl && finePointer && motion) {
+      const xTo = gsap.quickTo(fl, "x", { duration: 0.5, ease: "power3" });
+      const yTo = gsap.quickTo(fl, "y", { duration: 0.5, ease: "power3" });
+      idx.addEventListener("pointermove", e => { xTo(e.clientX + 28); yTo(e.clientY - 140); });
+      idx.addEventListener("pointerover", e => {
+        const head = e.target.closest(".mat-head");
+        const row = head && head.closest(".mat-row");
+        if (!row || row.classList.contains("open")) { gsap.to(fl, { opacity: 0, scale: 0.8, duration: 0.3 }); return; }
+        const m = M.find(x => x.id === row.dataset.id);
+        $("#mf-name").textContent = m.name;
+        $("#mf-props").textContent = m.traits.slice(0, 3).join(" · ");
+        $("#mf-pellet").style.setProperty("--c", LOOK[m.id] || "#888");
+        $("#mf-pellet").style.setProperty("--gloss", 0.8);
+        gsap.to(fl, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.6)" });
+      });
+      idx.addEventListener("pointerleave", () => gsap.to(fl, { opacity: 0, scale: 0.8, duration: 0.3 }));
+    } else if (fl) fl.remove();
   }
 
-  // ---------- Guia de seleção ----------
-  const quiz = $("#quiz"), result = $("#quiz-result");
-  if (quiz && result) {
-    const run = () => {
-      const f = new FormData(quiz);
-      const seg = f.get("seg"), prop = f.get("prop"), env = f.get("env");
-      const [a, b] = M.map(m => ({
-        m, s: (m.segments.includes(seg) ? 2 : 0) + (m.props.includes(prop) ? 3 : 0) + (env === "uv" && m.props.includes("uv") ? 2 : 0)
-      })).sort((x, y) => y.s - x.s);
-      result.innerHTML = `
-        <div><div class="mono" style="color:var(--steel)">SUGESTÃO INICIAL</div>
-        <div class="r-name">${a.m.name}</div><div class="mono" style="color:var(--steel);margin-top:6px">alternativa: ${b.m.name}</div></div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <a class="btn ghost" href="produto.html?linha=${a.m.id}">Ver ${a.m.name}</a>
-          <a class="btn" href="#contato" data-go>Validar com um especialista <span class="arr">→</span></a>
-        </div>`;
-      const go = $("[data-go]", result);
-      go.addEventListener("click", e => { e.preventDefault(); scrollToEl($("#contato")); });
-      if (motion) gsap.from(".r-name", { yPercent: 60, opacity: 0, duration: 0.6, ease: "expo.out" });
+  // ---------- Guia de seleção em etapas ----------
+  const gStage = $("#g-stage");
+  if (gStage) {
+    const Q = [
+      { k: "seg", q: "Para qual segmento é a peça?", o: [["automotivo", "Automotivo", "Interior, exterior, iluminação"], ["eletro", "Eletroeletrônicos", "Carcaças, conectores, plugs"], ["linha-branca", "Linha branca", "Geladeiras, lavadoras, pequenos"], ["construcao", "Construção civil", "Perfis, telhas, conexões"], ["embalagens", "Embalagens e cosméticos", "Potes, frascos, tampas"]] },
+      { k: "prop", q: "Qual é a exigência principal?", o: [["impacto", "Resistência ao impacto", "Peças sujeitas a choque"], ["chama", "Anti-chama", "V0 / RoHS / halogênio free"], ["transparencia", "Transparência", "Lentes, visores, utilidades"], ["temperatura", "Alta temperatura", "Próximo a calor ou motor"], ["rigidez", "Rigidez e mecânica", "Engrenagens, peças técnicas"]] },
+      { k: "env", q: "Onde a peça será usada?", o: [["interno", "Ambiente interno", "Sem exposição ao sol"], ["uv", "Ambiente externo", "Sol, chuva e intempéries"]] }
+    ];
+    const A = {};
+    let step = 0;
+    const back = $("#g-back");
+    const setProg = () => {
+      $("#g-step").textContent = step < Q.length ? `0${step + 1} / 03` : "Resultado";
+      $("#g-bar").style.transform = `scaleX(${Math.min(1, (step + 1) / Q.length)})`;
+      back.hidden = step === 0;
     };
-    quiz.addEventListener("change", run);
-    run();
+    const animIn = dir => { if (motion) gsap.from(gStage.children, { x: 60 * dir, opacity: 0, duration: 0.6, ease: "expo.out", stagger: 0.04 }); };
+    const showStep = (dir = 1) => {
+      const s = Q[step];
+      gStage.innerHTML = `<p class="g-q">${s.q}</p><div class="g-cards">${s.o.map((o, i) =>
+        `<button type="button" class="g-card${A[s.k] === o[0] ? " sel" : ""}" data-v="${o[0]}" data-cursor="Selecionar"><span class="gi">0${i + 1}</span><span><span class="gl">${o[1]}</span><span class="gs" style="display:block">${o[2]}</span></span></button>`).join("")}</div>`;
+      setProg();
+      if (motion) gsap.from($$(".g-card", gStage), { y: 40, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.05 });
+      animIn(dir);
+    };
+    const showResult = () => {
+      const [a, b] = M.map(m => ({
+        m, s: (m.segments.includes(A.seg) ? 2 : 0) + (m.props.includes(A.prop) ? 3 : 0) + (A.env === "uv" && m.props.includes("uv") ? 2 : 0)
+      })).sort((x, y) => y.s - x.s);
+      const label = (k, v) => Q.find(q => q.k === k).o.find(o => o[0] === v)[1];
+      gStage.innerHTML = `
+        <div class="result">
+          <div>
+            <div class="mono" style="color:var(--steel)">SUGESTÃO INICIAL</div>
+            <div class="r-name">${a.m.name}</div>
+            <div class="r-sum">${label("seg", A.seg)} · ${label("prop", A.prop)} · ${label("env", A.env)}<br>Alternativa: ${b.m.name}</div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button type="button" class="btn ghost" id="g-redo">Refazer</button>
+            <a class="btn ghost" href="produto.html?linha=${a.m.id}" data-cursor="Ver">Ver ${a.m.name}</a>
+            <a class="btn" href="#contato">Validar com um especialista <span class="arr">→</span></a>
+          </div>
+        </div>`;
+      setProg();
+      $("#g-redo").addEventListener("click", () => { step = 0; Object.keys(A).forEach(k => delete A[k]); showStep(-1); });
+      if (motion) {
+        gsap.from(".result", { y: 40, opacity: 0, duration: 0.8, ease: "expo.out" });
+        gsap.from(".result .r-name", { yPercent: 80, opacity: 0, duration: 1, ease: "expo.out", delay: 0.1 });
+      }
+    };
+    gStage.addEventListener("click", e => {
+      const c = e.target.closest(".g-card");
+      if (!c) return;
+      A[Q[step].k] = c.dataset.v;
+      $$(".g-card", gStage).forEach(x => x.classList.toggle("sel", x === c));
+      if (cur) cur.classList.remove("big");
+      setTimeout(() => { step++; step < Q.length ? showStep(1) : showResult(); }, motion ? 380 : 0);
+    });
+    back.addEventListener("click", () => { if (step > 0) { step--; showStep(-1); } });
+    showStep();
   }
 
   // ---------- Formulário ----------
@@ -388,7 +497,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} — Remo Polímeros · Wireframe v0.2`;
+    document.title = `${m.name} — Remo Polímeros · Wireframe v0.3`;
     $$("[data-f]").forEach(el => {
       const k = el.dataset.f;
       if (k === "apps") el.innerHTML = m.apps.map(a => `<li>${a}</li>`).join("");
@@ -398,10 +507,12 @@
     });
     $("#grades").innerHTML = m.grades.map(g =>
       `<div class="grade"><div><b>${g[0]}</b><small>${g[1]}</small></div><div style="display:flex;gap:16px"><a href="#">Ficha técnica PDF ↓</a><a href="index.html#contato">Pedir amostra</a></div></div>`).join("");
-    $("#other-lines").innerHTML = M.filter(x => x.id !== m.id).map(x => `<a class="btn ghost sm" href="produto.html?linha=${x.id}">${x.name}</a>`).join("");
+    $("#other-lines").innerHTML = M.filter(x => x.id !== m.id).map(x => `<a class="btn ghost sm" href="produto.html?linha=${x.id}" data-cursor="Ver">${x.name}</a>`).join("");
     if (motion) {
       gsap.from(".p-hero .big", { yPercent: 30, opacity: 0, duration: 1.2, ease: "expo.out" });
       gsap.from("#grades .grade", { y: 20, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.06, scrollTrigger: { trigger: "#grades", start: "top 85%" } });
     }
   }
+
+  if (hasGsap) { ScrollTrigger.sort(); ScrollTrigger.refresh(); }
 })();
