@@ -1,4 +1,4 @@
-// Interações e rolagens do wireframe v0.5 (GSAP + ScrollTrigger + Lenis)
+// Interações e rolagens do wireframe v0.6 (GSAP + ScrollTrigger + Lenis)
 (function () {
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -501,6 +501,108 @@
     } else if (fl) fl.remove();
   }
 
+
+  // ---------- Grânulo 3D (Three.js) no guia de seleção ----------
+  const pellet3d = (() => {
+    const box = $("#g3d"), cvs = $("#g3d-canvas");
+    if (!box || !cvs) return null;
+    if (!window.THREE) { box.remove(); return null; }
+    let renderer;
+    try { renderer = new THREE.WebGLRenderer({ canvas: cvs, antialias: true, alpha: true }); } catch (e) { box.remove(); return null; }
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 50);
+    camera.position.set(0, 0.4, 7);
+
+    // Perfil de um pellet cilíndrico com bordas arredondadas, girado em torno do eixo
+    const R = 1, Hh = 0.62, e = 0.34, pts = [new THREE.Vector2(0, -Hh)];
+    for (let i = 0; i <= 8; i++) { const t = (i / 8) * Math.PI / 2; pts.push(new THREE.Vector2(R - e + Math.sin(t) * e, -Hh + e - Math.cos(t) * e)); }
+    for (let i = 0; i <= 8; i++) { const t = (i / 8) * Math.PI / 2; pts.push(new THREE.Vector2(R - e + Math.cos(t) * e, Hh - e + Math.sin(t) * e)); }
+    pts.push(new THREE.Vector2(0, Hh));
+    const geo = new THREE.LatheGeometry(pts, 64);
+    geo.computeVertexNormals();
+
+    const mat = new THREE.MeshPhysicalMaterial({ color: 0xe8e4d8, roughness: 0.28, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.15, transparent: true, opacity: 1 });
+    const main = new THREE.Mesh(geo, mat);
+    main.rotation.set(0.9, 0, 0.35);
+    const group = new THREE.Group();
+    group.add(main);
+
+    // Grânulos menores orbitando
+    const small = [];
+    for (let i = 0; i < 7; i++) {
+      const m = new THREE.Mesh(geo, mat);
+      const s = 0.14 + Math.random() * 0.12;
+      m.scale.setScalar(s);
+      m.userData = { a: (i / 7) * Math.PI * 2, r: 1.9 + Math.random() * 0.5, y: (Math.random() - 0.5) * 1.6, sp: 0.15 + Math.random() * 0.2, rx: Math.random() * 3, ry: Math.random() * 3 };
+      group.add(m); small.push(m);
+    }
+    scene.add(group);
+
+    scene.add(new THREE.HemisphereLight(0xf4f5f7, 0x050b1a, 0.55));
+    const key = new THREE.DirectionalLight(0xffffff, 1.05); key.position.set(3, 4, 5); scene.add(key);
+    const rim = new THREE.PointLight(0xffd100, 1.2, 20); rim.position.set(-4, -1.5, -2); scene.add(rim);
+    const fillL = new THREE.PointLight(0x7fa8ff, 0.5, 20); fillL.position.set(-3, 3, 4); scene.add(fillL);
+
+    const parse = c => { const m = c.match(/[\d.]+/g).map(Number); return { color: new THREE.Color(m[0] / 255, m[1] / 255, m[2] / 255), a: m[3] }; };
+    const target = { color: new THREE.Color(0xe8e4d8), a: 1 };
+    const set = (id, burst) => {
+      const look = parse(LOOK[id] || LOOK.abs);
+      target.color.copy(look.color); target.a = look.a;
+      const m = M.find(x => x.id === id);
+      $("#g3d-name").textContent = m ? m.name : "";
+      if (burst) spin += 2.4;
+    };
+
+    // Arrastar para girar, com inércia; o mouse inclina levemente
+    let dragging = false, lx = 0, ly = 0, vx = 0.004, vy = 0, rotY = 0, rotX = 0.15, spin = 0, hx = 0, hy = 0;
+    box.addEventListener("pointerdown", e => { dragging = true; lx = e.clientX; ly = e.clientY; box.setPointerCapture(e.pointerId); });
+    box.addEventListener("pointermove", e => {
+      const r = box.getBoundingClientRect();
+      hx = (e.clientX - r.left) / r.width - 0.5; hy = (e.clientY - r.top) / r.height - 0.5;
+      if (!dragging) return;
+      vx = (e.clientX - lx) * 0.006; vy = (e.clientY - ly) * 0.006; lx = e.clientX; ly = e.clientY;
+      rotY += vx; rotX = Math.max(-1, Math.min(1, rotX + vy));
+    });
+    const up = () => { dragging = false; };
+    box.addEventListener("pointerup", up); box.addEventListener("pointercancel", up);
+    box.addEventListener("pointerleave", () => { hx = hy = 0; });
+
+    const resize = () => {
+      const w = box.clientWidth, h = box.clientHeight;
+      if (!w || !h) return;
+      renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+    };
+    resize(); addEventListener("resize", resize);
+
+    let visible = false, t0 = performance.now();
+    new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(box);
+    const frame = now => {
+      requestAnimationFrame(frame);
+      if (!visible) return;
+      const dt = Math.min(0.05, (now - t0) / 1000); t0 = now;
+      if (!dragging && !reduced) { vx += (0.004 - vx) * 0.04; vy *= 0.92; rotY += vx; }
+      if (spin > 0.001) { const d = spin * 0.08; rotY += d; spin -= d; }
+      group.rotation.y = rotY + hx * 0.4;
+      group.rotation.x = rotX + hy * 0.3;
+      main.position.y = reduced ? 0 : Math.sin(now / 900) * 0.08;
+      small.forEach(m => {
+        const u = m.userData; if (!reduced) u.a += u.sp * dt;
+        m.position.set(Math.cos(u.a) * u.r, u.y + Math.sin(u.a * 2) * 0.15, Math.sin(u.a) * u.r * 0.6);
+        m.rotation.set(u.rx + u.a, u.ry + u.a * 0.7, 0);
+      });
+      mat.color.lerp(target.color, 0.08);
+      mat.opacity += (target.a - mat.opacity) * 0.08;
+      mat.roughness = mat.opacity < 0.6 ? 0.05 : 0.28;
+      mat.depthWrite = mat.opacity > 0.9;
+      renderer.render(scene, camera);
+    };
+    requestAnimationFrame(frame);
+    set("abs");
+    return { set };
+  })();
+
   // ---------- Guia de seleção em etapas ----------
   const gStage = $("#g-stage");
   if (gStage) {
@@ -526,10 +628,11 @@
       if (motion) gsap.from($$(".g-card", gStage), { y: 40, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.05 });
       animIn(dir);
     };
+    const rank = () => M.map(m => ({
+      m, s: (m.segments.includes(A.seg) ? 2 : 0) + (m.props.includes(A.prop) ? 3 : 0) + (A.env === "uv" && m.props.includes("uv") ? 2 : 0)
+    })).sort((x, y) => y.s - x.s);
     const showResult = () => {
-      const [a, b] = M.map(m => ({
-        m, s: (m.segments.includes(A.seg) ? 2 : 0) + (m.props.includes(A.prop) ? 3 : 0) + (A.env === "uv" && m.props.includes("uv") ? 2 : 0)
-      })).sort((x, y) => y.s - x.s);
+      const [a, b] = rank();
       const label = (k, v) => Q.find(q => q.k === k).o.find(o => o[0] === v)[1];
       gStage.innerHTML = `
         <div class="result">
@@ -545,7 +648,7 @@
           </div>
         </div>`;
       setProg();
-      $("#g-redo").addEventListener("click", () => { step = 0; Object.keys(A).forEach(k => delete A[k]); showStep(-1); });
+      $("#g-redo").addEventListener("click", () => { step = 0; Object.keys(A).forEach(k => delete A[k]); showStep(-1); if (pellet3d) pellet3d.set("abs", true); });
       if (motion) {
         gsap.from(".result", { y: 40, opacity: 0, duration: 0.8, ease: "expo.out" });
         gsap.from(".result .r-name", { yPercent: 80, opacity: 0, duration: 1, ease: "expo.out", delay: 0.1 });
@@ -555,6 +658,7 @@
       const c = e.target.closest(".g-card");
       if (!c) return;
       A[Q[step].k] = c.dataset.v;
+      if (pellet3d) pellet3d.set(rank()[0].m.id, true);
       $$(".g-card", gStage).forEach(x => x.classList.toggle("sel", x === c));
       if (cur) cur.classList.remove("big");
       setTimeout(() => { step++; step < Q.length ? showStep(1) : showResult(); }, motion ? 380 : 0);
@@ -583,7 +687,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} — Remo Polímeros · Wireframe v0.5`;
+    document.title = `${m.name} — Remo Polímeros · Wireframe v0.6`;
     $$("[data-f]").forEach(el => {
       const k = el.dataset.f;
       if (k === "apps") el.innerHTML = m.apps.map(a => `<li>${a}</li>`).join("");

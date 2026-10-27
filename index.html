@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Remo Polímeros — Wireframe v0.5</title>
-  <meta name="description" content="Wireframe v0.5 da nova home da Remo Polímeros: identidade visual (Archivo + IBM Plex Mono), paleta e rolagens dinâmicas.">
+  <title>Remo Polímeros — Wireframe v0.6</title>
+  <meta name="description" content="Wireframe v0.6 da nova home da Remo Polímeros: identidade visual (Archivo + IBM Plex Mono), paleta e rolagens dinâmicas.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -47,7 +47,7 @@
 <div class="cursor" id="cursor" aria-hidden="true"><span id="cursor-label"></span></div>
 
 <div class="wf-bar" role="region" aria-label="Controles do wireframe">
-  <strong>WIREFRAME v0.5</strong> · Hero central + transição de página · sem imagens
+  <strong>WIREFRAME v0.6</strong> · Grânulo 3D no guia · sem imagens
   <a href="produto.html?linha=abs">Página de produto →</a>
   <a href="#mapa">Mapa do site</a>
   <span class="spacer"></span>
@@ -216,6 +216,11 @@
       <div>
         <div class="eyebrow">Guia de seleção</div>
         <h2 data-reveal style="max-width:16ch;margin:0">Não sabe qual resina usar? Responda 3 perguntas.</h2>
+        <p class="lead" style="margin-top:20px;max-width:440px">O grânulo 3D se transforma na resina sugerida a cada resposta. Arraste para girar.</p>
+      </div>
+      <div class="g3d" id="g3d" data-cursor="Girar" aria-label="Grânulo 3D da resina sugerida" role="img">
+        <canvas id="g3d-canvas"></canvas>
+        <div class="g3d-label"><span>Grânulo 3D</span><b id="g3d-name">Resina</b></div>
       </div>
     </div>
     <div class="g-progress"><button class="g-back" id="g-back" type="button" hidden>← Voltar</button><span id="g-step">01 / 03</span><div class="bar"><b id="g-bar"></b></div></div>
@@ -425,6 +430,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="assets/data.js"></script>
 <script src="assets/wireframe.js"></script>
 </body>
