@@ -1,4 +1,4 @@
-// Interações e rolagens do wireframe v0.3 (GSAP + ScrollTrigger + Lenis)
+// Interações e rolagens do wireframe v0.4 (GSAP + ScrollTrigger + Lenis)
 (function () {
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -163,7 +163,6 @@
   if (motion) {
     // Progresso (barra superior no celular + trilho lateral no desktop)
     if ($("#progress")) gsap.to("#progress", { scaleX: 1, ease: "none", scrollTrigger: { start: 0, end: "max", scrub: 0.3 } });
-    if ($("#rail-fill")) gsap.to("#rail-fill", { scaleY: 1, ease: "none", scrollTrigger: { start: 0, end: "max", scrub: 0.3 } });
 
     // Hero se afasta ao rolar
     if ($(".hero")) gsap.to("#hero-inner", { yPercent: -18, opacity: 0.1, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
@@ -226,19 +225,40 @@
     $$("[data-count]").forEach(el => { el.textContent = el.dataset.count; });
   }
 
-  // ---------- Trilho lateral: seção ativa ----------
-  const railLinks = $$("#rail a");
-  if (railLinks.length) {
-    const setActive = id => railLinks.forEach(a => a.classList.toggle("active", a.dataset.sec === id));
-    const secs = railLinks.map(a => $("#" + a.dataset.sec)).filter(Boolean);
-    if (hasGsap) {
-      secs.forEach(sec => ScrollTrigger.create({ trigger: sec, start: "top 50%", end: "bottom 50%", onToggle: s => { if (s.isActive) setActive(sec.id); } }));
-    } else {
-      const io = new IntersectionObserver(ens => ens.forEach(en => { if (en.isIntersecting) setActive(en.target.id); }), { rootMargin: "-50% 0px -50% 0px" });
-      secs.forEach(s => io.observe(s));
-    }
-    setActive("topo");
-  }
+  // ---------- Barra de progresso lateral (ponta a ponta) ----------
+  const rail = $("#rail");
+  if (rail && hasGsap) {
+    const SECS = [["topo", "Início"], ["sobre", "Manifesto"], ["numeros", "Números"], ["solucoes", "Como trabalhamos"], ["laboratorio", "Laboratório"], ["materiais", "Materiais"], ["guia", "Guia de seleção"], ["qualidade", "Qualidade ISO"], ["historia", "História"], ["contato", "Contato"]]
+      .map(([id, label]) => ({ id, label, el: $("#" + id), p: 0 })).filter(x => x.el);
+    const ticksEl = $("#rail-ticks"), fill = $("#rail-fill"), marker = $("#rail-marker");
+    ticksEl.innerHTML = SECS.map(x => `<button type="button" class="tick" data-sec="${x.id}" aria-label="Ir para ${x.label}"><span>${x.label}</span></button>`).join("");
+    const ticks = $$(".tick", ticksEl);
+    ticks.forEach((t, i) => t.addEventListener("click", () => scrollToEl(SECS[i].el)));
+    let progress = 0;
+    const layout = () => {
+      const max = ScrollTrigger.maxScroll(window) || 1, H = rail.clientHeight;
+      SECS.forEach((x, i) => {
+        const box = x.el.parentElement.classList.contains("pin-spacer") ? x.el.parentElement : x.el;
+        x.p = Math.min(1, Math.max(0, (box.getBoundingClientRect().top + scrollY) / max));
+        ticks[i].style.top = 12 + x.p * (H - 48) + "px";
+      });
+      update(progress);
+    };
+    const update = pr => {
+      progress = pr;
+      const H = rail.clientHeight;
+      fill.style.transform = `scaleY(${pr})`;
+      marker.style.transform = `translateY(${12 + pr * (H - 48)}px)`;
+      let a = 0;
+      SECS.forEach((x, i) => { if (x.p <= pr + 0.002) a = i; });
+      ticks.forEach((t, i) => t.classList.toggle("passed", SECS[i].p <= pr + 0.002));
+      $("#rail-label").textContent = SECS[a].label;
+      $("#rail-count").textContent = String(a + 1).padStart(2, "0");
+    };
+    ScrollTrigger.addEventListener("refresh", layout);
+    ScrollTrigger.create({ start: 0, end: "max", onUpdate: s => update(s.progress) });
+    layout();
+  } else if (rail) rail.remove();
 
   // ---------- Laboratório de cores ----------
   const sv = $("#sv");
@@ -394,24 +414,37 @@
     };
     idx.addEventListener("click", e => { const h = e.target.closest(".mat-head"); if (h) toggle(h.closest(".mat-row")); });
 
-    // Card flutuante que segue o cursor
+    // Card flutuante que segue o cursor.
+    // Visibilidade decidida pelo elemento sob o ponteiro (inclusive ao rolar sem mexer o mouse);
+    // overwrite evita que a animação de entrada vença a de saída.
     const fl = $("#mat-float");
     if (fl && finePointer && motion) {
       const xTo = gsap.quickTo(fl, "x", { duration: 0.5, ease: "power3" });
       const yTo = gsap.quickTo(fl, "y", { duration: 0.5, ease: "power3" });
-      idx.addEventListener("pointermove", e => { xTo(e.clientX + 28); yTo(e.clientY - 140); });
-      idx.addEventListener("pointerover", e => {
-        const head = e.target.closest(".mat-head");
+      let px = -1, py = -1, shown = null;
+      const hide = () => {
+        if (shown === null) return;
+        shown = null;
+        gsap.to(fl, { opacity: 0, scale: 0.8, duration: 0.25, ease: "power2.out", overwrite: "auto" });
+      };
+      const sync = () => {
+        const el = px < 0 ? null : document.elementFromPoint(px, py);
+        const head = el && el.closest("#mat-index .mat-head");
         const row = head && head.closest(".mat-row");
-        if (!row || row.classList.contains("open")) { gsap.to(fl, { opacity: 0, scale: 0.8, duration: 0.3 }); return; }
-        const m = M.find(x => x.id === row.dataset.id);
+        if (!row || row.classList.contains("open")) return hide();
+        if (shown === row.dataset.id) return;
+        shown = row.dataset.id;
+        const m = M.find(x => x.id === shown);
         $("#mf-name").textContent = m.name;
         $("#mf-props").textContent = m.traits.slice(0, 3).join(" · ");
         $("#mf-pellet").style.setProperty("--c", LOOK[m.id] || "#888");
         $("#mf-pellet").style.setProperty("--gloss", 0.8);
-        gsap.to(fl, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.6)" });
-      });
-      idx.addEventListener("pointerleave", () => gsap.to(fl, { opacity: 0, scale: 0.8, duration: 0.3 }));
+        gsap.to(fl, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.6)", overwrite: "auto" });
+      };
+      addEventListener("pointermove", e => { px = e.clientX; py = e.clientY; xTo(px + 28); yTo(py - 140); sync(); }, { passive: true });
+      document.documentElement.addEventListener("pointerleave", () => { px = -1; hide(); });
+      if (lenis) lenis.on("scroll", sync); else addEventListener("scroll", sync, { passive: true });
+      idx.addEventListener("click", () => setTimeout(sync, 0));
     } else if (fl) fl.remove();
   }
 
@@ -497,7 +530,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} — Remo Polímeros · Wireframe v0.3`;
+    document.title = `${m.name} — Remo Polímeros · Wireframe v0.4`;
     $$("[data-f]").forEach(el => {
       const k = el.dataset.f;
       if (k === "apps") el.innerHTML = m.apps.map(a => `<li>${a}</li>`).join("");

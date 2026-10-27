@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Remo Polímeros — Wireframe v0.3</title>
-  <meta name="description" content="Wireframe v0.3 da nova home da Remo Polímeros: identidade visual (Archivo + IBM Plex Mono), paleta e rolagens dinâmicas.">
+  <title>Remo Polímeros — Wireframe v0.4</title>
+  <meta name="description" content="Wireframe v0.4 da nova home da Remo Polímeros: identidade visual (Archivo + IBM Plex Mono), paleta e rolagens dinâmicas.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -27,25 +27,17 @@
 
 <div class="progress" id="progress"></div>
 
-<nav class="rail" id="rail" aria-label="Seções da página">
-  <ol>
-    <i class="rl"><b id="rail-fill"></b></i>
-    <li><a href="#topo" data-sec="topo">01<span>Início</span></a></li>
-    <li><a href="#sobre" data-sec="sobre">02<span>Manifesto</span></a></li>
-    <li><a href="#numeros" data-sec="numeros">03<span>Números</span></a></li>
-    <li><a href="#solucoes" data-sec="solucoes">04<span>Como trabalhamos</span></a></li>
-    <li><a href="#laboratorio" data-sec="laboratorio">05<span>Laboratório de cores</span></a></li>
-    <li><a href="#materiais" data-sec="materiais">06<span>Materiais</span></a></li>
-    <li><a href="#guia" data-sec="guia">07<span>Guia de seleção</span></a></li>
-    <li><a href="#qualidade" data-sec="qualidade">08<span>Qualidade ISO</span></a></li>
-    <li><a href="#historia" data-sec="historia">09<span>História</span></a></li>
-    <li><a href="#contato" data-sec="contato">10<span>Contato</span></a></li>
-  </ol>
+<nav class="rail" id="rail" aria-label="Progresso e seções da página">
+  <div class="track"></div><div class="fill" id="rail-fill"></div>
+  <div id="rail-ticks"></div>
+  <div class="marker" id="rail-marker"><i></i><span id="rail-label">Início</span></div>
+  <div class="count"><span id="rail-count">01</span> / 10</div>
 </nav>
+<div class="grain" aria-hidden="true"></div>
 <div class="cursor" id="cursor" aria-hidden="true"><span id="cursor-label"></span></div>
 
 <div class="wf-bar" role="region" aria-label="Controles do wireframe">
-  <strong>WIREFRAME v0.3</strong> · Ajustes de dinamismo · sem imagens
+  <strong>WIREFRAME v0.4</strong> · Texturas + barra lateral · sem imagens
   <a href="produto.html?linha=abs">Página de produto →</a>
   <a href="#mapa">Mapa do site</a>
   <span class="spacer"></span>
@@ -114,7 +106,7 @@
 </section>
 
 <!-- 04 · NÚMEROS -->
-<section class="divider" id="numeros" aria-label="A Remo em números">
+<section class="divider tex-glow" id="numeros" aria-label="A Remo em números">
   <div class="wrap">
     <div class="grid g4">
       <div class="stat" data-reveal><div class="n"><span data-count="37">0</span><small>anos</small></div><div class="l">de mercado, desde 1989</div></div>
@@ -208,7 +200,7 @@
 </section>
 
 <!-- 08 · GUIA DE SELEÇÃO -->
-<section id="guia" class="divider">
+<section id="guia" class="divider tex-glow">
   <div class="wrap">
     <div class="guide-top">
       <div>
@@ -223,7 +215,7 @@
 </section>
 
 <!-- 09 · QUALIDADE / ISO (destaque, seção fixa) -->
-<section class="iso" id="qualidade" style="padding:0">
+<section class="iso tex-glow" id="qualidade" style="padding:0">
   <div class="wrap iso-stage" id="iso-stage">
     <div class="seal" id="seal">
       <svg viewBox="0 0 400 400" aria-hidden="true">
@@ -305,7 +297,7 @@
 </section>
 
 <!-- 12 · CONTATO -->
-<section id="contato" class="divider">
+<section id="contato" class="divider tex-glow">
   <div class="wrap contact">
     <div>
       <div class="eyebrow">Fale com um especialista</div>
@@ -371,7 +363,7 @@
 </section>
 
 <!-- CTA FINAL -->
-<section class="final-cta">
+<section class="final-cta tex-glow">
   <div class="wrap">
     <div class="eyebrow">Próximo passo</div>
     <h2 data-lines>
