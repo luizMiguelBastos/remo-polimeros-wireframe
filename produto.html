@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wireframe — Produto | Remo Polímeros</title>
+  <link rel="stylesheet" href="assets/wireframe.css">
+</head>
+<body>
+
+<div class="wf-bar" role="region" aria-label="Controles do wireframe">
+  <strong>WIREFRAME v0.1</strong> · Modelo de página de produto
+  <a href="index.html">← Voltar para a home</a>
+  <span class="spacer"></span>
+  <button type="button" id="toggle-notes" aria-pressed="true">Ocultar notas de UX</button>
+</div>
+
+<header class="site-header">
+  <div class="wrap">
+    <a href="index.html" class="logo ph" aria-label="Remo Polímeros — início"><span>LOGO</span></a>
+    <nav class="nav" id="nav" aria-label="Principal">
+      <a href="index.html#solucoes">Soluções</a>
+      <a href="index.html#materiais" aria-current="page"><b>Materiais</b></a>
+      <a href="index.html#laboratorio">Laboratório</a>
+      <a href="index.html#qualidade">Qualidade</a>
+      <a href="index.html#sobre">Sobre</a>
+      <a href="index.html#contato">Contato</a>
+    </nav>
+    <a href="index.html#qualidade" class="header-iso">ISO 9001:2015*</a>
+    <a href="index.html#contato" class="btn">Solicitar amostra</a>
+    <button class="btn ghost menu-toggle" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+  </div>
+</header>
+
+<main id="product-page">
+  <div class="wrap crumbs"><a href="index.html">Home</a> / <a href="index.html#materiais">Materiais</a> / <span data-f="name"></span></div>
+  <p class="wrap note" style="max-width:1168px"><b>Nielsen #1 e #3:</b> breadcrumb e item ativo no menu mostram onde o visitante está e como voltar.</p>
+
+  <section style="padding-top:32px">
+    <div class="wrap grid g2" style="align-items:center;gap:40px">
+      <div>
+        <span class="sec-label">Linha de produto</span>
+        <h1 data-f="name"></h1>
+        <p class="muted" data-f="full" style="font-size:18px;margin-top:-4px"></p>
+        <p class="lead" data-f="desc"></p>
+        <div data-f="traits" style="margin:16px 0"></div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a href="#grades-t" class="btn">Ver grades e fichas</a>
+          <a href="index.html#contato" class="btn ghost">Desenvolver versão sob medida</a>
+        </div>
+      </div>
+      <div class="ph" style="aspect-ratio:4/3"><span>[GRÂNULOS 3D / VÍDEO DO MATERIAL]</span></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap grid g2" style="gap:40px">
+      <div>
+        <h2>Principais aplicações</h2>
+        <ul data-f="apps" style="font-size:17px;line-height:1.9"></ul>
+      </div>
+      <div class="grid g2">
+        <div class="ph" style="aspect-ratio:1"><span>[foto aplicação 1]</span></div>
+        <div class="ph" style="aspect-ratio:1"><span>[foto aplicação 2]</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--fill-2)">
+    <div class="wrap">
+      <h2 id="grades-t">Grades disponíveis</h2>
+      <p class="muted"><span data-f="sheets"></span> fichas técnicas disponíveis para download.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin:16px 0">
+        <span class="chip">Filtro: Anti-chama</span><span class="chip">UV</span><span class="chip">Alto fluxo</span><span class="chip">Alta temperatura</span><span class="chip">Fibra de vidro</span>
+      </div>
+      <div class="grade-list" id="grades"></div>
+      <p class="note"><b>Nielsen #7:</b> filtros por propriedade e botão de ficha com nome do grade (hoje todos dizem só "Informações do produto"). Pedido de amostra direto do grade.</p>
+    </div>
+  </section>
+
+  <section class="quality">
+    <div class="wrap" style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;justify-content:space-between">
+      <div style="display:flex;gap:20px;align-items:center">
+        <div class="iso-seal" style="width:110px;font-size:16px">ISO<br>9001:2015*</div>
+        <div><h3 style="font-size:22px">Produzido sob certificação ISO</h3><p class="muted" style="margin:0">Padrão internacional de produção em todos os lotes.</p></div>
+      </div>
+      <a href="index.html#contato" class="btn light">Precisa de algo diferente? Desenvolvemos sob medida</a>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h3>Outras linhas</h3>
+      <div id="other-lines" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="bottom" style="margin-top:0;border-top:0;padding-top:0"><span>© 2026 Remo Polímeros · ISO 9001:2015* · Rod. Pres. Dutra, km 207,8 · Guarulhos/SP</span><span>* Número da certificação provisório</span></div>
+  </div>
+</footer>
+
+<script src="assets/data.js"></script>
+<script src="assets/wireframe.js"></script>
+</body>
+</html>
