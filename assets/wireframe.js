@@ -1,4 +1,4 @@
-// Interações e rolagens do wireframe v0.4 (GSAP + ScrollTrigger + Lenis)
+// Interações e rolagens do wireframe v0.5 (GSAP + ScrollTrigger + Lenis)
 (function () {
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -43,8 +43,11 @@
     gsap.ticker.add(t => lenis.raf(t * 1000));
     gsap.ticker.lagSmoothing(0);
   }
+  // gate = hero travado esperando a primeira rolagem para a transição de página
+  let gate = false;
   const scrollToEl = el => {
-    if (lenis) lenis.scrollTo(el, { offset: -72, duration: 1.4 });
+    if (gate && el.id !== "topo") { gate = false; if (lenis) lenis.start(); }
+    if (lenis) lenis.scrollTo(el, { offset: el.id === "sobre" ? 0 : -72, duration: 1.4, force: true });
     else el.scrollIntoView({ behavior: reduced ? "auto" : "smooth" });
   };
   document.addEventListener("click", e => {
@@ -84,6 +87,41 @@
     });
   } else if (cur) cur.remove();
 
+  // ---------- Transição hero → manifesto (página que sobe, como a abertura) ----------
+  const heroGate = (() => {
+    const sheet = $("#sheet"), mf = $("#sobre"), hero = $(".hero");
+    if (!motion || !lenis || !sheet || !mf || !hero) { if (sheet) sheet.remove(); return null; }
+    let busy = false, ty = null;
+    const words = $$(".word span", sheet);
+    const play = () => {
+      if (!gate || busy) return;
+      busy = true; gate = false;
+      const cnt = { v: 0 };
+      gsap.timeline({ onComplete: () => { gsap.set(sheet, { display: "none", opacity: 1 }); lenis.start(); busy = false; } })
+        .set(sheet, { display: "grid", yPercent: 100, opacity: 1 })
+        .set(".sheet-inner", { opacity: 1, y: 0 })
+        .to(sheet, { yPercent: 0, duration: 0.85, ease: "expo.inOut" })
+        .from(words, { yPercent: 110, duration: 0.55, ease: "expo.out", stagger: 0.05 }, "-=0.3")
+        .to(cnt, { v: 100, duration: 0.8, ease: "power2.inOut", onUpdate: () => { $("#sheet-count").textContent = Math.round(cnt.v); } }, "-=0.5")
+        .add(() => { lenis.scrollTo(mf, { immediate: true, force: true }); ScrollTrigger.update(); })
+        .to(".sheet-inner", { opacity: 0, y: -24, duration: 0.4, ease: "power2.in" }, "+=0.05")
+        .to(sheet, { opacity: 0, duration: 0.35 });
+    };
+    const arm = () => { if (lenis.scroll <= 2) { gate = true; lenis.stop(); } };
+    addEventListener("wheel", e => { if (gate && e.deltaY > 4) play(); }, { passive: true });
+    addEventListener("touchstart", e => { ty = e.touches[0].clientY; }, { passive: true });
+    addEventListener("touchmove", e => { if (gate && ty !== null && ty - e.touches[0].clientY > 24) play(); }, { passive: true });
+    addEventListener("keydown", e => {
+      if (!gate || e.target.closest("input, textarea, select")) return;
+      if (["ArrowDown", "PageDown", " ", "Spacebar"].includes(e.key)) { e.preventDefault(); play(); }
+    });
+    const nx = $("#hero-next");
+    if (nx) nx.addEventListener("click", () => { if (gate) play(); else scrollToEl(mf); });
+    // Voltar ao topo rolando reativa a transição
+    lenis.on("scroll", e => { if (!busy && !gate && e.scroll <= 2 && e.direction < 0) arm(); });
+    return { arm };
+  })();
+
   // ---------- Abertura ----------
   const pre = $("#preloader");
   const heroIn = () => {
@@ -93,7 +131,7 @@
   };
   const endIntro = () => {
     document.body.classList.remove("is-loading");
-    if (lenis) lenis.start();
+    if (lenis) { lenis.start(); if (heroGate) heroGate.arm(); }
     const rail = $("#rail");
     if (rail) rail.classList.add("on");
     if (hasGsap) ScrollTrigger.refresh();
@@ -164,9 +202,6 @@
     // Progresso (barra superior no celular + trilho lateral no desktop)
     if ($("#progress")) gsap.to("#progress", { scaleX: 1, ease: "none", scrollTrigger: { start: 0, end: "max", scrub: 0.3 } });
 
-    // Hero se afasta ao rolar
-    if ($(".hero")) gsap.to("#hero-inner", { yPercent: -18, opacity: 0.1, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
-    if ($(".hero")) gsap.to("#field", { opacity: 0.25, scale: 1.08, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
 
     // Manifesto: travado até a última palavra acender
     const mf = $("#manifesto");
@@ -200,13 +235,27 @@
       const steps = $("#steps");
       if (steps) {
         const dist = () => steps.scrollWidth - innerWidth;
-        gsap.to(steps, {
+        const cards = $$(".step", steps);
+        const setStep = i => {
+          cards.forEach((c, k) => c.classList.toggle("active", k === i));
+          $("#step-count").textContent = `0${i + 1} / 04`;
+        };
+        const tw = gsap.to(steps, {
           x: () => -dist(), ease: "none",
           scrollTrigger: {
             trigger: "#hscroll", start: "top top", end: () => "+=" + dist(), pin: true, scrub: 1, invalidateOnRefresh: true,
-            onUpdate: s => { $("#step-count").textContent = `0${Math.min(4, Math.floor(s.progress * 3.999) + 1)} / 04`; }
+            onUpdate: s => setStep(Math.min(cards.length - 1, Math.round(s.progress * (cards.length - 1))))
           }
         });
+        setStep(0);
+        // Clicar num card leva a esteira até ele
+        const onClick = e => {
+          const c = e.target.closest(".step");
+          if (!c) return;
+          const st = tw.scrollTrigger, i = cards.indexOf(c);
+          lenis ? lenis.scrollTo(st.start + (st.end - st.start) * i / (cards.length - 1), { duration: 1.2 }) : scrollTo(0, st.start + (st.end - st.start) * i / (cards.length - 1));
+        };
+        steps.addEventListener("click", onClick);
       }
       const tlEl = $("#timeline");
       if (tlEl) {
@@ -215,6 +264,10 @@
         gsap.to(tlEl, { x: () => -dist(), ease: "none", scrollTrigger: st });
         gsap.to("#tl-fill", { scaleX: 1, ease: "none", scrollTrigger: { ...st, pin: false } });
       }
+    });
+
+    mm.add("(max-width: 900px)", () => {
+      $$("#steps .step").forEach(c => ScrollTrigger.create({ trigger: c, start: "top 70%", end: "bottom 30%", toggleClass: "active" }));
     });
 
     // Selo ISO gira com a rolagem
@@ -530,7 +583,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} — Remo Polímeros · Wireframe v0.4`;
+    document.title = `${m.name} — Remo Polímeros · Wireframe v0.5`;
     $$("[data-f]").forEach(el => {
       const k = el.dataset.f;
       if (k === "apps") el.innerHTML = m.apps.map(a => `<li>${a}</li>`).join("");

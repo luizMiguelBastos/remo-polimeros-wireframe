@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Remo Polímeros — Wireframe v0.4</title>
-  <meta name="description" content="Wireframe v0.4 da nova home da Remo Polímeros: identidade visual (Archivo + IBM Plex Mono), paleta e rolagens dinâmicas.">
+  <title>Remo Polímeros — Wireframe v0.5</title>
+  <meta name="description" content="Wireframe v0.5 da nova home da Remo Polímeros: identidade visual (Archivo + IBM Plex Mono), paleta e rolagens dinâmicas.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -34,10 +34,20 @@
   <div class="count"><span id="rail-count">01</span> / 10</div>
 </nav>
 <div class="grain" aria-hidden="true"></div>
+<div class="sheet" id="sheet" aria-hidden="true">
+  <div class="sheet-inner">
+    <div class="mark">
+      <svg viewBox="0 0 64 64"><g stroke="#4A5468" stroke-width="2"><line x1="14" y1="16" x2="40" y2="30"/><line x1="40" y1="30" x2="22" y2="50"/><line x1="40" y1="30" x2="54" y2="12"/></g><circle cx="14" cy="16" r="6" fill="#0B1220"/><circle cx="40" cy="30" r="8" fill="#FFD100"/><circle cx="22" cy="50" r="6" fill="#0B1220"/><circle cx="54" cy="12" r="5" fill="#0B1220"/></svg>
+      <div class="word"><span>r</span><span>e</span><span>m</span><span>o</span></div>
+    </div>
+    <div class="sheet-tag">02 · Manifesto</div>
+  </div>
+  <div class="sheet-count"><span id="sheet-count">0</span>%</div>
+</div>
 <div class="cursor" id="cursor" aria-hidden="true"><span id="cursor-label"></span></div>
 
 <div class="wf-bar" role="region" aria-label="Controles do wireframe">
-  <strong>WIREFRAME v0.4</strong> · Texturas + barra lateral · sem imagens
+  <strong>WIREFRAME v0.5</strong> · Hero central + transição de página · sem imagens
   <a href="produto.html?linha=abs">Página de produto →</a>
   <a href="#mapa">Mapa do site</a>
   <span class="spacer"></span>
@@ -59,7 +69,7 @@
       <a href="#sobre">Sobre</a>
       <a href="#contato">Contato</a>
     </nav>
-    <a href="#qualidade" class="header-iso">ISO 9001:2015*</a>
+    <a href="#qualidade" class="iso-badge" title="Certificação ISO"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22.5" fill="none" stroke="currentColor" stroke-opacity=".35"/><circle cx="24" cy="24" r="18" fill="none" stroke="#FFD100" stroke-width="1.5" stroke-dasharray="80 200" transform="rotate(-90 24 24)"/><circle cx="24" cy="6" r="1.6" fill="#FFD100"/><text x="24" y="28.5" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" font-weight="700" font-stretch="125%" fill="currentColor">ISO</text></svg><span><b>ISO 9001:2015*</b><small>Certificada</small></span></a>
     <a href="#contato" class="btn sm">Solicitar amostra <span class="arr">→</span></a>
     <button class="btn ghost sm menu-toggle" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
   </div>
@@ -85,28 +95,28 @@
       <a href="#guia" class="btn ghost">Encontre o material ideal</a>
     </div>
     <div class="trust-row" data-reveal>
-      <a href="#qualidade" class="trust iso" style="text-decoration:none"><div class="k">Certificação</div><div class="v">ISO 9001:2015*</div></a>
+      <a href="#qualidade" class="trust iso" style="text-decoration:none"><div class="k">Certificação</div><div class="v"><i class="dot"></i>ISO 9001:2015*</div></a>
       <div class="trust"><div class="k">Parceria</div><div class="v">LG Chem · 2001</div></div>
       <div class="trust"><div class="k">Capital</div><div class="v">100% nacional</div></div>
-      <div class="trust"><div class="k">Role</div><div class="v scroll-cue"><i></i>Descubra</div></div>
+      <button type="button" class="trust trust-btn" id="hero-next"><div class="k">Role</div><div class="v scroll-cue"><i></i>Descubra</div></button>
     </div>
     <p class="note"><b>Nielsen #2 / Norman (modelo conceitual):</b> em 5 s fica claro o que a Remo faz e o diferencial (sob medida). ISO é o 1º selo. * Número provisório. <b>Movimento:</b> título sobe linha a linha; ao rolar, o conteúdo se afasta e o fundo escurece.</p>
   </div>
 </section>
 
 <!-- 02 · MANIFESTO (fixo até a leitura completa) -->
-<section class="manifesto" id="sobre">
+<section class="manifesto light" id="sobre">
   <div class="texture">[textura de fundo · fase de imagens]</div>
   <div class="wrap">
     <div class="eyebrow">Manifesto</div>
     <p id="manifesto">Nada aqui é padrão. Cada grade nasce da necessidade de um cliente, da dureza à cor, do aditivo ao acabamento. O plástico e a química são o nosso DNA.</p>
     <div class="m-progress"><i><b id="m-bar"></b></i><span>Role para ler</span></div>
-    <p class="note"><b>Movimento:</b> a seção fica travada e só libera a rolagem quando a última palavra acende.</p>
+    <p class="note"><b>Movimento:</b> ao rolar no hero, uma página branca sobe cobrindo a tela (como a abertura) e revela o manifesto. A seção fica travada até a última palavra acender.</p>
   </div>
 </section>
 
 <!-- 04 · NÚMEROS -->
-<section class="divider tex-glow" id="numeros" aria-label="A Remo em números">
+<section class="divider" id="numeros" aria-label="A Remo em números">
   <div class="wrap">
     <div class="grid g4">
       <div class="stat" data-reveal><div class="n"><span data-count="37">0</span><small>anos</small></div><div class="l">de mercado, desde 1989</div></div>
@@ -129,10 +139,10 @@
       <div class="count" id="step-count">01 / 04</div>
     </div>
     <div class="steps" id="steps">
-      <article class="step"><div class="num">01</div><div class="ph">[imagem · briefing]</div><h3>Briefing técnico</h3><p>Aplicação, processo (injeção, extrusão), exigências de norma e ambiente de uso.</p></article>
-      <article class="step"><div class="num">02</div><div class="ph">[imagem · formulação]</div><h3>Formulação sob medida</h3><p>Grades <i>tailor made</i>: dureza, fluxo, reforço com fibra e aditivos.</p><div><span class="chip">UV</span><span class="chip">Anti-chama</span><span class="chip">Antiestático</span><span class="chip">Condutivo</span></div></article>
-      <article class="step"><div class="num">03</div><div class="ph">[imagem · laboratório]</div><h3>Laboratório de cores</h3><p>Espectrofotômetros, colorímetro, cabine de luz e medidor de brilho. Padrões Pantone, RAL ou peça.</p></article>
-      <article class="step"><div class="num">04</div><div class="ph">[imagem · produção]</div><h3>Produção e entrega</h3><p>Plantas em Guarulhos/SP e Rio de Janeiro/RJ e centro de distribuição próprio.</p></article>
+      <article class="step" data-cursor="Ampliar"><div class="num">01</div><div class="ph">[imagem · briefing]</div><h3>Briefing técnico</h3><p>Aplicação, processo (injeção, extrusão), exigências de norma e ambiente de uso.</p><div class="bar"></div></article>
+      <article class="step" data-cursor="Ampliar"><div class="num">02</div><div class="ph">[imagem · formulação]</div><h3>Formulação sob medida</h3><p>Grades <i>tailor made</i>: dureza, fluxo, reforço com fibra e aditivos.</p><div><span class="chip">UV</span><span class="chip">Anti-chama</span><span class="chip">Antiestático</span><span class="chip">Condutivo</span></div><div class="bar"></div></article>
+      <article class="step" data-cursor="Ampliar"><div class="num">03</div><div class="ph">[imagem · laboratório]</div><h3>Laboratório de cores</h3><p>Espectrofotômetros, colorímetro, cabine de luz e medidor de brilho. Padrões Pantone, RAL ou peça.</p><div class="bar"></div></article>
+      <article class="step" data-cursor="Ampliar"><div class="num">04</div><div class="ph">[imagem · produção]</div><h3>Produção e entrega</h3><p>Plantas em Guarulhos/SP e Rio de Janeiro/RJ e centro de distribuição próprio.</p><div class="bar"></div></article>
     </div>
     <div class="wrap"><p class="note"><b>Movimento:</b> seção fixa; as etapas deslizam na horizontal com a rolagem. No celular vira lista vertical.</p></div>
   </div>
@@ -200,7 +210,7 @@
 </section>
 
 <!-- 08 · GUIA DE SELEÇÃO -->
-<section id="guia" class="divider tex-glow">
+<section id="guia" class="divider">
   <div class="wrap">
     <div class="guide-top">
       <div>
@@ -215,7 +225,7 @@
 </section>
 
 <!-- 09 · QUALIDADE / ISO (destaque, seção fixa) -->
-<section class="iso tex-glow" id="qualidade" style="padding:0">
+<section class="iso" id="qualidade" style="padding:0">
   <div class="wrap iso-stage" id="iso-stage">
     <div class="seal" id="seal">
       <svg viewBox="0 0 400 400" aria-hidden="true">
@@ -297,7 +307,7 @@
 </section>
 
 <!-- 12 · CONTATO -->
-<section id="contato" class="divider tex-glow">
+<section id="contato" class="divider">
   <div class="wrap contact">
     <div>
       <div class="eyebrow">Fale com um especialista</div>
@@ -363,7 +373,7 @@
 </section>
 
 <!-- CTA FINAL -->
-<section class="final-cta tex-glow">
+<section class="final-cta">
   <div class="wrap">
     <div class="eyebrow">Próximo passo</div>
     <h2 data-lines>
@@ -401,7 +411,7 @@
       <div>
         <a href="#topo" class="logo" style="color:var(--white)">remo<small>polímeros</small></a>
         <p style="margin-top:16px;max-width:34ch">Fabricação e distribuição de polímeros especiais. Capital 100% nacional desde 1989.</p>
-        <div class="iso-foot">● ISO 9001:2015* · Certificada</div>
+        <div class="iso-seal-foot"><svg viewBox="0 0 48 48" class="big" aria-hidden="true"><circle cx="24" cy="24" r="22.5" fill="none" stroke="currentColor" stroke-opacity=".35"/><circle cx="24" cy="24" r="18" fill="none" stroke="#FFD100" stroke-width="1.5" stroke-dasharray="80 200" transform="rotate(-90 24 24)"/><circle cx="24" cy="6" r="1.6" fill="#FFD100"/><text x="24" y="28.5" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" font-weight="700" font-stretch="125%" fill="currentColor">ISO</text></svg><span><b>ISO 9001:2015*</b><small>Padrão internacional de produção · Certificada</small></span></div>
       </div>
       <div><h4>Empresa</h4><ul><li><a href="#sobre">Sobre</a></li><li><a href="#qualidade">Qualidade</a></li><li><a href="#">Notícias</a></li><li><a href="#">Carreiras</a></li></ul></div>
       <div><h4>Materiais</h4><ul><li><a href="produto.html?linha=abs">ABS</a></li><li><a href="produto.html?linha=pc">PC</a></li><li><a href="produto.html?linha=pmma">PMMA</a></li><li><a href="#materiais">Todas as linhas</a></li></ul></div>
