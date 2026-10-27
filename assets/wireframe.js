@@ -1,4 +1,4 @@
-// Interações e rolagens do wireframe v0.6 (GSAP + ScrollTrigger + Lenis)
+// Interações e rolagens do wireframe v0.7 (GSAP + ScrollTrigger + Lenis)
 (function () {
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -58,7 +58,9 @@
     const el = $(id);
     if (!el) return;
     e.preventDefault();
-    scrollToEl(el);
+    // Cliques feitos no hero passam pela transição de página
+    if (heroGate && a.closest(".hero")) heroGate.play(el);
+    else scrollToEl(el);
   });
 
   // ---------- Header que some ao descer ----------
@@ -93,8 +95,8 @@
     if (!motion || !lenis || !sheet || !mf || !hero) { if (sheet) sheet.remove(); return null; }
     let busy = false, ty = null;
     const words = $$(".word span", sheet);
-    const play = () => {
-      if (!gate || busy) return;
+    const play = (dest = mf) => {
+      if (busy) return;
       busy = true; gate = false;
       const cnt = { v: 0 };
       gsap.timeline({ onComplete: () => { gsap.set(sheet, { display: "none", opacity: 1 }); lenis.start(); busy = false; } })
@@ -103,23 +105,23 @@
         .to(sheet, { yPercent: 0, duration: 0.85, ease: "expo.inOut" })
         .from(words, { yPercent: 110, duration: 0.55, ease: "expo.out", stagger: 0.05 }, "-=0.3")
         .to(cnt, { v: 100, duration: 0.8, ease: "power2.inOut", onUpdate: () => { $("#sheet-count").textContent = Math.round(cnt.v); } }, "-=0.5")
-        .add(() => { lenis.scrollTo(mf, { immediate: true, force: true }); ScrollTrigger.update(); })
+        .add(() => { lenis.scrollTo(dest, { immediate: true, force: true, offset: dest === mf ? 0 : -72 }); ScrollTrigger.update(); })
         .to(".sheet-inner", { opacity: 0, y: -24, duration: 0.4, ease: "power2.in" }, "+=0.05")
         .to(sheet, { opacity: 0, duration: 0.35 });
     };
     const arm = () => { if (lenis.scroll <= 2) { gate = true; lenis.stop(); } };
-    addEventListener("wheel", e => { if (gate && e.deltaY > 4) play(); }, { passive: true });
+    addEventListener("wheel", e => { if (gate && !busy && e.deltaY > 4) play(); }, { passive: true });
     addEventListener("touchstart", e => { ty = e.touches[0].clientY; }, { passive: true });
-    addEventListener("touchmove", e => { if (gate && ty !== null && ty - e.touches[0].clientY > 24) play(); }, { passive: true });
+    addEventListener("touchmove", e => { if (gate && !busy && ty !== null && ty - e.touches[0].clientY > 24) play(); }, { passive: true });
     addEventListener("keydown", e => {
-      if (!gate || e.target.closest("input, textarea, select")) return;
+      if (!gate || busy || e.target.closest("input, textarea, select")) return;
       if (["ArrowDown", "PageDown", " ", "Spacebar"].includes(e.key)) { e.preventDefault(); play(); }
     });
     const nx = $("#hero-next");
-    if (nx) nx.addEventListener("click", () => { if (gate) play(); else scrollToEl(mf); });
+    if (nx) nx.addEventListener("click", () => play(mf));
     // Voltar ao topo rolando reativa a transição
     lenis.on("scroll", e => { if (!busy && !gate && e.scroll <= 2 && e.direction < 0) arm(); });
-    return { arm };
+    return { arm, play };
   })();
 
   // ---------- Abertura ----------
@@ -313,6 +315,94 @@
     layout();
   } else if (rail) rail.remove();
 
+  // ---------- Grânulo 3D (Three.js): usado no laboratório de cores e no guia ----------
+  // Devolve null sem WebGL; quem chama mantém o fallback.
+  function makePellet3D(box, cvs, opts = {}) {
+    if (!box || !cvs || !window.THREE) return null;
+    let renderer;
+    try { renderer = new THREE.WebGLRenderer({ canvas: cvs, antialias: true, alpha: true }); } catch (e) { return null; }
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 50);
+    camera.position.set(0, 0.4, opts.distance || 7);
+
+    // Perfil de um pellet cilíndrico com bordas arredondadas, girado em torno do eixo
+    const R = 1, Hh = 0.62, e = 0.34, pts = [new THREE.Vector2(0, -Hh)];
+    for (let i = 0; i <= 8; i++) { const t = (i / 8) * Math.PI / 2; pts.push(new THREE.Vector2(R - e + Math.sin(t) * e, -Hh + e - Math.cos(t) * e)); }
+    for (let i = 0; i <= 8; i++) { const t = (i / 8) * Math.PI / 2; pts.push(new THREE.Vector2(R - e + Math.cos(t) * e, Hh - e + Math.sin(t) * e)); }
+    pts.push(new THREE.Vector2(0, Hh));
+    const geo = new THREE.LatheGeometry(pts, 64);
+    geo.computeVertexNormals();
+
+    const mat = new THREE.MeshPhysicalMaterial({ color: new THREE.Color(0xe8e4d8).convertSRGBToLinear(), roughness: 0.28, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.15, transparent: true, opacity: 1 });
+    const main = new THREE.Mesh(geo, mat);
+    main.rotation.set(0.9, 0, 0.35);
+    const group = new THREE.Group();
+    group.add(main);
+
+    const small = [];
+    if (opts.orbit) for (let i = 0; i < 7; i++) {
+      const m = new THREE.Mesh(geo, mat);
+      m.scale.setScalar(0.14 + Math.random() * 0.12);
+      m.userData = { a: (i / 7) * Math.PI * 2, r: 1.9 + Math.random() * 0.5, y: (Math.random() - 0.5) * 1.6, sp: 0.15 + Math.random() * 0.2, rx: Math.random() * 3, ry: Math.random() * 3 };
+      group.add(m); small.push(m);
+    }
+    scene.add(group);
+
+    scene.add(new THREE.HemisphereLight(0xf4f5f7, opts.light ? 0x9aa3b5 : 0x050b1a, 0.55));
+    const key = new THREE.DirectionalLight(0xffffff, 1.05); key.position.set(3, 4, 5); scene.add(key);
+    const rim = new THREE.PointLight(0xffd100, opts.light ? 0.5 : 1.2, 20); rim.position.set(-4, -1.5, -2); scene.add(rim);
+    const fillL = new THREE.PointLight(0x7fa8ff, 0.5, 20); fillL.position.set(-3, 3, 4); scene.add(fillL);
+
+    const target = { color: new THREE.Color(0xe8e4d8).convertSRGBToLinear(), a: 1 };
+    let dragging = false, lx = 0, ly = 0, vx = 0.004, vy = 0, rotY = 0, rotX = 0.15, spin = 0, hx = 0, hy = 0;
+    box.addEventListener("pointerdown", ev => { dragging = true; lx = ev.clientX; ly = ev.clientY; box.setPointerCapture(ev.pointerId); });
+    box.addEventListener("pointermove", ev => {
+      const r = box.getBoundingClientRect();
+      hx = (ev.clientX - r.left) / r.width - 0.5; hy = (ev.clientY - r.top) / r.height - 0.5;
+      if (!dragging) return;
+      vx = (ev.clientX - lx) * 0.006; vy = (ev.clientY - ly) * 0.006; lx = ev.clientX; ly = ev.clientY;
+      rotY += vx; rotX = Math.max(-1, Math.min(1, rotX + vy));
+    });
+    const up = () => { dragging = false; };
+    box.addEventListener("pointerup", up); box.addEventListener("pointercancel", up);
+    box.addEventListener("pointerleave", () => { hx = hy = 0; });
+
+    const resize = () => {
+      const w = box.clientWidth, h = box.clientHeight;
+      if (!w || !h) return;
+      renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+    };
+    resize(); addEventListener("resize", resize);
+
+    let visible = false, t0 = performance.now();
+    const api = { mat, target, onFrame: null, spin: () => { spin += 2.4; } };
+    new IntersectionObserver(([en]) => { visible = en.isIntersecting; if (visible) resize(); }).observe(box);
+    const frame = now => {
+      requestAnimationFrame(frame);
+      if (!visible) return;
+      const dt = Math.min(0.05, (now - t0) / 1000); t0 = now;
+      if (!dragging && !reduced) { vx += (0.004 - vx) * 0.04; vy *= 0.92; rotY += vx; }
+      if (spin > 0.001) { const d = spin * 0.08; rotY += d; spin -= d; }
+      group.rotation.y = rotY + hx * 0.4;
+      group.rotation.x = rotX + hy * 0.3;
+      main.position.y = reduced ? 0 : Math.sin(now / 900) * 0.08;
+      small.forEach(m => {
+        const u = m.userData; if (!reduced) u.a += u.sp * dt;
+        m.position.set(Math.cos(u.a) * u.r, u.y + Math.sin(u.a * 2) * 0.15, Math.sin(u.a) * u.r * 0.6);
+        m.rotation.set(u.rx + u.a, u.ry + u.a * 0.7, 0);
+      });
+      mat.color.lerp(target.color, 0.12);
+      mat.opacity += (target.a - mat.opacity) * 0.12;
+      mat.depthWrite = mat.opacity > 0.9;
+      if (api.onFrame) api.onFrame(now);
+      renderer.render(scene, camera);
+    };
+    requestAnimationFrame(frame);
+    return api;
+  }
+
   // ---------- Laboratório de cores ----------
   const sv = $("#sv");
   if (sv) {
@@ -331,6 +421,48 @@
     const hex = rgb => "#" + rgb.map(x => x.toString(16).padStart(2, "0")).join("").toUpperCase();
     const fxNames = { solido: "Sólido", metalico: "Metálico", fluorescente: "Fluorescente", fosforescente: "Fosforescente", madeira: "Madeira", granito: "Granito" };
     const pellet = $("#pellet"), knob = $("#knob");
+    // Pré-visualização em 3D (o grânulo em CSS fica como alternativa sem WebGL)
+    const lab3d = makePellet3D($(".stage"), $("#lab-canvas"), { light: true, distance: 6.2 });
+    const texs = {};
+    const tex = kind => {
+      if (texs[kind]) return texs[kind];
+      const c = document.createElement("canvas"); c.width = c.height = 256;
+      const g = c.getContext("2d");
+      g.fillStyle = "#fff"; g.fillRect(0, 0, 256, 256);
+      if (kind === "madeira") {
+        for (let y = 0; y < 256; y += 2) {
+          const v = Math.sin(y * 0.09 + Math.sin(y * 0.02) * 3) * 0.5 + 0.5;
+          g.fillStyle = `rgba(40,22,5,${0.12 + v * 0.5})`; g.fillRect(0, y, 256, 2);
+        }
+      } else {
+        for (let i = 0; i < 2600; i++) {
+          g.fillStyle = Math.random() < 0.55 ? `rgba(0,0,0,${0.2 + Math.random() * 0.5})` : `rgba(255,255,255,${0.4 + Math.random() * 0.5})`;
+          const s = 1 + Math.random() * 3; g.fillRect(Math.random() * 256, Math.random() * 256, s, s);
+        }
+      }
+      const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.wrapS = t.wrapT = THREE.RepeatWrapping;
+      return (texs[kind] = t);
+    };
+    let lastFx = null;
+    const apply3d = rgb => {
+      if (!lab3d) return;
+      const m = lab3d.mat;
+      lab3d.target.color.setRGB(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255).convertSRGBToLinear();
+      lab3d.target.a = S.a;
+      m.roughness = 0.05 + (1 - S.gloss) * 0.75;
+      m.clearcoat = S.gloss; m.clearcoatRoughness = 0.05 + (1 - S.gloss) * 0.6;
+      m.metalness = S.fx === "metalico" ? 0.85 : 0;
+      m.emissive.copy(lab3d.target.color);
+      m.emissiveIntensity = S.fx === "fluorescente" ? 0.55 : S.fx === "fosforescente" ? 0.3 : 0;
+      if (S.fx !== lastFx) {
+        m.map = S.fx === "madeira" || S.fx === "granito" ? tex(S.fx) : null;
+        m.needsUpdate = true; lastFx = S.fx;
+      }
+    };
+    if (lab3d) {
+      $(".stage").classList.add("has3d");
+      lab3d.onFrame = now => { if (S.fx === "fosforescente" && !reduced) lab3d.mat.emissiveIntensity = 0.25 + Math.sin(now / 380) * 0.2; };
+    }
 
     const render = (skip) => {
       const rgb = hsv2rgb(S.h, S.s, S.v);
@@ -349,6 +481,7 @@
       pellet.style.setProperty("--gloss", S.gloss);
       pellet.style.setProperty("--glow", S.fx === "fluorescente" ? 0.9 : S.fx === "fosforescente" ? 0.5 : 0);
       pellet.dataset.fx = S.fx;
+      apply3d(rgb);
       const ref = $("#ref-code").value.trim();
       $("#spec").innerHTML =
         `<span>HEX</span><b>${hex(rgb)}</b><span>RGB</span><b>${rgb.join(" · ")}</b>` +
@@ -397,7 +530,8 @@
     $$(".effects button").forEach(b => b.addEventListener("click", () => {
       $$(".effects button").forEach(x => x.setAttribute("aria-pressed", "false"));
       b.setAttribute("aria-pressed", "true"); S.fx = b.dataset.fx; render();
-      if (motion) gsap.fromTo(pellet, { scale: 0.92 }, { scale: 1, duration: 0.6, ease: "elastic.out(1, .5)" });
+      if (lab3d) lab3d.spin();
+      else if (motion) gsap.fromTo(pellet, { scale: 0.92 }, { scale: 1, duration: 0.6, ease: "elastic.out(1, .5)" });
     }));
 
     // Leva a especificação para o formulário
@@ -419,6 +553,8 @@
     const labBar = $("#lab-bar");
     if (labBar) new IntersectionObserver(([en]) => labBar.classList.toggle("show", en.isIntersecting), { threshold: 0.15 }).observe($(".lab-grid"));
     render();
+    // reaplica o estado quando o 3D entra na tela (o primeiro quadro do WebGL pode ignorar o estado inicial)
+    if (lab3d) new IntersectionObserver(([en]) => { if (en.isIntersecting) render(); }).observe($(".stage"));
   }
 
   // ---------- Materiais: índice interativo ----------
@@ -502,103 +638,19 @@
   }
 
 
-  // ---------- Grânulo 3D (Three.js) no guia de seleção ----------
+  // Grânulo 3D do guia: vira a resina sugerida a cada resposta
   const pellet3d = (() => {
-    const box = $("#g3d"), cvs = $("#g3d-canvas");
-    if (!box || !cvs) return null;
-    if (!window.THREE) { box.remove(); return null; }
-    let renderer;
-    try { renderer = new THREE.WebGLRenderer({ canvas: cvs, antialias: true, alpha: true }); } catch (e) { box.remove(); return null; }
-    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
-    renderer.outputEncoding = THREE.sRGBEncoding;
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 50);
-    camera.position.set(0, 0.4, 7);
-
-    // Perfil de um pellet cilíndrico com bordas arredondadas, girado em torno do eixo
-    const R = 1, Hh = 0.62, e = 0.34, pts = [new THREE.Vector2(0, -Hh)];
-    for (let i = 0; i <= 8; i++) { const t = (i / 8) * Math.PI / 2; pts.push(new THREE.Vector2(R - e + Math.sin(t) * e, -Hh + e - Math.cos(t) * e)); }
-    for (let i = 0; i <= 8; i++) { const t = (i / 8) * Math.PI / 2; pts.push(new THREE.Vector2(R - e + Math.cos(t) * e, Hh - e + Math.sin(t) * e)); }
-    pts.push(new THREE.Vector2(0, Hh));
-    const geo = new THREE.LatheGeometry(pts, 64);
-    geo.computeVertexNormals();
-
-    const mat = new THREE.MeshPhysicalMaterial({ color: 0xe8e4d8, roughness: 0.28, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.15, transparent: true, opacity: 1 });
-    const main = new THREE.Mesh(geo, mat);
-    main.rotation.set(0.9, 0, 0.35);
-    const group = new THREE.Group();
-    group.add(main);
-
-    // Grânulos menores orbitando
-    const small = [];
-    for (let i = 0; i < 7; i++) {
-      const m = new THREE.Mesh(geo, mat);
-      const s = 0.14 + Math.random() * 0.12;
-      m.scale.setScalar(s);
-      m.userData = { a: (i / 7) * Math.PI * 2, r: 1.9 + Math.random() * 0.5, y: (Math.random() - 0.5) * 1.6, sp: 0.15 + Math.random() * 0.2, rx: Math.random() * 3, ry: Math.random() * 3 };
-      group.add(m); small.push(m);
-    }
-    scene.add(group);
-
-    scene.add(new THREE.HemisphereLight(0xf4f5f7, 0x050b1a, 0.55));
-    const key = new THREE.DirectionalLight(0xffffff, 1.05); key.position.set(3, 4, 5); scene.add(key);
-    const rim = new THREE.PointLight(0xffd100, 1.2, 20); rim.position.set(-4, -1.5, -2); scene.add(rim);
-    const fillL = new THREE.PointLight(0x7fa8ff, 0.5, 20); fillL.position.set(-3, 3, 4); scene.add(fillL);
-
-    const parse = c => { const m = c.match(/[\d.]+/g).map(Number); return { color: new THREE.Color(m[0] / 255, m[1] / 255, m[2] / 255), a: m[3] }; };
-    const target = { color: new THREE.Color(0xe8e4d8), a: 1 };
+    const box = $("#g3d");
+    const p = makePellet3D(box, $("#g3d-canvas"), { orbit: true });
+    if (!p) { if (box) box.remove(); return null; }
     const set = (id, burst) => {
-      const look = parse(LOOK[id] || LOOK.abs);
-      target.color.copy(look.color); target.a = look.a;
-      const m = M.find(x => x.id === id);
-      $("#g3d-name").textContent = m ? m.name : "";
-      if (burst) spin += 2.4;
+      const m = (LOOK[id] || LOOK.abs).match(/[\d.]+/g).map(Number);
+      p.target.color.setRGB(m[0] / 255, m[1] / 255, m[2] / 255).convertSRGBToLinear(); p.target.a = m[3];
+      p.mat.roughness = m[3] < 0.6 ? 0.05 : 0.28;
+      const mm = M.find(x => x.id === id);
+      $("#g3d-name").textContent = mm ? mm.name : "";
+      if (burst) p.spin();
     };
-
-    // Arrastar para girar, com inércia; o mouse inclina levemente
-    let dragging = false, lx = 0, ly = 0, vx = 0.004, vy = 0, rotY = 0, rotX = 0.15, spin = 0, hx = 0, hy = 0;
-    box.addEventListener("pointerdown", e => { dragging = true; lx = e.clientX; ly = e.clientY; box.setPointerCapture(e.pointerId); });
-    box.addEventListener("pointermove", e => {
-      const r = box.getBoundingClientRect();
-      hx = (e.clientX - r.left) / r.width - 0.5; hy = (e.clientY - r.top) / r.height - 0.5;
-      if (!dragging) return;
-      vx = (e.clientX - lx) * 0.006; vy = (e.clientY - ly) * 0.006; lx = e.clientX; ly = e.clientY;
-      rotY += vx; rotX = Math.max(-1, Math.min(1, rotX + vy));
-    });
-    const up = () => { dragging = false; };
-    box.addEventListener("pointerup", up); box.addEventListener("pointercancel", up);
-    box.addEventListener("pointerleave", () => { hx = hy = 0; });
-
-    const resize = () => {
-      const w = box.clientWidth, h = box.clientHeight;
-      if (!w || !h) return;
-      renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
-    };
-    resize(); addEventListener("resize", resize);
-
-    let visible = false, t0 = performance.now();
-    new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(box);
-    const frame = now => {
-      requestAnimationFrame(frame);
-      if (!visible) return;
-      const dt = Math.min(0.05, (now - t0) / 1000); t0 = now;
-      if (!dragging && !reduced) { vx += (0.004 - vx) * 0.04; vy *= 0.92; rotY += vx; }
-      if (spin > 0.001) { const d = spin * 0.08; rotY += d; spin -= d; }
-      group.rotation.y = rotY + hx * 0.4;
-      group.rotation.x = rotX + hy * 0.3;
-      main.position.y = reduced ? 0 : Math.sin(now / 900) * 0.08;
-      small.forEach(m => {
-        const u = m.userData; if (!reduced) u.a += u.sp * dt;
-        m.position.set(Math.cos(u.a) * u.r, u.y + Math.sin(u.a * 2) * 0.15, Math.sin(u.a) * u.r * 0.6);
-        m.rotation.set(u.rx + u.a, u.ry + u.a * 0.7, 0);
-      });
-      mat.color.lerp(target.color, 0.08);
-      mat.opacity += (target.a - mat.opacity) * 0.08;
-      mat.roughness = mat.opacity < 0.6 ? 0.05 : 0.28;
-      mat.depthWrite = mat.opacity > 0.9;
-      renderer.render(scene, camera);
-    };
-    requestAnimationFrame(frame);
     set("abs");
     return { set };
   })();
@@ -687,7 +739,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} — Remo Polímeros · Wireframe v0.6`;
+    document.title = `${m.name} — Remo Polímeros · Wireframe v0.7`;
     $$("[data-f]").forEach(el => {
       const k = el.dataset.f;
       if (k === "apps") el.innerHTML = m.apps.map(a => `<li>${a}</li>`).join("");
