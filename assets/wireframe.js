@@ -1,4 +1,4 @@
-// Interações e rolagens do wireframe v0.8 (GSAP + ScrollTrigger + Lenis)
+// Interações e rolagens do wireframe v0.9 (GSAP + ScrollTrigger + Lenis)
 (function () {
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -43,24 +43,27 @@
     gsap.ticker.add(t => lenis.raf(t * 1000));
     gsap.ticker.lagSmoothing(0);
   }
-  // gate = hero travado esperando a primeira rolagem para a transição de página
-  let gate = false;
   const scrollToEl = el => {
-    if (gate && el.id !== "topo") { gate = false; if (lenis) lenis.start(); }
     if (lenis) lenis.scrollTo(el, { offset: el.id === "sobre" ? 0 : -72, duration: 1.4, force: true });
     else el.scrollIntoView({ behavior: reduced ? "auto" : "smooth" });
   };
   document.addEventListener("click", e => {
-    const a = e.target.closest('a[href^="#"]');
-    if (!a) return;
-    const id = a.getAttribute("href");
-    if (id.length < 2) return;
-    const el = $(id);
-    if (!el) return;
-    e.preventDefault();
-    // Cliques feitos no hero passam pela transição de página
-    if (heroGate && a.closest(".hero")) heroGate.play(el);
-    else scrollToEl(el);
+    const a = e.target.closest("a[href]");
+    if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || a.target === "_blank") return;
+    const href = a.getAttribute("href");
+    if (href.startsWith("#")) {
+      const el = href.length > 1 && $(href);
+      if (!el) return;
+      e.preventDefault();
+      scrollToEl(el);
+      return;
+    }
+    // Links para outras páginas do site passam pela transição com a logo
+    const url = new URL(a.href, location.href);
+    if (pageTx && url.origin === location.origin && /\.html$/.test(url.pathname) && url.href !== location.href) {
+      e.preventDefault();
+      pageTx.leave(url.href);
+    }
   });
 
   // ---------- Header que some ao descer ----------
@@ -89,40 +92,41 @@
     });
   } else if (cur) cur.remove();
 
-  // ---------- Transição hero → manifesto (página que sobe, como a abertura) ----------
-  const heroGate = (() => {
-    const sheet = $("#sheet"), mf = $("#sobre"), hero = $(".hero");
-    if (!motion || !lenis || !sheet || !mf || !hero) { if (sheet) sheet.remove(); return null; }
-    let busy = false, ty = null;
-    const words = $$(".word span", sheet);
-    const play = (dest = mf) => {
+  // ---------- Transição entre páginas (página branca com a logo) ----------
+  const pageTx = (() => {
+    const sheet = $("#sheet");
+    if (!sheet || !motion) { if (sheet) sheet.remove(); return null; }
+    const words = $$(".word span", sheet), inner = $(".sheet-inner", sheet), count = $("#sheet-count");
+    let busy = false;
+    const leave = url => {
       if (busy) return;
-      busy = true; gate = false;
+      busy = true;
+      if (lenis) lenis.stop();
       const cnt = { v: 0 };
-      gsap.timeline({ onComplete: () => { gsap.set(sheet, { display: "none", opacity: 1 }); lenis.start(); busy = false; } })
+      gsap.timeline({ onComplete: () => { try { sessionStorage.setItem("remo-nav", "1"); } catch (e) {} location.href = url; } })
         .set(sheet, { display: "grid", yPercent: 100, opacity: 1 })
-        .set(".sheet-inner", { opacity: 1, y: 0 })
-        .to(sheet, { yPercent: 0, duration: 0.85, ease: "expo.inOut" })
-        .from(words, { yPercent: 110, duration: 0.55, ease: "expo.out", stagger: 0.05 }, "-=0.3")
-        .to(cnt, { v: 100, duration: 0.8, ease: "power2.inOut", onUpdate: () => { $("#sheet-count").textContent = Math.round(cnt.v); } }, "-=0.5")
-        .add(() => { lenis.scrollTo(dest, { immediate: true, force: true, offset: dest === mf ? 0 : -72 }); ScrollTrigger.update(); })
-        .to(".sheet-inner", { opacity: 0, y: -24, duration: 0.4, ease: "power2.in" }, "+=0.05")
-        .to(sheet, { opacity: 0, duration: 0.35 });
+        .set(inner, { opacity: 1, y: 0 })
+        .to(sheet, { yPercent: 0, duration: 0.75, ease: "expo.inOut" })
+        .from(words, { yPercent: 110, duration: 0.5, ease: "expo.out", stagger: 0.05 }, "-=0.25")
+        .to(cnt, { v: 100, duration: 0.6, ease: "power2.inOut", onUpdate: () => { count.textContent = Math.round(cnt.v); } }, "-=0.45");
     };
-    const arm = () => { if (lenis.scroll <= 2) { gate = true; lenis.stop(); } };
-    addEventListener("wheel", e => { if (gate && !busy && e.deltaY > 4) play(); }, { passive: true });
-    addEventListener("touchstart", e => { ty = e.touches[0].clientY; }, { passive: true });
-    addEventListener("touchmove", e => { if (gate && !busy && ty !== null && ty - e.touches[0].clientY > 24) play(); }, { passive: true });
-    addEventListener("keydown", e => {
-      if (!gate || busy || e.target.closest("input, textarea, select")) return;
-      if (["ArrowDown", "PageDown", " ", "Spacebar"].includes(e.key)) { e.preventDefault(); play(); }
-    });
-    const nx = $("#hero-next");
-    if (nx) nx.addEventListener("click", () => play(mf));
-    // Voltar ao topo rolando reativa a transição
-    lenis.on("scroll", e => { if (!busy && !gate && e.scroll <= 2 && e.direction < 0) arm(); });
-    return { arm, play };
+    // Chegando de outra página: a folha começa cobrindo e sai para cima
+    const enter = () => {
+      let from = false;
+      try { from = sessionStorage.getItem("remo-nav") === "1"; sessionStorage.removeItem("remo-nav"); } catch (e) {}
+      if (!from) return false;
+      count.textContent = "100";
+      gsap.timeline({ onComplete: () => gsap.set(sheet, { display: "none" }) })
+        .set(sheet, { display: "grid", yPercent: 0, opacity: 1 })
+        .to(inner, { opacity: 0, y: -24, duration: 0.35, ease: "power2.in", delay: 0.1 })
+        .to(sheet, { yPercent: -100, duration: 0.8, ease: "expo.inOut" });
+      return true;
+    };
+    // Voltar pelo navegador pode restaurar a página com a folha cobrindo
+    addEventListener("pageshow", ev => { if (ev.persisted) { busy = false; gsap.set(sheet, { display: "none" }); if (lenis) lenis.start(); } });
+    return { leave, enter };
   })();
+  const arrived = pageTx ? pageTx.enter() : false;
 
   // ---------- Abertura ----------
   const pre = $("#preloader");
@@ -133,11 +137,11 @@
   };
   const endIntro = () => {
     document.body.classList.remove("is-loading");
-    if (lenis) { lenis.start(); if (heroGate) heroGate.arm(); }
+    if (lenis) lenis.start();
     if (hasGsap) ScrollTrigger.refresh();
   };
   if (pre) {
-    if (!motion) { pre.remove(); endIntro(); }
+    if (!motion || arrived) { pre.remove(); endIntro(); heroIn(); }
     else {
       if (lenis) lenis.stop();
       const short = sessionStorage.getItem("remo-intro") === "1";
@@ -154,8 +158,7 @@
         .to(pre, { yPercent: -100, duration: 0.9, ease: "expo.inOut" }, "+=0.15")
         .add(heroIn, "-=0.45");
     }
-  } else {
-  }
+  } else if (arrived) heroIn();
   const replay = $("#replay");
   if (replay) replay.addEventListener("click", () => { try { sessionStorage.removeItem("remo-intro"); } catch (e) {} scrollTo(0, 0); location.reload(); });
 
@@ -277,7 +280,7 @@
   }
 
 
-  // ---------- Grânulo 3D (Three.js): usado no laboratório de cores e no guia ----------
+  // ---------- Grânulo 3D (Three.js): card flutuante do índice de materiais ----------
   // Devolve null sem WebGL; quem chama mantém o fallback.
   function makePellet3D(box, cvs, opts = {}) {
     if (!box || !cvs || !window.THREE) return null;
@@ -365,160 +368,6 @@
     return api;
   }
 
-  // ---------- Laboratório de cores ----------
-  const sv = $("#sv");
-  if (sv) {
-    const S = { h: 221, s: 1, v: 0.373, a: 1, gloss: 0.6, fx: "solido" };
-    const hsv2rgb = (h, s, v) => {
-      const f = n => { const k = (n + h / 60) % 6; return v - v * s * Math.max(0, Math.min(k, 4 - k, 1)); };
-      return [f(5), f(3), f(1)].map(x => Math.round(x * 255));
-    };
-    const rgb2hsv = (r, g, b) => {
-      r /= 255; g /= 255; b /= 255;
-      const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn;
-      let h = 0;
-      if (d) h = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4;
-      return [Math.round((h * 60 + 360) % 360), mx ? d / mx : 0, mx];
-    };
-    const hex = rgb => "#" + rgb.map(x => x.toString(16).padStart(2, "0")).join("").toUpperCase();
-    const fxNames = { solido: "Sólido", metalico: "Metálico", fluorescente: "Fluorescente", fosforescente: "Fosforescente", madeira: "Madeira", granito: "Granito" };
-    const pellet = $("#pellet"), knob = $("#knob");
-    // Pré-visualização em 3D (o grânulo em CSS fica como alternativa sem WebGL)
-    const lab3d = makePellet3D($(".stage"), $("#lab-canvas"), { light: true, distance: 6.2 });
-    const texs = {};
-    const tex = kind => {
-      if (texs[kind]) return texs[kind];
-      const c = document.createElement("canvas"); c.width = c.height = 256;
-      const g = c.getContext("2d");
-      g.fillStyle = "#fff"; g.fillRect(0, 0, 256, 256);
-      if (kind === "madeira") {
-        for (let y = 0; y < 256; y += 2) {
-          const v = Math.sin(y * 0.09 + Math.sin(y * 0.02) * 3) * 0.5 + 0.5;
-          g.fillStyle = `rgba(40,22,5,${0.12 + v * 0.5})`; g.fillRect(0, y, 256, 2);
-        }
-      } else {
-        for (let i = 0; i < 2600; i++) {
-          g.fillStyle = Math.random() < 0.55 ? `rgba(0,0,0,${0.2 + Math.random() * 0.5})` : `rgba(255,255,255,${0.4 + Math.random() * 0.5})`;
-          const s = 1 + Math.random() * 3; g.fillRect(Math.random() * 256, Math.random() * 256, s, s);
-        }
-      }
-      const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.wrapS = t.wrapT = THREE.RepeatWrapping;
-      return (texs[kind] = t);
-    };
-    let lastFx = null;
-    const apply3d = rgb => {
-      if (!lab3d) return;
-      const m = lab3d.mat;
-      lab3d.target.color.setRGB(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255).convertSRGBToLinear();
-      lab3d.target.a = S.a;
-      m.roughness = 0.05 + (1 - S.gloss) * 0.75;
-      m.clearcoat = S.gloss; m.clearcoatRoughness = 0.05 + (1 - S.gloss) * 0.6;
-      m.metalness = S.fx === "metalico" ? 0.85 : 0;
-      m.emissive.copy(lab3d.target.color);
-      m.emissiveIntensity = S.fx === "fluorescente" ? 0.55 : S.fx === "fosforescente" ? 0.3 : 0;
-      if (S.fx !== lastFx) {
-        m.map = S.fx === "madeira" || S.fx === "granito" ? tex(S.fx) : null;
-        m.needsUpdate = true; lastFx = S.fx;
-      }
-    };
-    if (lab3d) {
-      $(".stage").classList.add("has3d");
-      lab3d.onFrame = now => { if (S.fx === "fosforescente" && !reduced) lab3d.mat.emissiveIntensity = 0.25 + Math.sin(now / 380) * 0.2; };
-    }
-
-    const render = (skip) => {
-      const rgb = hsv2rgb(S.h, S.s, S.v);
-      sv.style.backgroundColor = `hsl(${S.h} 100% 50%)`;
-      knob.style.left = S.s * 100 + "%"; knob.style.top = (1 - S.v) * 100 + "%";
-      knob.style.background = hex(rgb);
-      $("#alpha").style.backgroundImage = `linear-gradient(90deg, transparent, ${hex(rgb)}), conic-gradient(#ddd 25%, #fff 0 50%, #ddd 0 75%, #fff 0)`;
-      $("#alpha").style.backgroundSize = "100% 100%, 12px 12px";
-      $("#hue").value = S.h; $("#hue-o").textContent = S.h + "°";
-      $("#alpha").value = Math.round(S.a * 100); $("#alpha-o").textContent = Math.round(S.a * 100) + "%";
-      $("#gloss").value = Math.round(S.gloss * 100); $("#gloss-o").textContent = Math.round(S.gloss * 100) + "%";
-      if (skip !== "hex") $("#hex").value = hex(rgb);
-      if (skip !== "rgb") { $("#r").value = rgb[0]; $("#g").value = rgb[1]; $("#b").value = rgb[2]; }
-      const rgba = `rgba(${rgb.join(",")},${S.a})`;
-      pellet.style.setProperty("--c", rgba);
-      pellet.style.setProperty("--gloss", S.gloss);
-      pellet.style.setProperty("--glow", S.fx === "fluorescente" ? 0.9 : S.fx === "fosforescente" ? 0.5 : 0);
-      pellet.dataset.fx = S.fx;
-      apply3d(rgb);
-      const ref = $("#ref-code").value.trim();
-      $("#spec").innerHTML =
-        `<span>HEX</span><b>${hex(rgb)}</b><span>RGB</span><b>${rgb.join(" · ")}</b>` +
-        `<span>Opacidade</span><b>${Math.round(S.a * 100)}%${S.a < 1 ? " transl." : ""}</b>` +
-        `<span>Brilho</span><b>${S.gloss < 0.35 ? "Fosco" : S.gloss > 0.7 ? "Alto brilho" : "Acetinado"}</b>` +
-        `<span>Efeito</span><b>${fxNames[S.fx]}</b>` +
-        (ref ? `<span>Ref.</span><b>${$("#ref-type").value} ${ref}</b>` : "");
-      const bar = $("#lab-bar-sw");
-      if (bar) { bar.style.background = rgba; $("#lab-bar-txt").textContent = `${hex(rgb)} · ${fxNames[S.fx]}`; }
-    };
-
-    const pick = e => {
-      const r = sv.getBoundingClientRect();
-      S.s = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
-      S.v = Math.min(1, Math.max(0, 1 - (e.clientY - r.top) / r.height));
-      render();
-    };
-    sv.addEventListener("pointerdown", e => { sv.setPointerCapture(e.pointerId); pick(e); sv.addEventListener("pointermove", pick); });
-    sv.addEventListener("pointerup", () => sv.removeEventListener("pointermove", pick));
-    sv.addEventListener("keydown", e => {
-      const st = e.shiftKey ? 0.1 : 0.02;
-      if (e.key === "ArrowRight") S.s = Math.min(1, S.s + st);
-      else if (e.key === "ArrowLeft") S.s = Math.max(0, S.s - st);
-      else if (e.key === "ArrowUp") S.v = Math.min(1, S.v + st);
-      else if (e.key === "ArrowDown") S.v = Math.max(0, S.v - st);
-      else return;
-      e.preventDefault(); render();
-    });
-    $("#hue").addEventListener("input", e => { S.h = +e.target.value; render(); });
-    $("#alpha").addEventListener("input", e => { S.a = +e.target.value / 100; render(); });
-    $("#gloss").addEventListener("input", e => { S.gloss = +e.target.value / 100; render(); });
-    $("#hex").addEventListener("input", e => {
-      const m = e.target.value.trim().match(/^#?([0-9a-f]{6})$/i);
-      if (!m) return;
-      const n = parseInt(m[1], 16);
-      [S.h, S.s, S.v] = rgb2hsv(n >> 16, (n >> 8) & 255, n & 255);
-      render("hex");
-    });
-    ["r", "g", "b"].forEach(id => $("#" + id).addEventListener("input", () => {
-      const c = ["r", "g", "b"].map(k => Math.min(255, Math.max(0, +$("#" + k).value || 0)));
-      [S.h, S.s, S.v] = rgb2hsv(...c);
-      render("rgb");
-    }));
-    $("#ref-code").addEventListener("input", () => render());
-    $("#ref-type").addEventListener("change", () => render());
-    $$(".effects button").forEach(b => b.addEventListener("click", () => {
-      $$(".effects button").forEach(x => x.setAttribute("aria-pressed", "false"));
-      b.setAttribute("aria-pressed", "true"); S.fx = b.dataset.fx; render();
-      if (lab3d) lab3d.spin();
-      else if (motion) gsap.fromTo(pellet, { scale: 0.92 }, { scale: 1, duration: 0.6, ease: "elastic.out(1, .5)" });
-    }));
-
-    // Leva a especificação para o formulário
-    const sendColor = () => {
-      const rgb = hsv2rgb(S.h, S.s, S.v);
-      const ref = $("#ref-code").value.trim();
-      const spec = `Cor ${hex(rgb)} (RGB ${rgb.join(", ")}) · opacidade ${Math.round(S.a * 100)}% · brilho ${Math.round(S.gloss * 100)}% · efeito ${fxNames[S.fx]}` + (ref ? ` · ref. ${$("#ref-type").value} ${ref}` : "");
-      $("#tipo").value = "Solicitar amostra de cor";
-      $("#msg").value = spec + "\nAplicação: ";
-      $("#prefill").classList.add("show");
-      $("#prefill-sw").style.background = `rgba(${rgb.join(",")},${S.a})`;
-      $("#prefill-txt").textContent = "Especificação da cor anexada ao pedido";
-      scrollToEl($("#contato"));
-    };
-    $("#send-color").addEventListener("click", sendColor);
-    if ($("#send-color-m")) $("#send-color-m").addEventListener("click", sendColor);
-
-    // Barra fixa do laboratório no celular
-    const labBar = $("#lab-bar");
-    if (labBar) new IntersectionObserver(([en]) => labBar.classList.toggle("show", en.isIntersecting), { threshold: 0.15 }).observe($(".lab-grid"));
-    render();
-    // estado inicial aplicado direto, sem esperar a transição de cor
-    if (lab3d) lab3d.mat.color.copy(lab3d.target.color);
-  }
-
   // ---------- Materiais: índice interativo ----------
   const idx = $("#mat-index");
   if (idx) {
@@ -536,7 +385,7 @@
             <div>${m.traits.map(t => `<span class="chip">${t}</span>`).join("")}</div>
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:24px">
               <a class="btn" href="produto.html?linha=${m.id}" data-cursor="Ver">Ver linha ${m.name} <span class="arr">→</span></a>
-              <a class="btn ghost" href="#contato">Solicitar amostra</a>
+              <a class="btn ghost" href="contato.html?tipo=amostra">Solicitar amostra</a>
             </div>
           </div>
           <div>
@@ -609,89 +458,21 @@
   }
 
 
-  // Grânulo 3D do guia: vira a resina sugerida a cada resposta
-  const pellet3d = (() => {
-    const box = $("#g3d");
-    const p = makePellet3D(box, $("#g3d-canvas"), { orbit: true, distance: 8.8 });
-    if (!p) { if (box) box.remove(); return null; }
-    const set = (id, burst) => {
-      const m = (LOOK[id] || LOOK.abs).match(/[\d.]+/g).map(Number);
-      p.target.color.setRGB(m[0] / 255, m[1] / 255, m[2] / 255).convertSRGBToLinear(); p.target.a = m[3];
-      p.mat.roughness = m[3] < 0.6 ? 0.05 : 0.28;
-      const mm = M.find(x => x.id === id);
-      $("#g3d-name").textContent = mm ? mm.name : "";
-      if (burst) p.spin();
-    };
-    set("abs");
-    return { set };
-  })();
-
-  // ---------- Guia de seleção em etapas ----------
-  const gStage = $("#g-stage");
-  if (gStage) {
-    const Q = [
-      { k: "seg", q: "Para qual segmento é a peça?", o: [["automotivo", "Automotivo", "Interior, exterior, iluminação"], ["eletro", "Eletroeletrônicos", "Carcaças, conectores, plugs"], ["linha-branca", "Linha branca", "Geladeiras, lavadoras, pequenos"], ["construcao", "Construção civil", "Perfis, telhas, conexões"], ["embalagens", "Embalagens e cosméticos", "Potes, frascos, tampas"]] },
-      { k: "prop", q: "Qual é a exigência principal?", o: [["impacto", "Resistência ao impacto", "Peças sujeitas a choque"], ["chama", "Anti-chama", "V0 / RoHS / halogênio free"], ["transparencia", "Transparência", "Lentes, visores, utilidades"], ["temperatura", "Alta temperatura", "Próximo a calor ou motor"], ["rigidez", "Rigidez e mecânica", "Engrenagens, peças técnicas"]] },
-      { k: "env", q: "Onde a peça será usada?", o: [["interno", "Ambiente interno", "Sem exposição ao sol"], ["uv", "Ambiente externo", "Sol, chuva e intempéries"]] }
-    ];
-    const A = {};
-    let step = 0;
-    const back = $("#g-back");
-    const setProg = () => {
-      $("#g-step").textContent = step < Q.length ? `0${step + 1} / 03` : "Resultado";
-      $("#g-bar").style.transform = `scaleX(${Math.min(1, (step + 1) / Q.length)})`;
-      back.hidden = step === 0;
-    };
-    const animIn = dir => { if (motion) gsap.from(gStage.children, { x: 60 * dir, opacity: 0, duration: 0.6, ease: "expo.out", stagger: 0.04 }); };
-    const showStep = (dir = 1) => {
-      const s = Q[step];
-      gStage.innerHTML = `<p class="g-q">${s.q}</p><div class="g-cards">${s.o.map((o, i) =>
-        `<button type="button" class="g-card${A[s.k] === o[0] ? " sel" : ""}" data-v="${o[0]}" data-cursor="Selecionar"><span class="gi">0${i + 1}</span><span><span class="gl">${o[1]}</span><span class="gs" style="display:block">${o[2]}</span></span></button>`).join("")}</div>`;
-      setProg();
-      if (motion) gsap.from($$(".g-card", gStage), { y: 40, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.05 });
-      animIn(dir);
-    };
-    const rank = () => M.map(m => ({
-      m, s: (m.segments.includes(A.seg) ? 2 : 0) + (m.props.includes(A.prop) ? 3 : 0) + (A.env === "uv" && m.props.includes("uv") ? 2 : 0)
-    })).sort((x, y) => y.s - x.s);
-    const showResult = () => {
-      const [a, b] = rank();
-      const label = (k, v) => Q.find(q => q.k === k).o.find(o => o[0] === v)[1];
-      gStage.innerHTML = `
-        <div class="result">
-          <div>
-            <div class="mono" style="color:var(--steel)">SUGESTÃO INICIAL</div>
-            <div class="r-name">${a.m.name}</div>
-            <div class="r-sum">${label("seg", A.seg)} · ${label("prop", A.prop)} · ${label("env", A.env)}<br>Alternativa: ${b.m.name}</div>
-          </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <button type="button" class="btn ghost" id="g-redo">Refazer</button>
-            <a class="btn ghost" href="produto.html?linha=${a.m.id}" data-cursor="Ver">Ver ${a.m.name}</a>
-            <a class="btn" href="#contato">Validar com um especialista <span class="arr">→</span></a>
-          </div>
-        </div>`;
-      setProg();
-      $("#g-redo").addEventListener("click", () => { step = 0; Object.keys(A).forEach(k => delete A[k]); showStep(-1); if (pellet3d) pellet3d.set("abs", true); });
-      if (motion) {
-        gsap.from(".result", { y: 40, opacity: 0, duration: 0.8, ease: "expo.out" });
-        gsap.from(".result .r-name", { yPercent: 80, opacity: 0, duration: 1, ease: "expo.out", delay: 0.1 });
-      }
-    };
-    gStage.addEventListener("click", e => {
-      const c = e.target.closest(".g-card");
-      if (!c) return;
-      A[Q[step].k] = c.dataset.v;
-      if (pellet3d) pellet3d.set(rank()[0].m.id, true);
-      $$(".g-card", gStage).forEach(x => x.classList.toggle("sel", x === c));
-      if (cur) cur.classList.remove("big");
-      setTimeout(() => { step++; step < Q.length ? showStep(1) : showResult(); }, motion ? 380 : 0);
-    });
-    back.addEventListener("click", () => { if (step > 0) { step--; showStep(-1); } });
-    showStep();
+  // ---------- Guia de seleção: tabela segmento x exigência ----------
+  const mx = $("#matrix");
+  if (mx) {
+    const SEG = [["automotivo", "Automotivo"], ["eletro", "Eletroeletrônicos"], ["linha-branca", "Linha branca"], ["construcao", "Construção civil"], ["embalagens", "Embalagens e cosméticos"]];
+    const REQ = [["impacto", "Impacto"], ["chama", "Anti-chama"], ["transparencia", "Transparência"], ["temperatura", "Alta temperatura"], ["rigidez", "Rigidez"], ["uv", "Externo (UV)"]];
+    const cell = (seg, req) => M.filter(m => m.segments.includes(seg) && m.props.includes(req))
+      .map(m => `<a href="produto.html?linha=${m.id}" data-cursor="Ver">${m.name}</a>`).join("") || '<span class="none">Consulte</span>';
+    mx.innerHTML = `<thead><tr><th scope="col"><span class="mono">Segmento / exigência</span></th>${REQ.map(r => `<th scope="col">${r[1]}</th>`).join("")}</tr></thead>
+      <tbody>${SEG.map(s => `<tr><th scope="row">${s[1]}</th>${REQ.map(r => `<td>${cell(s[0], r[0])}</td>`).join("")}</tr>`).join("")}</tbody>`;
+    if (motion) gsap.from($$("tbody tr", mx), { y: 30, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.08, scrollTrigger: { trigger: mx, start: "top 85%" } });
   }
 
   // ---------- Formulário ----------
   const form = $("#contact-form");
+  if (form && new URLSearchParams(location.search).get("tipo") === "amostra") $("#tipo").value = "Solicitar amostra de cor";
   if (form) form.addEventListener("submit", e => {
     e.preventDefault();
     const bad = $$("[required]", form).filter(el => !el.checkValidity());
@@ -710,7 +491,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v0.8`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v0.9`;
     $$("[data-f]").forEach(el => {
       const k = el.dataset.f;
       if (k === "apps") el.innerHTML = m.apps.map(a => `<li>${a}</li>`).join("");
@@ -719,7 +500,7 @@
       else el.textContent = m[k];
     });
     $("#grades").innerHTML = m.grades.map(g =>
-      `<div class="grade"><div><b>${g[0]}</b><small>${g[1]}</small></div><div style="display:flex;gap:16px"><a href="#">Ficha técnica PDF ↓</a><a href="index.html#contato">Pedir amostra</a></div></div>`).join("");
+      `<div class="grade"><div><b>${g[0]}</b><small>${g[1]}</small></div><div style="display:flex;gap:16px"><a href="#">Ficha técnica PDF ↓</a><a href="contato.html?tipo=amostra">Pedir amostra</a></div></div>`).join("");
     $("#other-lines").innerHTML = M.filter(x => x.id !== m.id).map(x => `<a class="btn ghost sm" href="produto.html?linha=${x.id}" data-cursor="Ver">${x.name}</a>`).join("");
     if (motion) {
       gsap.from(".p-hero .big", { yPercent: 30, opacity: 0, duration: 1.2, ease: "expo.out" });

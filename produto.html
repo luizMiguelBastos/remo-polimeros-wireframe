@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Produto · Remo Polímeros · Wireframe v0.8</title>
+  <title>Produto · Remo Polímeros · Wireframe v0.9</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -13,10 +13,19 @@
 
 <div class="progress" id="progress"></div>
 <div class="grain" aria-hidden="true"></div>
+<div class="sheet" id="sheet" aria-hidden="true">
+  <div class="sheet-inner">
+    <div class="mark">
+      <svg viewBox="0 0 64 64"><g stroke="#4A5468" stroke-width="2"><line x1="14" y1="16" x2="40" y2="30"/><line x1="40" y1="30" x2="22" y2="50"/><line x1="40" y1="30" x2="54" y2="12"/></g><circle cx="14" cy="16" r="6" fill="#0B1220"/><circle cx="40" cy="30" r="8" fill="#FFD100"/><circle cx="22" cy="50" r="6" fill="#0B1220"/><circle cx="54" cy="12" r="5" fill="#0B1220"/></svg>
+      <div class="word"><span>r</span><span>e</span><span>m</span><span>o</span></div>
+    </div>
+  </div>
+  <div class="sheet-count"><span id="sheet-count">0</span>%</div>
+</div>
 <div class="cursor" id="cursor" aria-hidden="true"><span id="cursor-label"></span></div>
 
 <div class="wf-bar" role="region" aria-label="Controles do wireframe">
-  <strong>WIREFRAME v0.8</strong> · Modelo de página de produto
+  <strong>WIREFRAME v0.9</strong> · Modelo de página de produto
   <a href="index.html">← Home</a>
   <span class="spacer"></span>
   <button type="button" id="toggle-notes" aria-pressed="false">Mostrar notas de UX</button>
@@ -29,21 +38,22 @@
       remo<small>polímeros</small>
     </a>
     <nav class="nav" id="nav" aria-label="Principal">
-      <a href="index.html#solucoes">Soluções</a>
-      <a href="index.html#materiais" aria-current="page">Materiais</a>
-      <a href="index.html#laboratorio">Laboratório</a>
-      <a href="index.html#qualidade">Qualidade</a>
-      <a href="index.html#a-remo">Sobre</a>
-      <a href="index.html#contato">Contato</a>
+      <a href="institucional.html">Institucional</a>
+      <a href="materiais.html" aria-current="page">Materiais</a>
+      <a href="como-trabalhamos.html">Como trabalhamos</a>
+      <a href="laboratorio.html">Laboratório</a>
+      <a href="guia.html">Guia</a>
+      <a href="qualidade.html">Qualidade</a>
+      <a href="contato.html">Contato</a>
     </nav>
-    <a href="index.html#qualidade" class="iso-badge" title="Certificação ISO"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22.5" fill="none" stroke="currentColor" stroke-opacity=".35"/><circle cx="24" cy="24" r="18" fill="none" stroke="#FFD100" stroke-width="1.5" stroke-dasharray="80 200" transform="rotate(-90 24 24)"/><circle cx="24" cy="6" r="1.6" fill="#FFD100"/><text x="24" y="28.5" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" font-weight="700" font-stretch="125%" fill="currentColor">ISO</text></svg><span><b>ISO 9001:2015*</b><small>Certificada</small></span></a>
-    <a href="index.html#contato" class="btn sm">Solicitar amostra <span class="arr">→</span></a>
+    <a href="qualidade.html" class="iso-badge" title="Certificação ISO"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22.5" fill="none" stroke="currentColor" stroke-opacity=".35"/><circle cx="24" cy="24" r="18" fill="none" stroke="#FFD100" stroke-width="1.5" stroke-dasharray="80 200" transform="rotate(-90 24 24)"/><circle cx="24" cy="6" r="1.6" fill="#FFD100"/><text x="24" y="28.5" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" font-weight="700" font-stretch="125%" fill="currentColor">ISO</text></svg><span><b>ISO 9001:2015*</b><small>Certificada</small></span></a>
+    <a href="contato.html?tipo=amostra" class="btn sm">Solicitar amostra <span class="arr">→</span></a>
     <button class="btn ghost sm menu-toggle" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
   </div>
 </header>
 
 <main id="product-page">
-  <div class="wrap crumbs"><a href="index.html">Home</a> / <a href="index.html#materiais">Materiais</a> / <span data-f="name"></span></div>
+  <div class="wrap crumbs"><a href="index.html">Home</a> / <a href="materiais.html">Materiais</a> / <span data-f="name"></span></div>
 
   <section class="p-hero" style="padding-bottom:80px">
     <div class="wrap">
@@ -56,7 +66,7 @@
           <div data-f="traits" style="margin:20px 0"></div>
           <div style="display:flex;gap:12px;flex-wrap:wrap">
             <a href="#grades-t" class="btn">Ver grades e fichas <span class="arr">↓</span></a>
-            <a href="index.html#contato" class="btn ghost">Desenvolver versão sob medida</a>
+            <a href="contato.html" class="btn ghost">Desenvolver versão sob medida</a>
           </div>
         </div>
         <div class="ph" style="aspect-ratio:4/3">[grânulos 3D / vídeo do material · fase de imagens]</div>
@@ -98,7 +108,7 @@
         <div style="width:96px;height:96px;border-radius:50%;border:1px solid var(--yellow);display:grid;place-items:center;text-align:center;font:600 24px/1 var(--f-sans);font-stretch:125%">ISO<span style="font:11px var(--f-mono);color:var(--yellow);display:block;margin-top:4px">9001:2015*</span></div>
         <div><h3 style="margin:0 0 6px">Produzido sob certificação ISO</h3><p class="mono" style="color:var(--steel);margin:0">Padrão internacional de produção em todos os lotes.</p></div>
       </div>
-      <a href="index.html#contato" class="btn">Precisa de algo diferente? Desenvolvemos sob medida <span class="arr">→</span></a>
+      <a href="contato.html" class="btn">Precisa de algo diferente? Desenvolvemos sob medida <span class="arr">→</span></a>
     </div>
   </section>
 

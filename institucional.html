@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Institucional · Remo Polímeros · Wireframe v0.9</title>
+  <meta name="description" content="Manifesto, números, missão, valores e história da Remo Polímeros.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="assets/wireframe.css">
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="sheet" id="sheet" aria-hidden="true">
+  <div class="sheet-inner">
+    <div class="mark">
+      <svg viewBox="0 0 64 64"><g stroke="#4A5468" stroke-width="2"><line x1="14" y1="16" x2="40" y2="30"/><line x1="40" y1="30" x2="22" y2="50"/><line x1="40" y1="30" x2="54" y2="12"/></g><circle cx="14" cy="16" r="6" fill="#0B1220"/><circle cx="40" cy="30" r="8" fill="#FFD100"/><circle cx="22" cy="50" r="6" fill="#0B1220"/><circle cx="54" cy="12" r="5" fill="#0B1220"/></svg>
+      <div class="word"><span>r</span><span>e</span><span>m</span><span>o</span></div>
+    </div>
+  </div>
+  <div class="sheet-count"><span id="sheet-count">0</span>%</div>
+</div>
+<div class="cursor" id="cursor" aria-hidden="true"><span id="cursor-label"></span></div>
+
+<div class="wf-bar" role="region" aria-label="Controles do wireframe">
+  <strong>WIREFRAME v0.9</strong> · Home com seções em páginas · sem imagens
+  <a href="index.html">Início</a>
+  <span class="spacer"></span>
+  
+  <button type="button" id="toggle-notes" aria-pressed="false">Mostrar notas de UX</button>
+</div>
+
+<header class="site-header" id="header">
+  <div class="wrap">
+    <a href="index.html" class="logo" aria-label="Remo Polímeros, início">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><g stroke="#A3ABBC" stroke-width="3"><line x1="14" y1="16" x2="40" y2="30"/><line x1="40" y1="30" x2="22" y2="50"/><line x1="40" y1="30" x2="54" y2="12"/></g><circle cx="14" cy="16" r="7" fill="#F4F5F7"/><circle cx="40" cy="30" r="9" fill="#FFD100"/><circle cx="22" cy="50" r="7" fill="#F4F5F7"/><circle cx="54" cy="12" r="6" fill="#F4F5F7"/></svg>
+      remo<small>polímeros</small>
+    </a>
+    <nav class="nav" id="nav" aria-label="Principal">
+      <a href="institucional.html" aria-current="page">Institucional</a>
+      <a href="materiais.html">Materiais</a>
+      <a href="como-trabalhamos.html">Como trabalhamos</a>
+      <a href="laboratorio.html">Laboratório</a>
+      <a href="guia.html">Guia</a>
+      <a href="qualidade.html">Qualidade</a>
+      <a href="contato.html">Contato</a>
+    </nav>
+    <a href="qualidade.html" class="iso-badge" title="Certificação ISO"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22.5" fill="none" stroke="currentColor" stroke-opacity=".35"/><circle cx="24" cy="24" r="18" fill="none" stroke="#FFD100" stroke-width="1.5" stroke-dasharray="80 200" transform="rotate(-90 24 24)"/><circle cx="24" cy="6" r="1.6" fill="#FFD100"/><text x="24" y="28.5" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" font-weight="700" font-stretch="125%" fill="currentColor">ISO</text></svg><span><b>ISO 9001:2015*</b><small>Certificada</small></span></a>
+    <a href="contato.html?tipo=amostra" class="btn sm">Solicitar amostra <span class="arr">→</span></a>
+    <button class="btn ghost sm menu-toggle" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+  </div>
+</header>
+
+<main>
+<section class="page-hero">
+  <div class="wrap">
+    <div class="crumbs"><a href="index.html">Início</a> / Institucional</div>
+    <div class="eyebrow">Institucional</div>
+    <div class="sec-head" style="margin-bottom:0">
+      <h1 data-lines>
+        <span class="line"><span>Química que vira</span></span>
+        <span class="line"><span><span class="hl">solução</span> desde 1989.</span></span>
+      </h1>
+      <p class="lead" data-reveal>Conheça quem somos, no que acreditamos e a trajetória que trouxe a Remo até aqui.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 · MANIFESTO (fixo até a leitura completa) -->
+<section class="manifesto light" id="sobre">
+  <div class="texture">[textura de fundo · fase de imagens]</div>
+  <div class="wrap">
+    <div class="eyebrow">Manifesto</div>
+    <p id="manifesto">Nada aqui é padrão. Cada grade nasce da necessidade de um cliente, da dureza à cor, do aditivo ao acabamento. O plástico e a química são o nosso DNA.</p>
+    <div class="m-progress"><i><b id="m-bar"></b></i><span>Role para ler</span></div>
+    <p class="note"><b>Movimento:</b> a seção fica travada até a última palavra acender.</p>
+  </div>
+</section>
+
+<!-- 03 · SOBRE A EMPRESA -->
+<section class="divider" id="a-remo" aria-labelledby="a-remo-t">
+  <div class="wrap">
+    <div class="eyebrow">Sobre a Remo</div>
+    <div class="about-head">
+      <h2 id="a-remo-t" data-lines>
+        <span class="line"><span>Desde 1989,</span></span>
+        <span class="line"><span>química que vira <span class="hl">solução.</span></span></span>
+      </h2>
+      <p class="lead" data-reveal>De origem familiar e capital 100% nacional, a Remo fabrica e distribui polímeros especiais para as mais variadas aplicações e níveis de complexidade. Somos parte do dia a dia das pessoas.</p>
+    </div>
+    <div class="grid g4" style="margin-top:72px">
+      <div class="stat" data-reveal><div class="n"><span data-count="37">0</span><small>anos</small></div><div class="l">de mercado, desde 1989</div></div>
+      <div class="stat" data-reveal><div class="n"><span data-count="25">0</span><small>anos</small></div><div class="l">de parceria tecnológica com a LG Chem</div></div>
+      <div class="stat" data-reveal><div class="n"><span data-count="9">0</span><small>linhas</small></div><div class="l">de resinas de engenharia</div></div>
+      <div class="stat" data-reveal><div class="n"><span data-count="1">0</span><small>dia</small></div><div class="l">do padrão à amostra de cor, em casos especiais</div></div>
+    </div>
+    <div class="about-values">
+      <div class="mv" data-reveal>
+        <div class="mv-item"><span class="mono">Missão</span><p>Oferecer soluções inteligentes em resinas plásticas, agregando valor ao produto final dos nossos clientes e otimizando recursos e processos da cadeia.</p></div>
+        <div class="mv-item"><span class="mono">Visão</span><p class="mv-big">Criar. Transformar. Evoluir.</p></div>
+      </div>
+      <ol class="values" data-reveal>
+        <li><span>01</span>Somos íntegros com todos e em todos os momentos</li>
+        <li><span>02</span>Acreditamos na indústria brasileira</li>
+        <li><span>03</span>Ética e transparência fazem parte do nosso dia a dia</li>
+        <li><span>04</span>Somos comprometidos e responsáveis</li>
+        <li><span>05</span>Respondemos os clientes com a máxima agilidade e atenção</li>
+        <li><span>06</span>Eficiência da equipe técnica e dos projetos executados</li>
+        <li><span>07</span>Transmitimos confiança nas relações profissionais</li>
+        <li><span>08</span>Somos flexíveis no relacionamento com os clientes</li>
+        <li><span>09</span>Qualidade, preços e prazos competitivos</li>
+        <li><span>10</span>Persistimos no que nos propomos a fazer</li>
+      </ol>
+    </div>
+    <p class="note"><b>Sobre:</b> números, missão, visão e os 10 valores numa seção só, seguida da linha do tempo. Pendência: clientes ativos, estados atendidos, cores desenvolvidas, capacidade produtiva.</p>
+  </div>
+</section>
+
+<!-- 03b · SOBRE: LINHA DO TEMPO -->
+<section class="light tl-wrap" id="historia" style="padding-bottom:0">
+  <div id="tl-pin" style="padding-bottom:clamp(80px,12vw,160px)">
+    <div class="wrap">
+      <div class="eyebrow">Sobre a Remo · Linha do tempo</div>
+      <h2 data-reveal style="max-width:14ch;margin-bottom:64px">De origem familiar a referência do setor.</h2>
+    </div>
+    <div class="timeline" id="timeline">
+      <div class="tl-line"></div><div class="tl-fill" id="tl-fill"></div>
+      <div class="tl"><div class="y">1989</div><p>Fundação. Industrialização e comercialização de plásticos de engenharia.</p></div>
+      <div class="tl"><div class="y">2001</div><p>Parceria com a LG Chem e foco em mercados mais complexos.</p></div>
+      <div class="tl"><div class="y">2004</div><p>Novas instalações industriais em Guarulhos/SP.</p></div>
+      <div class="tl"><div class="y">2007</div><p>Novas instalações industriais no Rio de Janeiro/RJ.</p></div>
+      <div class="tl"><div class="y">2016</div><p>Novo centro de distribuição.</p></div>
+      <div class="tl iso-y"><div class="y">ISO</div><p>Certificação ISO 9001:2015*. <i>[ano a confirmar]</i></p></div>
+      <div class="tl"><div class="y">2026</div><p>37 anos, 9 linhas de resinas e desenvolvimento sob medida.</p></div>
+    </div>
+    <div class="wrap"><p class="note"><b>Movimento:</b> a linha do tempo desliza na horizontal e a barra azul preenche conforme a rolagem. Pendência: marcos de 2016 até hoje.</p></div>
+  </div>
+</section>
+
+<!-- 11 · DEPOIMENTO -->
+<section aria-label="Depoimento de cliente">
+  <div class="wrap">
+    <div class="eyebrow">Clientes</div>
+    <p class="quote" data-reveal>“[Depoimento de um cliente sobre agilidade no desenvolvimento, qualidade do material ou atendimento técnico.]”</p>
+    <p class="quote-by">Nome · Cargo · Empresa · pendente de autorização</p>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="wrap">
+    <div class="eyebrow">Próximo passo</div>
+    <h2 data-lines>
+      <span class="line"><span>O material certo</span></span>
+      <span class="line"><span>começa <span class="hl">aqui.</span></span></span>
+    </h2>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:32px">
+      <a href="contato.html" class="btn">Fale com um especialista <span class="arr">→</span></a>
+      <a href="index.html#explorar" class="btn ghost">Ver outras seções</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="grid">
+      <div>
+        <a href="index.html" class="logo" style="color:var(--white)">remo<small>polímeros</small></a>
+        <p style="margin-top:16px;max-width:34ch">Fabricação e distribuição de polímeros especiais. Capital 100% nacional desde 1989.</p>
+        <div class="iso-seal-foot"><svg viewBox="0 0 48 48" class="big" aria-hidden="true"><circle cx="24" cy="24" r="22.5" fill="none" stroke="currentColor" stroke-opacity=".35"/><circle cx="24" cy="24" r="18" fill="none" stroke="#FFD100" stroke-width="1.5" stroke-dasharray="80 200" transform="rotate(-90 24 24)"/><circle cx="24" cy="6" r="1.6" fill="#FFD100"/><text x="24" y="28.5" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" font-weight="700" font-stretch="125%" fill="currentColor">ISO</text></svg><span><b>ISO 9001:2015*</b><small>Padrão internacional de produção · Certificada</small></span></div>
+      </div>
+      <div><h4>Empresa</h4><ul><li><a href="institucional.html">Sobre</a></li><li><a href="qualidade.html">Qualidade</a></li><li><a href="#">Notícias</a></li><li><a href="#">Carreiras</a></li></ul></div>
+      <div><h4>Materiais</h4><ul><li><a href="produto.html?linha=abs">ABS</a></li><li><a href="produto.html?linha=pc">PC</a></li><li><a href="produto.html?linha=pmma">PMMA</a></li><li><a href="materiais.html">Todas as linhas</a></li></ul></div>
+      <div><h4>Contato</h4><ul><li>+55 (11) 2175-1000</li><li>remo@remopolimeros.com.br</li><li>Rod. Pres. Dutra, km 207,8<br>Guarulhos/SP</li></ul></div>
+    </div>
+    <div class="huge" aria-hidden="true">remo</div>
+    <div class="bottom"><span>© 2026 Remo Polímeros · <a href="#">Política de Privacidade</a> · <a href="index.html#explorar">Mapa do site</a></span><span>* Número da certificação ISO provisório</span></div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/wireframe.js"></script>
+</body>
+</html>
