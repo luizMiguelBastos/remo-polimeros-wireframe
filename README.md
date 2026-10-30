@@ -1,31 +1,42 @@
 # Remo Polímeros · Wireframe v0.9
 
-Wireframe da nova home da Remo Polímeros para validar **usabilidade**, **onde fica cada informação** e, nesta versão, a **identidade visual** (tipografia, paleta e rolagens dinâmicas) antes de entrarem imagens, vídeos e os movimentos finais.
+Wireframe do novo site da Remo Polímeros para validar **usabilidade**, **navegação**, **onde fica cada informação** e a **identidade visual** antes de entrarem imagens, vídeos e os movimentos finais.
 
 **Link:** https://luizmiguelbastos.github.io/remo-polimeros-wireframe/
 
-## Identidade visual (v0.9)
+## Estrutura (v0.9)
+A home é um ponto de partida: hero com breve introdução e dois botões (**Conheça a Remo** e **Com o que trabalhamos**), seguido de cards para cada seção. Cada seção é uma página própria.
+
+| Página | Conteúdo |
+|---|---|
+| `index.html` | Hero e cards "Explore a Remo" |
+| `institucional.html` | Manifesto, números, missão, visão, valores, linha do tempo e depoimento |
+| `materiais.html` | Índice de resinas que abre ao clicar, com card 3D seguindo o cursor |
+| `produto.html?linha=abs` | Página de cada linha (troque `abs` por `abs-pc`, `asa`, `pbt`, `pc`, `pc-compostos`, `pmma`, `pom` ou `san`) |
+| `como-trabalhamos.html` | As 4 etapas em esteira horizontal |
+| `laboratorio.html` | Página informativa: prazo, efeitos especiais, equipamentos, padrões e aditivos |
+| `guia.html` | Tabela de resinas indicadas por segmento e exigência |
+| `qualidade.html` | Certificação ISO, Política da Qualidade, parceria LG Chem e rastreabilidade |
+| `contato.html` | Formulário por tipo de pedido, informações e FAQ |
+
+## Identidade visual
 - **Tipografia:** Archivo (títulos em largura expandida, textos em largura normal) + IBM Plex Mono (dados técnicos)
-- **Paleta:** Night `#050B1A` · Navy `#001F5F` · Signal Yellow `#FFD100` (só destaque) · Slate `#4A5468` · Steel `#A3ABBC` · Polymer White `#F4F5F7`
-- **Movimento:** abertura com a logo, rolagem suave (Lenis), animações ligadas à rolagem (GSAP ScrollTrigger), seções horizontais fixas no desktop. Respeita "reduzir movimento" do sistema.
-- **Laboratório de cores:** seletor completo (saturação/brilho, matiz, opacidade, brilho da superfície, HEX/RGB, Pantone/RAL, efeitos) que pré-preenche o pedido de amostra.
+- **Paleta:** Night `#050B1A` · Navy `#001F5F` (só na logo) · Signal Yellow `#FFD100` (só destaque) · Slate `#4A5468` · Steel `#A3ABBC` · Polymer White `#F4F5F7`
+- **Movimento:** abertura com a logo na primeira visita, transição com a logo entre páginas, rolagem suave (Lenis) e animações ligadas à rolagem (GSAP ScrollTrigger). Respeita "reduzir movimento" do sistema.
+- **Texturas:** grão de filme, grade técnica nos fundos escuros e papel pontilhado nos claros.
 - A logo usada é **provisória** (desenho aproximado); será trocada pelo SVG oficial.
 
 ## Como abrir
-Abra `index.html` no navegador (não precisa de servidor).
-
-- `index.html`: home completa (seções 00 a 13) + mapa do site proposto
-- `produto.html?linha=abs`: modelo de página de produto (troque `abs` por `abs-pc`, `asa`, `pbt`, `pc`, `pc-compostos`, `pmma`, `pom` ou `san`)
-
-Use o botão **"Ocultar notas de UX"** na barra superior para ver a página sem as anotações.
+Abra `index.html` no navegador (não precisa de servidor). Use o botão **"Mostrar notas de UX"** na barra superior para ver as anotações.
 
 ## O que validar
-1. Ordem das seções da home
-2. Destaque da certificação ISO (header, hero, seção Qualidade, rodapé)
-3. Guia de seleção de resina (3 perguntas)
-4. Laboratório de cores interativo
-5. Formulário de contato por tipo de pedido
-6. Página de produto com fichas técnicas por grade
+1. Home como ponto de partida e os cards de seções
+2. Transição entre páginas
+3. Destaque da certificação ISO (header, hero, página Qualidade, rodapé)
+4. Tabela do guia de seleção
+5. Página informativa do laboratório
+6. Formulário de contato por tipo de pedido
+7. Página de produto com fichas técnicas por grade
 
 ## Referências de método
 Heurísticas de Nielsen e princípios de Don Norman, indicados nas notas azuis de cada seção.
