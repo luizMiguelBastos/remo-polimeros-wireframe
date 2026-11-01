@@ -1,10 +1,10 @@
-# Remo Polímeros · Wireframe v0.9
+# Remo Polímeros · Wireframe v1.1
 
 Wireframe do novo site da Remo Polímeros para validar **usabilidade**, **navegação**, **onde fica cada informação** e a **identidade visual** antes de entrarem imagens, vídeos e os movimentos finais.
 
 **Link:** https://luizmiguelbastos.github.io/remo-polimeros-wireframe/
 
-## Estrutura (v0.9)
+## Estrutura (v1.1)
 A home é um ponto de partida: hero com breve introdução e dois botões (**Conheça a Remo** e **Com o que trabalhamos**), seguido de cards para cada seção. Cada seção é uma página própria.
 
 | Página | Conteúdo |
@@ -23,6 +23,7 @@ A home é um ponto de partida: hero com breve introdução e dois botões (**Con
 - **Paleta:** Night `#050B1A` · Navy `#001F5F` (só na logo) · Signal Yellow `#FFD100` (só destaque) · Slate `#4A5468` · Steel `#A3ABBC` · Polymer White `#F4F5F7`
 - **Movimento:** abertura com a logo na primeira visita, transição com a logo entre páginas, rolagem suave (Lenis) e animações ligadas à rolagem (GSAP ScrollTrigger). Respeita "reduzir movimento" do sistema.
 - **Texturas:** grão de filme, grade técnica nos fundos escuros e papel pontilhado nos claros.
+- **Imagens:** simuladas no Google Flow (hero, aberturas das páginas, cards da home, contato e linha do tempo). Serão trocadas por fotos reais.
 - A logo usada é **provisória** (desenho aproximado); será trocada pelo SVG oficial.
 
 ## Como abrir
@@ -41,6 +42,7 @@ Abra `index.html` no navegador (não precisa de servidor). Use o botão **"Mostr
 Heurísticas de Nielsen e princípios de Don Norman, indicados nas notas azuis de cada seção.
 
 ## Pendências de conteúdo
+- Razão social e CNPJ (footer)
 - Número real da certificação ISO (no wireframe: **ISO 9001:2015\***, provisório)
 - Certificado em PDF
 - Números adicionais (clientes, estados, capacidade)

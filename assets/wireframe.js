@@ -134,11 +134,6 @@
     if (!motion) return;
     gsap.from(".hero [data-lines] .line > span", { yPercent: 110, duration: 1.2, ease: "expo.out", stagger: 0.1 });
     gsap.from(".hero [data-reveal]", { y: 30, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.12, delay: 0.35 });
-    gsap.from(".hero .trust", { y: 40, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.12, delay: 0.7 });
-    $$(".hero [data-count]").forEach(el => {
-      const o = { v: +(el.dataset.from || 0) };
-      gsap.to(o, { v: +el.dataset.count, duration: 2, ease: "power3.out", delay: 0.9, onUpdate: () => { el.textContent = Math.round(o.v); } });
-    });
   };
   const endIntro = () => {
     document.body.classList.remove("is-loading");
@@ -232,6 +227,33 @@
       };
       show(0);
       if (slides.length > 1 && motion) setInterval(() => { i = (i + 1) % slides.length; show(i); }, DUR * 1000);
+    });
+  }
+
+  // ---------- Fotos: aberturas, cards da home, faixa do institucional ----------
+  if (motion) {
+    $$(".page-hero.photo .ph-media").forEach(m => {
+      gsap.fromTo(m, { scale: 1.15 }, { scale: 1, duration: 2.4, ease: "expo.out" });
+      gsap.to(m, { yPercent: 12, ease: "none", scrollTrigger: { trigger: m.parentElement, start: "top top", end: "bottom top", scrub: true } });
+    });
+    const grid = $(".hub-grid");
+    if (grid) {
+      const cards = $$(".hub-card", grid);
+      gsap.set(cards, { y: 80, opacity: 0 });
+      gsap.set($$(".hc-img", grid), { clipPath: "inset(100% 0 0 0)" });
+      ScrollTrigger.batch(cards, {
+        start: "top 88%", once: true,
+        onEnter: batch => {
+          gsap.to(batch, { y: 0, opacity: 1, duration: 1.1, ease: "expo.out", stagger: 0.12 });
+          gsap.to(batch.map(c => $(".hc-img", c)), { clipPath: "inset(0% 0 0 0)", duration: 1.3, ease: "expo.inOut", stagger: 0.12, delay: 0.15 });
+        }
+      });
+    }
+    $$(".px-band .px-media").forEach(m => {
+      gsap.fromTo(m, { yPercent: -10 }, { yPercent: 10, ease: "none", scrollTrigger: { trigger: m.parentElement, start: "top bottom", end: "bottom top", scrub: true } });
+    });
+    $$(".contact-band .cb-media").forEach(m => {
+      gsap.fromTo(m, { scale: 1.15 }, { scale: 1, ease: "none", scrollTrigger: { trigger: m.parentElement, start: "top bottom", end: "bottom bottom", scrub: true } });
     });
   }
 
@@ -540,7 +562,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v0.9`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v1.1`;
     $$("[data-f]").forEach(el => {
       const k = el.dataset.f;
       if (k === "apps") el.innerHTML = m.apps.map(a => `<li>${a}</li>`).join("");
