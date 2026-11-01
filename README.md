@@ -11,11 +11,10 @@ A home é um ponto de partida: hero com breve introdução e dois botões (**Con
 |---|---|
 | `index.html` | Hero e cards "Explore a Remo" |
 | `institucional.html` | Manifesto, números, missão, visão, valores, linha do tempo e depoimento |
-| `materiais.html` | Índice de resinas que abre ao clicar, com card 3D seguindo o cursor |
+| `materiais.html` | Guia de seleção (tabela por segmento e exigência) e índice de resinas que abre ao clicar, com card 3D seguindo o cursor |
 | `produto.html?linha=abs` | Página de cada linha (troque `abs` por `abs-pc`, `asa`, `pbt`, `pc`, `pc-compostos`, `pmma`, `pom` ou `san`) |
 | `como-trabalhamos.html` | As 4 etapas em esteira horizontal |
 | `laboratorio.html` | Página informativa: prazo, efeitos especiais, equipamentos, padrões e aditivos |
-| `guia.html` | Tabela de resinas indicadas por segmento e exigência |
 | `qualidade.html` | Certificação ISO, Política da Qualidade, parceria LG Chem e rastreabilidade |
 | `contato.html` | Formulário por tipo de pedido, informações e FAQ |
 
@@ -33,7 +32,7 @@ Abra `index.html` no navegador (não precisa de servidor). Use o botão **"Mostr
 1. Home como ponto de partida e os cards de seções
 2. Transição entre páginas
 3. Destaque da certificação ISO (header, hero, página Qualidade, rodapé)
-4. Tabela do guia de seleção
+4. Guia de seleção no topo da página de Materiais
 5. Página informativa do laboratório
 6. Formulário de contato por tipo de pedido
 7. Página de produto com fichas técnicas por grade

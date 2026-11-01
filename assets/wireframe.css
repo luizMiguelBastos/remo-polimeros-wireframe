@@ -557,7 +557,9 @@ body { background-image: linear-gradient(rgba(244,245,247,.028) 1px, transparent
 @media (hover: none), (pointer: coarse) { .cursor { display: none; } }
 
 /* ---------- Home: cards de seções ---------- */
-.hub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.hub-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media (max-width: 900px) { .hub-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .hub-grid { grid-template-columns: 1fr; } }
 .hub-card {
   position: relative; overflow: hidden; display: grid; grid-template-rows: auto 1fr auto; gap: 14px; min-height: 260px;
   padding: 24px; border: 1px solid var(--line-d); border-radius: 6px; background: var(--night-2); color: var(--white); text-decoration: none;
