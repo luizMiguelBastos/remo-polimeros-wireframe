@@ -134,6 +134,11 @@
     if (!motion) return;
     gsap.from(".hero [data-lines] .line > span", { yPercent: 110, duration: 1.2, ease: "expo.out", stagger: 0.1 });
     gsap.from(".hero [data-reveal]", { y: 30, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.12, delay: 0.35 });
+    gsap.from(".hero .trust", { y: 40, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.12, delay: 0.7 });
+    $$(".hero [data-count]").forEach(el => {
+      const o = { v: +(el.dataset.from || 0) };
+      gsap.to(o, { v: +el.dataset.count, duration: 2, ease: "power3.out", delay: 0.9, onUpdate: () => { el.textContent = Math.round(o.v); } });
+    });
   };
   const endIntro = () => {
     document.body.classList.remove("is-loading");
@@ -198,6 +203,50 @@
     if (reduced) draw(); else loop();
   }
 
+  // ---------- Fundo do hero: fotos dos setores alternando ----------
+  const slidesBox = $("#hero-slides");
+  if (slidesBox) {
+    const all = $$(".slide", slidesBox);
+    const sector = $("#hero-sector");
+    // Só entram as fotos que existem; sem fotos, fica o campo de grânulos
+    Promise.all(all.map(sl => new Promise(ok => {
+      const img = new Image();
+      img.onload = () => { sl.style.backgroundImage = `url(${sl.dataset.src})`; ok(sl); };
+      img.onerror = () => { sl.remove(); ok(null); };
+      img.src = sl.dataset.src;
+    }))).then(list => {
+      const slides = list.filter(Boolean);
+      if (!slides.length) { sector.remove(); return; }
+      document.querySelector(".hero").classList.add("has-photos");
+      let i = 0;
+      const DUR = 6;
+      const show = n => {
+        slides.forEach((sl, k) => sl.classList.toggle("on", k === n));
+        $("#hs-no").textContent = String(n + 1).padStart(2, "0");
+        $("#hs-label").textContent = slides[n].dataset.label;
+        if (hasGsap && motion) {
+          gsap.fromTo(slides[n], { scale: 1.12 }, { scale: 1, duration: DUR + 1.5, ease: "none" });
+          gsap.fromTo("#hs-label", { yPercent: 100, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.8, ease: "expo.out" });
+          gsap.fromTo("#hs-bar", { scaleX: 0 }, { scaleX: 1, duration: DUR, ease: "none" });
+        }
+      };
+      show(0);
+      if (slides.length > 1 && motion) setInterval(() => { i = (i + 1) % slides.length; show(i); }, DUR * 1000);
+    });
+  }
+
+  // ---------- Cards da home: inclinação seguindo o cursor ----------
+  if (motion && matchMedia("(hover: hover)").matches) {
+    $$(".hub-card").forEach(card => {
+      card.addEventListener("pointermove", e => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+        gsap.to(card, { rotateY: x * 8, rotateX: -y * 8, duration: 0.6, ease: "power3.out", overwrite: "auto" });
+      });
+      card.addEventListener("pointerleave", () => gsap.to(card, { rotateY: 0, rotateX: 0, duration: 0.8, ease: "expo.out", overwrite: "auto" }));
+    });
+  }
+
   // ---------- Rolagens (em ordem de página, para os pins calcularem certo) ----------
   if (motion) {
     // Progresso (barra superior no celular + trilho lateral no desktop)
@@ -225,7 +274,7 @@
     });
 
     // Contadores
-    $$("[data-count]").forEach(el => {
+    $$("[data-count]").filter(el => !el.closest(".hero")).forEach(el => {
       const o = { v: 0 };
       gsap.to(o, { v: +el.dataset.count, duration: 1.8, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 85%" }, onUpdate: () => { el.textContent = Math.round(o.v); } });
     });

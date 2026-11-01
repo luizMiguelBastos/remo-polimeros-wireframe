@@ -9,7 +9,7 @@ A home é um ponto de partida: hero com breve introdução e dois botões (**Con
 
 | Página | Conteúdo |
 |---|---|
-| `index.html` | Hero e cards "Explore a Remo" |
+| `index.html` | Hero com fotos dos setores alternando (geradas no Google Flow, só para simulação), cards "Explore a Remo" e contato |
 | `institucional.html` | Manifesto, números, missão, visão, valores, linha do tempo e depoimento |
 | `materiais.html` | Guia de seleção (tabela por segmento e exigência) e índice de resinas que abre ao clicar, com card 3D seguindo o cursor |
 | `produto.html?linha=abs` | Página de cada linha (troque `abs` por `abs-pc`, `asa`, `pbt`, `pc`, `pc-compostos`, `pmma`, `pom` ou `san`) |
