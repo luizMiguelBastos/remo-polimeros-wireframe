@@ -70,7 +70,7 @@
   const header = $("#header");
   let lastY = 0;
   const onScroll = y => {
-    if (header) { header.classList.toggle("hidden", y > lastY && y > 400); header.classList.toggle("scrolled", y > 60); }
+    if (header) header.classList.toggle("scrolled", y > 60);
     lastY = y;
   };
   if (lenis) lenis.on("scroll", e => onScroll(e.scroll));
@@ -404,48 +404,32 @@
     });
   }
 
-  // ---------- Aberturas das páginas: título letra a letra ----------
-  const splitChars = el => {
-    [...el.childNodes].forEach(n => {
-      if (n.nodeType === 3) {
-        const frag = document.createDocumentFragment();
-        [...n.textContent].forEach(c => {
-          if (c === " ") { frag.appendChild(document.createTextNode(" ")); return; }
-          const sp = document.createElement("span"); sp.className = "ch"; sp.textContent = c; frag.appendChild(sp);
-        });
-        n.replaceWith(frag);
-      } else if (n.nodeType === 1) splitChars(n);
-    });
-  };
-  $$(".page-hero h1").forEach(h => {
+  // ---------- Aberturas das páginas: mesmo movimento do hero principal ----------
+  $$(".page-hero").forEach(ph => {
     if (!motion) return;
-    $$(".line > span", h).forEach(splitChars);
-    const chars = $$(".ch", h);
-    gsap.from(chars, { yPercent: 120, rotate: 12, opacity: 0, duration: 1.1, ease: "expo.out", stagger: 0.022, delay: 0.15 });
-    gsap.from($$(".hl .ch", h), { color: "#FFFFFF", duration: 1.2, delay: 0.9, stagger: 0.02 });
-    const eb = $(".eyebrow", h.closest(".page-hero"));
-    if (eb) gsap.from(eb, { x: -30, opacity: 0, duration: 0.9, ease: "expo.out" });
+    gsap.from($$("h1 .line > span", ph), { yPercent: 110, duration: 1.2, ease: "expo.out", stagger: 0.1, delay: 0.1 });
+    gsap.from($$(".eyebrow, .crumbs", ph), { y: 20, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.08 });
   });
 
-  // ---------- Hero: a palavra final troca por sinônimos ----------
-  const swap = $("#hero-swap");
-  if (swap) {
-    const WORDS = ["sob medida.", "para você.", "personalizados.", "com precisão.", "do seu jeito."];
+  // ---------- Palavra que troca por sinônimos (hero e aberturas) ----------
+  $$(".swap[data-words]").forEach((swap, n) => {
+    const WORDS = swap.dataset.words.split("|");
     let wi = 0;
-    if (motion) setInterval(() => {
+    if (!motion || WORDS.length < 2) return;
+    setTimeout(() => setInterval(() => {
       wi = (wi + 1) % WORDS.length;
       const cur = $(".sw-word", swap);
       const next = document.createElement("span");
       next.className = "sw-word"; next.textContent = WORDS[wi];
-      next.style.position = "absolute"; next.style.left = "0"; next.style.top = "0";
+      next.style.position = "absolute"; next.style.left = "0"; next.style.top = "0"; next.style.whiteSpace = "nowrap";
       swap.appendChild(next);
-      gsap.timeline({ onComplete: () => { cur.remove(); next.style.position = ""; } })
+      gsap.timeline({ onComplete: () => { cur.remove(); next.style.position = ""; next.style.whiteSpace = ""; } })
         .to(cur, { yPercent: -110, opacity: 0, duration: 0.6, ease: "expo.in" })
         .fromTo(next, { yPercent: 110, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.35)
         .to(swap, { width: () => next.offsetWidth, duration: 0.6, ease: "expo.inOut" }, 0.2)
         .set(swap, { clearProps: "width" });
-    }, 3000);
-  }
+    }, 3000), 1800 + n * 150);
+  });
 
   // ---------- Botões magnéticos ----------
   if (motion && finePointer) {
@@ -463,15 +447,6 @@
     gsap.from(".hub-deco .hd-blue", { scaleX: 0, duration: 1.2, ease: "expo.inOut", scrollTrigger: { trigger: ".hub-head", start: "top 85%" } });
     gsap.from(".hub-dot", { scale: 0, rotate: 90, duration: 0.8, ease: "back.out(3)", delay: 0.5, scrollTrigger: { trigger: ".hub-head", start: "top 85%" } });
   }
-
-  // ---------- Manifesto do fim da página: palavras acendem com a rolagem ----------
-  $$(".end-manifesto [data-words]").forEach(p => {
-    const HL = ["certo", "começa", "aqui."];
-    p.innerHTML = p.textContent.trim().split(/\s+/).map(w => `<span class="w${HL.includes(w) ? " hl-w" : ""}">${w}</span>`).join(" ");
-    const ws = $$(".w", p);
-    if (!motion) { ws.forEach(w => (w.style.opacity = 1)); return; }
-    gsap.to(ws, { opacity: 1, stagger: 0.1, ease: "none", scrollTrigger: { trigger: p, start: "top 80%", end: "bottom 45%", scrub: 0.6 } });
-  });
 
   // ---------- Esteira de seções: rolagem lateral presa à rolagem (desktop) ----------
   const railTrack = $(".rail-track");
@@ -713,6 +688,35 @@
     mx.innerHTML = `<thead><tr><th scope="col"><span class="mono">Segmento / exigência</span></th>${REQ.map(r => `<th scope="col">${r[1]}</th>`).join("")}</tr></thead>
       <tbody>${SEG.map(s => `<tr><th scope="row">${s[1]}</th>${REQ.map(r => `<td>${cell(s[0], r[0])}</td>`).join("")}</tr>`).join("")}</tbody>`;
     if (motion) gsap.from($$("tbody tr", mx), { y: 30, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.08, scrollTrigger: { trigger: mx, start: "top 85%" } });
+  }
+
+  // ---------- Produtos: comparador de duas linhas ----------
+  const cmpA = $("#cmp-a"), cmpB = $("#cmp-b"), cmpT = $("#cmp-table");
+  if (cmpA && cmpB && cmpT) {
+    const PROPS = [["impacto", "Resistência ao impacto"], ["chama", "Anti-chama"], ["transparencia", "Transparência"], ["temperatura", "Alta temperatura"], ["rigidez", "Rigidez"], ["uv", "Uso externo (UV)"]];
+    const SEGN = { automotivo: "Automotivo", eletro: "Eletroeletrônicos", "linha-branca": "Linha branca", construcao: "Construção civil", embalagens: "Embalagens e cosméticos" };
+    const opts = M.map(m => `<option value="${m.id}">${m.name}</option>`).join("");
+    cmpA.innerHTML = opts; cmpB.innerHTML = opts;
+    cmpA.value = "abs"; cmpB.value = "pc";
+    const render = () => {
+      const a = M.find(m => m.id === cmpA.value), b = M.find(m => m.id === cmpB.value);
+      const cell = (m, k) => { const on = m.props.includes(k); return `<div class="cmp-cell"><span class="cmp-bar${on ? "" : " off"}"><i style="transform:scaleX(${on ? 1 : .12})"></i></span><span class="${on ? "ok" : "no"}">${on ? "Atende" : "Não indicado"}</span></div>`; };
+      const rows = [
+        `<div class="cmp-row cmp-head" role="row"><span>Linha</span><div class="cmp-cell"><div><b>${a.name}</b><small>${a.full}</small></div></div><div class="cmp-cell"><div><b>${b.name}</b><small>${b.full}</small></div></div></div>`,
+        ...PROPS.map(([k, label]) => `<div class="cmp-row" role="row"><span>${label}</span>${cell(a, k)}${cell(b, k)}</div>`),
+        `<div class="cmp-row" role="row"><span>Segmentos</span><div class="cmp-cell">${a.segments.map(x => SEGN[x]).join(", ")}</div><div class="cmp-cell">${b.segments.map(x => SEGN[x]).join(", ")}</div></div>`,
+        `<div class="cmp-row" role="row"><span>Grades e fichas</span><div class="cmp-cell">${a.grades.length} grades · ${a.sheets} fichas</div><div class="cmp-cell">${b.grades.length} grades · ${b.sheets} fichas</div></div>`,
+        `<div class="cmp-row" role="row"><span></span><div class="cmp-cell cmp-cta"><a class="btn sm" href="produto.html?linha=${a.id}">Ver ${a.name} <span class="arr">→</span></a></div><div class="cmp-cell cmp-cta"><a class="btn sm" href="produto.html?linha=${b.id}">Ver ${b.name} <span class="arr">→</span></a></div></div>`
+      ];
+      cmpT.innerHTML = rows.join("");
+      if (motion) {
+        gsap.from($$(".cmp-bar i", cmpT), { scaleX: 0, duration: 0.9, ease: "expo.out", stagger: 0.04 });
+        gsap.from($$(".cmp-head b", cmpT), { yPercent: 60, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.08 });
+      }
+    };
+    cmpA.addEventListener("change", render); cmpB.addEventListener("change", render);
+    render();
+    if (motion) gsap.from(cmpT, { y: 40, opacity: 0, duration: 1, ease: "expo.out", scrollTrigger: { trigger: cmpT, start: "top 85%" } });
   }
 
   // ---------- Formulário ----------
