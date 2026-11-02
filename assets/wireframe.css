@@ -1206,3 +1206,11 @@ html.tx-in .sheet { display: grid; }
 @media (max-width: 600px) { .preloader .word { font-size: 34vw; } }
 .hero { min-height: calc(100svh - 43px); }
 .hero-sector { top: 104px; bottom: auto; }
+
+
+/* ---------- v2.1: hero principal à esquerda, com contraste de tamanhos ---------- */
+.ph-home { flex-direction: column; align-items: flex-start; gap: 22px; }
+.hero .ph-home h1 { font-size: clamp(48px, 7vw, 112px); line-height: .9; }
+.hero .ph-home h1 .h-small { font-size: clamp(20px, 2.1vw, 32px); line-height: 1.15; letter-spacing: -.01em; margin-bottom: .25em; }
+.hero .ph-home h1 .h-big { letter-spacing: -.04em; }
+.ph-home .ph-side { flex: none; max-width: 520px; padding-bottom: 0; }

@@ -136,8 +136,7 @@
         .set(sheet, { display: "grid", yPercent: 100, opacity: 1 })
         .set(inner, { opacity: 1, y: 0 })
         .to(sheet, { yPercent: 0, duration: 0.75, ease: "expo.inOut" })
-        .from(words, { yPercent: 115, rotate: 6, duration: 0.7, ease: "expo.out", stagger: 0.06 }, "-=0.3")
-        .from(meta.children, { y: 20, opacity: 0, duration: 0.5, ease: "expo.out", stagger: 0.08 }, "-=0.5")
+        .from(meta.children, { y: 20, opacity: 0, duration: 0.5, ease: "expo.out", stagger: 0.08 }, "-=0.3")
         .to(cnt, { v: 100, duration: 0.6, ease: "power2.inOut", onUpdate: () => { count.textContent = Math.round(cnt.v); } }, "-=0.6");
     };
     // Chegando de outra página: a folha começa cobrindo e sai para cima
@@ -158,8 +157,7 @@
         setTimeout(ok, 1500);
       });
       ready.then(() => gsap.timeline({ onComplete: () => { gsap.set(sheet, { display: "none" }); document.documentElement.classList.remove("tx-in"); if (sheet.stopMol) sheet.stopMol(); } })
-        .to(words, { yPercent: -115, duration: 0.5, ease: "expo.in", stagger: 0.04, delay: 0.15 })
-        .to(meta.children, { y: -16, opacity: 0, duration: 0.35, ease: "power2.in", stagger: 0.05 }, "<")
+        .to(meta.children, { y: -16, opacity: 0, duration: 0.35, ease: "power2.in", stagger: 0.05, delay: 0.15 })
         .to(sheet, { yPercent: -100, duration: 0.8, ease: "expo.inOut" }, "-=0.15"));
       return true;
     };
