@@ -247,7 +247,7 @@
       W = host.clientWidth; H = host.clientHeight;
       cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       const n = Math.round(Math.min(90, W * H / 16000));
-      nodes = Array.from({ length: n }, () => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25, r: 1.2 + Math.random() * 2.2, y2: Math.random() < .06 }));
+      nodes = Array.from({ length: n }, () => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25, r: 1.2 + Math.random() * 2.2, y2: Math.random() < .45 }));
     };
     const LINK = 130;
     const draw = () => {
@@ -260,13 +260,13 @@
         const a = nodes[i];
         for (let j = i + 1; j < nodes.length; j++) {
           const b = nodes[j], d = Math.hypot(a.x - b.x, a.y - b.y);
-          if (d < LINK) { ctx.strokeStyle = ink ? `rgba(1,4,10,${(1 - d / LINK) * .12})` : `rgba(244,245,247,${(1 - d / LINK) * .1})`; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
+          if (d < LINK) { const al = (1 - d / LINK) * (ink ? .28 : .22); ctx.strokeStyle = a.y2 ? `rgba(255,209,0,${al})` : (ink ? `rgba(0,31,95,${al})` : `rgba(110,140,205,${al})`); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
         }
         const dm = Math.hypot(a.x - mx, a.y - my);
         if (dm < 180) { ctx.strokeStyle = `rgba(255,209,0,${(1 - dm / 180) * .35})`; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(mx, my); ctx.stroke(); }
       }
       for (const a of nodes) {
-        ctx.fillStyle = a.y2 ? "rgba(255,209,0,.85)" : (ink ? "rgba(1,4,10,.22)" : "rgba(244,245,247,.22)");
+        ctx.fillStyle = a.y2 ? "rgba(255,209,0,.85)" : (ink ? "rgba(0,31,95,.55)" : "rgba(110,140,205,.65)");
         ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2); ctx.fill();
       }
     };
@@ -453,18 +453,21 @@
     gsap.from(".hub-dot", { scale: 0, rotate: 90, duration: 0.8, ease: "back.out(3)", delay: 0.5, scrollTrigger: { trigger: ".hub-head", start: "top 85%" } });
   }
 
-  // ---------- Escolha por onde começar: letreiro e cards em velocidades diferentes ----------
-  const hmTrack = $(".hm-track");
-  if (hmTrack && motion) {
-    const loopTw = gsap.to(hmTrack, { xPercent: -50, duration: 40, ease: "none", repeat: -1 });
-    ScrollTrigger.create({ trigger: ".hub", start: "top bottom", end: "bottom top", onUpdate: st => { loopTw.timeScale(1 + Math.abs(st.getVelocity()) / 250); gsap.to(loopTw, { timeScale: 1, duration: 1.2, overwrite: true }); } });
+  // ---------- Escolha por onde começar: cards em velocidades diferentes ----------
+  if ($(".hub-grid") && motion) {
     gsap.matchMedia().add("(min-width: 901px)", () => {
       $$(".hub-grid .hub-card").forEach((c, k) => {
-        const col = k % 3, amt = [8, -6, 12][col];
+        const amt = [8, -6, 12][k % 3];
         gsap.fromTo(c, { yPercent: amt }, { yPercent: -amt, ease: "none", scrollTrigger: { trigger: ".hub-grid", start: "top bottom", end: "bottom top", scrub: 1 } });
       });
     });
   }
+
+  // ---------- Footer: voltar ao topo ----------
+  $$("[data-top]").forEach(a => a.addEventListener("click", e => {
+    e.preventDefault(); e.stopPropagation();
+    if (lenis) lenis.scrollTo(0, { duration: 1.6 }); else scrollTo({ top: 0, behavior: "smooth" });
+  }));
 
   // ---------- Esteira de seções: rolagem lateral presa à rolagem (desktop) ----------
   const railTrack = $(".rail-track");
