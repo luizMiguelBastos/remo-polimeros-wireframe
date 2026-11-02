@@ -289,6 +289,85 @@
     });
   }
 
+  // ---------- Aberturas das páginas: título letra a letra ----------
+  const splitChars = el => {
+    [...el.childNodes].forEach(n => {
+      if (n.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        [...n.textContent].forEach(c => {
+          if (c === " ") { frag.appendChild(document.createTextNode(" ")); return; }
+          const sp = document.createElement("span"); sp.className = "ch"; sp.textContent = c; frag.appendChild(sp);
+        });
+        n.replaceWith(frag);
+      } else if (n.nodeType === 1) splitChars(n);
+    });
+  };
+  $$(".page-hero h1").forEach(h => {
+    if (!motion) return;
+    $$(".line > span", h).forEach(splitChars);
+    const chars = $$(".ch", h);
+    gsap.from(chars, { yPercent: 120, rotate: 12, opacity: 0, duration: 1.1, ease: "expo.out", stagger: 0.022, delay: 0.15 });
+    gsap.from($$(".hl .ch", h), { color: "#FFFFFF", duration: 1.2, delay: 0.9, stagger: 0.02 });
+    const eb = $(".eyebrow", h.closest(".page-hero"));
+    if (eb) gsap.from(eb, { x: -30, opacity: 0, duration: 0.9, ease: "expo.out" });
+  });
+
+  // ---------- Hero: a palavra final troca por sinônimos ----------
+  const swap = $("#hero-swap");
+  if (swap) {
+    const WORDS = ["sob medida.", "para você.", "personalizados.", "com precisão.", "do seu jeito."];
+    let wi = 0;
+    if (motion) setInterval(() => {
+      wi = (wi + 1) % WORDS.length;
+      const cur = $(".sw-word", swap);
+      const next = document.createElement("span");
+      next.className = "sw-word"; next.textContent = WORDS[wi];
+      next.style.position = "absolute"; next.style.left = "0"; next.style.top = "0";
+      swap.appendChild(next);
+      gsap.timeline({ onComplete: () => { cur.remove(); next.style.position = ""; } })
+        .to(cur, { yPercent: -110, opacity: 0, duration: 0.6, ease: "expo.in" })
+        .fromTo(next, { yPercent: 110, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.35)
+        .to(swap, { width: () => next.offsetWidth, duration: 0.6, ease: "expo.inOut" }, 0.2)
+        .set(swap, { clearProps: "width" });
+    }, 3000);
+  }
+
+  // ---------- Botões magnéticos ----------
+  if (motion && finePointer) {
+    $$(".btn").forEach(btn => {
+      btn.addEventListener("pointermove", e => {
+        const r = btn.getBoundingClientRect();
+        gsap.to(btn, { x: (e.clientX - r.left - r.width / 2) * 0.25, y: (e.clientY - r.top - r.height / 2) * 0.35, duration: 0.4, ease: "power3.out" });
+      });
+      btn.addEventListener("pointerleave", () => gsap.to(btn, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.4)" }));
+    });
+  }
+
+  // ---------- Escolha por onde começar: detalhes ----------
+  if (motion && $(".hub-deco")) {
+    gsap.from(".hub-deco .hd-blue", { scaleX: 0, duration: 1.2, ease: "expo.inOut", scrollTrigger: { trigger: ".hub-head", start: "top 85%" } });
+    gsap.from(".hub-dot", { scale: 0, rotate: 90, duration: 0.8, ease: "back.out(3)", delay: 0.5, scrollTrigger: { trigger: ".hub-head", start: "top 85%" } });
+  }
+
+  // ---------- Manifesto do fim da página: palavras acendem com a rolagem ----------
+  $$(".end-manifesto [data-words]").forEach(p => {
+    const HL = ["certo", "começa", "aqui."];
+    p.innerHTML = p.textContent.trim().split(/\s+/).map(w => `<span class="w${HL.includes(w) ? " hl-w" : ""}">${w}</span>`).join(" ");
+    const ws = $$(".w", p);
+    if (!motion) { ws.forEach(w => (w.style.opacity = 1)); return; }
+    gsap.to(ws, { opacity: 1, stagger: 0.1, ease: "none", scrollTrigger: { trigger: p, start: "top 80%", end: "bottom 45%", scrub: 0.6 } });
+  });
+
+  // ---------- Esteira de seções: rolagem lateral presa à rolagem (desktop) ----------
+  const railTrack = $(".rail-track");
+  if (railTrack && motion) {
+    gsap.matchMedia().add("(min-width: 901px)", () => {
+      const dist = () => Math.max(0, railTrack.scrollWidth - innerWidth + 24);
+      gsap.to(railTrack, { x: () => -dist(), ease: "none", scrollTrigger: { trigger: ".rail-pin", start: "top top", end: () => "+=" + dist(), pin: true, scrub: 1, invalidateOnRefresh: true } });
+    });
+    gsap.from($$(".rail-card", railTrack), { y: 60, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.08, scrollTrigger: { trigger: railTrack, start: "top 85%" } });
+  }
+
   // ---------- Cards da home: inclinação seguindo o cursor ----------
   if (motion && matchMedia("(hover: hover)").matches) {
     $$(".hub-card").forEach(card => {
@@ -319,7 +398,7 @@
 
     // Títulos em linhas e revelação genérica (fora do hero)
     $$("[data-lines]").forEach(h => {
-      if (h.closest(".hero")) return;
+      if (h.closest(".hero") || h.closest(".page-hero")) return;
       gsap.from($$(".line > span", h), { yPercent: 110, duration: 1.1, ease: "expo.out", stagger: 0.08, scrollTrigger: { trigger: h, start: "top 85%" } });
     });
     $$("[data-reveal]").forEach(el => {
@@ -517,47 +596,6 @@
     };
     idx.addEventListener("click", e => { const h = e.target.closest(".mat-head"); if (h) toggle(h.closest(".mat-row")); });
 
-    // Card flutuante que segue o cursor.
-    // Visibilidade decidida pelo elemento sob o ponteiro (inclusive ao rolar sem mexer o mouse);
-    // overwrite evita que a animação de entrada vença a de saída.
-    const fl = $("#mat-float");
-    if (fl && finePointer && motion) {
-      const mf3d = makePellet3D($(".mf-stage", fl), $("#mf-canvas"), { distance: 5.6 });
-      if (mf3d) { $(".mf-stage", fl).classList.add("has3d"); mf3d.paused = true; }
-      const xTo = gsap.quickTo(fl, "x", { duration: 0.5, ease: "power3" });
-      const yTo = gsap.quickTo(fl, "y", { duration: 0.5, ease: "power3" });
-      let px = -1, py = -1, shown = null;
-      const hide = () => {
-        if (shown === null) return;
-        shown = null;
-        if (mf3d) setTimeout(() => { if (shown === null) mf3d.paused = true; }, 300);
-        gsap.to(fl, { opacity: 0, scale: 0.8, duration: 0.25, ease: "power2.out", overwrite: "auto" });
-      };
-      const sync = () => {
-        const el = px < 0 ? null : document.elementFromPoint(px, py);
-        const head = el && el.closest("#mat-index .mat-head");
-        const row = head && head.closest(".mat-row");
-        if (!row || row.classList.contains("open")) return hide();
-        if (shown === row.dataset.id) return;
-        shown = row.dataset.id;
-        const m = M.find(x => x.id === shown);
-        $("#mf-name").textContent = m.name;
-        $("#mf-props").textContent = m.traits.slice(0, 3).join(" · ");
-        $("#mf-pellet").style.setProperty("--c", LOOK[m.id] || "#888");
-        $("#mf-pellet").style.setProperty("--gloss", 0.8);
-        if (mf3d) {
-          const v = (LOOK[m.id] || LOOK.abs).match(/[\d.]+/g).map(Number);
-          mf3d.target.color.setRGB(v[0] / 255, v[1] / 255, v[2] / 255).convertSRGBToLinear(); mf3d.target.a = v[3];
-          mf3d.mat.roughness = v[3] < 0.6 ? 0.05 : 0.28;
-          mf3d.paused = false; mf3d.spin();
-        }
-        gsap.to(fl, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.6)", overwrite: "auto" });
-      };
-      addEventListener("pointermove", e => { px = e.clientX; py = e.clientY; xTo(px + 28); yTo(py - 140); sync(); }, { passive: true });
-      document.documentElement.addEventListener("pointerleave", () => { px = -1; hide(); });
-      if (lenis) lenis.on("scroll", sync); else addEventListener("scroll", sync, { passive: true });
-      idx.addEventListener("click", () => setTimeout(sync, 0));
-    } else if (fl) fl.remove();
   }
 
 

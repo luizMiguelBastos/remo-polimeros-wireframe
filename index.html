@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Início · Remo Polímeros · Wireframe v1.2</title>
+  <title>Início · Remo Polímeros · Wireframe v1.3</title>
   <meta name="description" content="Remo Polímeros: polímeros de engenharia feitos sob medida.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
-  <link rel="stylesheet" href="assets/wireframe.css?v=1.2">
+  <link rel="stylesheet" href="assets/wireframe.css?v=1.3">
 </head>
 <body class="is-loading">
 
@@ -38,7 +38,7 @@
 <div class="cursor" id="cursor" aria-hidden="true"><span id="cursor-label"></span></div>
 
 <div class="wf-bar" role="region" aria-label="Controles do wireframe">
-  <strong>WIREFRAME v1.2</strong> · Home com seções em páginas · imagens simuladas (Google Flow)
+  <strong>WIREFRAME v1.3</strong> · Home com seções em páginas · imagens simuladas (Google Flow)
   <a href="index.html">Início</a>
   <span class="spacer"></span>
   <button type="button" id="replay">Rever abertura</button>
@@ -59,8 +59,8 @@
       <a href="onde-atuamos.html">Onde atuamos</a>
       <a href="contato.html">Contato</a>
     </nav>
-    <a href="valores.html#qualidade" class="iso-badge" title="Certificação ISO"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22.5" fill="none" stroke="currentColor" stroke-opacity=".35"/><circle cx="24" cy="24" r="18" fill="none" stroke="#FFD100" stroke-width="1.5" stroke-dasharray="80 200" transform="rotate(-90 24 24)"/><circle cx="24" cy="6" r="1.6" fill="#FFD100"/><text x="24" y="28.5" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" font-weight="700" font-stretch="125%" fill="currentColor">ISO</text></svg><span><b>ISO 9001:2015*</b><small>Certificada</small></span></a>
-    <a href="contato.html?tipo=amostra" class="btn sm">Solicitar amostra <span class="arr">→</span></a>
+    <a href="produtos.html" class="btn sm hdr-main">Produtos <span class="arr">→</span></a>
+    <a href="contato.html" class="btn ghost sm hdr-sub">Contato</a>
     <button class="btn ghost sm menu-toggle" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
   </div>
 </header>
@@ -82,7 +82,7 @@
     <div class="eyebrow">Polímeros especiais · Desde 1989</div>
     <h1 data-lines>
       <span class="line"><span>Polímeros de engenharia,</span></span>
-      <span class="line"><span class="hl">feitos sob medida.</span></span>
+      <span class="line"><span class="hl">feitos <span class="swap" id="hero-swap" aria-live="polite"><span class="sw-word">sob medida.</span></span></span></span>
     </h1>
     <p class="lead" data-reveal>Dureza, cor e performance exatas para o seu projeto. Fabricamos, desenvolvemos e distribuímos resinas especiais com tecnologia de padrão global.</p>
     <div class="hero-ctas" data-reveal>
@@ -98,9 +98,9 @@
 <section id="explorar" class="hub light">
   <div class="wrap">
     <div class="eyebrow">Explore a Remo</div>
-    <div class="sec-head">
-      <h2 data-reveal>Escolha por onde começar.</h2>
-      <p class="lead" data-reveal>Cada seção é uma página própria. Vá direto ao que interessa.</p>
+    <div class="hub-head">
+      <h2 data-lines><span class="line"><span>Escolha por</span></span><span class="line"><span>onde começar<i class="hub-dot" aria-hidden="true"></i></span></span></h2>
+      <div class="hub-deco" aria-hidden="true"><i class="hd-blue"></i><span class="mono">06 seções</span></div>
     </div>
     <div class="hub-grid">
       <a class="hub-card" href="produtos.html" data-cursor="Abrir">
@@ -219,7 +219,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<script src="assets/data.js?v=1.2"></script>
-<script src="assets/wireframe.js?v=1.2"></script>
+<script src="assets/data.js?v=1.3"></script>
+<script src="assets/wireframe.js?v=1.3"></script>
 </body>
 </html>

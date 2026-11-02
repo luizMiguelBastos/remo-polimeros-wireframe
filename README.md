@@ -1,16 +1,16 @@
-# Remo Polímeros · Wireframe v1.2
+# Remo Polímeros · Wireframe v1.3
 
 Wireframe do novo site da Remo Polímeros para validar **usabilidade**, **navegação**, **onde fica cada informação** e a **identidade visual** antes de entrarem fotos reais, vídeos e os movimentos finais.
 
 **Link:** https://luizmiguelbastos.github.io/remo-polimeros-wireframe/
 
-## Estrutura (v1.2)
+## Estrutura (v1.3)
 A home é um ponto de partida: hero com fotos dos setores alternando, dois botões (**Conheça a Remo** e **Com o que trabalhamos**) e 6 cards, um para cada seção. Cada seção é uma página própria.
 
 | Página | Conteúdo |
 |---|---|
 | `index.html` | Hero com fotos dos setores alternando, cards "Escolha por onde começar" e contato |
-| `produtos.html` | Guia de seleção (tabela por segmento e exigência) e índice de resinas que abre ao clicar, com card 3D seguindo o cursor |
+| `produtos.html` | Índice de resinas que abre ao clicar, com grades e fichas técnicas |
 | `produto.html?linha=abs` | Página de cada linha (troque `abs` por `abs-pc`, `asa`, `pbt`, `pc`, `pc-compostos`, `pmma`, `pom` ou `san`) |
 | `historia.html` | Manifesto, faixa em parallax, números, linha do tempo com fotos e depoimento |
 | `valores.html` | Missão, visão e valores, compromisso ambiental e certificação ISO 9001:2015* |
@@ -18,11 +18,11 @@ A home é um ponto de partida: hero com fotos dos setores alternando, dois botõ
 | `onde-atuamos.html` | "A Remo está em todo lugar": um dia com a Remo e os 5 segmentos com as resinas indicadas |
 | `contato.html` | Formulário por tipo de pedido, informações e FAQ |
 
-Os endereços antigos (`materiais`, `institucional`, `como-trabalhamos`, `laboratorio`, `qualidade` e `guia`) redirecionam para as páginas novas. O formulário de contato aparece no fim de todas as páginas.
+Os endereços antigos (`materiais`, `institucional`, `como-trabalhamos`, `laboratorio`, `qualidade` e `guia`) redirecionam para as páginas novas. No fim de cada página há um manifesto, uma esteira com as outras seções e o formulário de contato.
 
 ## Identidade visual
 - **Tipografia:** Archivo (títulos em largura expandida, textos em largura normal) + IBM Plex Mono (dados técnicos)
-- **Paleta:** Preto `#000000` (base) · Navy `#001F5F` (logo e detalhes nas seções brancas) · Signal Yellow `#FFD100` (só destaque sobre o preto) · Slate `#4A5468` · Steel `#A3ABBC` · Polymer White `#F4F5F7`
+- **Paleta:** Preto `#000000` (base) · Navy `#001F5F` (logo e detalhes nas seções brancas) · Azul `#2A5BD7` (detalhes sobre o preto) · Signal Yellow `#FFD100` (só destaque sobre o preto) · Slate `#4A5468` · Steel `#A3ABBC` · Polymer White `#F4F5F7`
 - **Movimento:** abertura com a logo na primeira visita, transição com a logo entre páginas, rolagem suave (Lenis) e animações ligadas à rolagem (GSAP ScrollTrigger). Respeita "reduzir movimento" do sistema.
 - **Texturas:** grão de filme, grade técnica nos fundos escuros e papel pontilhado nos claros.
 - **Imagens:** simuladas no Google Flow (hero, aberturas das páginas, cards, contato, linha do tempo, meio ambiente, dureza e segmentos). Serão trocadas por fotos reais.
