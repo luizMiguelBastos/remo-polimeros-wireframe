@@ -1214,3 +1214,10 @@ html.tx-in .sheet { display: grid; }
 .hero .ph-home h1 .h-small { font-size: clamp(20px, 2.1vw, 32px); line-height: 1.15; letter-spacing: -.01em; margin-bottom: .25em; }
 .hero .ph-home h1 .h-big { letter-spacing: -.04em; }
 .ph-home .ph-side { flex: none; max-width: 520px; padding-bottom: 0; }
+
+
+/* ---------- v2.2: proporção do título e subtítulo na largura do título ---------- */
+.hero .ph-home h1 { font-size: clamp(44px, 5.6vw, 88px); }
+.hero .ph-home h1 .h-small { font-size: clamp(28px, 3.1vw, 48px); line-height: 1.05; letter-spacing: -.02em; margin-bottom: .12em; }
+.ph-home .ph-side { max-width: none; }
+.ph-home .ph-side .lead { font-size: clamp(17px, 1.3vw, 20px); line-height: 1.55; max-width: none; }

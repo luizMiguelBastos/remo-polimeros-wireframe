@@ -457,6 +457,14 @@
     if (motion) gsap.from($$(".ch", big), { yPercent: 115, rotate: 6, duration: 1.1, ease: "expo.out", stagger: 0.05, delay: big.closest(".hero") ? 0.2 : 0.1 });
   });
 
+  // ---------- Hero principal: subtítulo com a mesma largura da linha grande do título ----------
+  const bigLine = $(".hero .h-big"), heroLead = $(".ph-home .ph-side .lead");
+  if (bigLine && heroLead) {
+    const fit = () => { heroLead.style.width = Math.max(280, Math.round(bigLine.getBoundingClientRect().width)) + "px"; heroLead.style.maxWidth = "100%"; };
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(fit);
+    addEventListener("resize", fit);
+  }
+
   // ---------- Palavra que troca por sinônimos (hero e aberturas) ----------
   $$(".swap[data-words]").forEach((swap, n) => {
     const WORDS = swap.dataset.words.split("|");
