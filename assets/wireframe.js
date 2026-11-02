@@ -98,17 +98,47 @@
     if (!sheet || !motion) { if (sheet) sheet.remove(); return null; }
     const words = $$(".word span", sheet), inner = $(".sheet-inner", sheet), count = $("#sheet-count");
     let busy = false;
+    // Nome da página de destino e moléculas animadas na folha
+    const PAGE = { "index.html": "Início", "": "Início", "produtos.html": "Produtos", "produto.html": "Produtos", "historia.html": "História", "valores.html": "Valores", "tecnologias.html": "Tecnologias", "onde-atuamos.html": "Onde atuamos", "contato.html": "Contato" };
+    const dest = $("#sheet-dest"), meta = $(".sheet-meta", sheet), molC = $("#sheet-mol", sheet);
+    const pageName = href => PAGE[new URL(href, location.href).pathname.split("/").pop()] || "Remo";
+    let molOn = false;
+    if (molC) {
+      const mctx = molC.getContext("2d");
+      let nodes = [];
+      const seed = () => {
+        const dpr = Math.min(devicePixelRatio || 1, 2);
+        molC.width = innerWidth * dpr; molC.height = innerHeight * dpr; mctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        nodes = Array.from({ length: 46 }, () => ({ x: Math.random() * innerWidth, y: Math.random() * innerHeight, vx: (Math.random() - .5) * 1.4, vy: (Math.random() - .5) * 1.4, r: 1.6 + Math.random() * 2.6, y2: Math.random() < .45 }));
+      };
+      const tick = () => {
+        if (!molOn) return;
+        mctx.clearRect(0, 0, innerWidth, innerHeight); mctx.lineCap = "round";
+        for (const a of nodes) { a.x += a.vx; a.y += a.vy; if (a.x < 0 || a.x > innerWidth) a.vx *= -1; if (a.y < 0 || a.y > innerHeight) a.vy *= -1; }
+        for (let i = 0; i < nodes.length; i++) for (let k = i + 1; k < nodes.length; k++) {
+          const a = nodes[i], b = nodes[k], d = Math.hypot(a.x - b.x, a.y - b.y);
+          if (d < 170) { const al = (1 - d / 170) * .32; mctx.strokeStyle = a.y2 ? `rgba(255,209,0,${al})` : `rgba(0,31,95,${al})`; mctx.lineWidth = 1.2; mctx.beginPath(); mctx.moveTo(a.x, a.y); mctx.lineTo(b.x, b.y); mctx.stroke(); }
+        }
+        for (const a of nodes) { mctx.fillStyle = a.y2 ? "rgba(255,209,0,.9)" : "rgba(0,31,95,.6)"; mctx.beginPath(); mctx.arc(a.x, a.y, a.r, 0, Math.PI * 2); mctx.fill(); }
+        requestAnimationFrame(tick);
+      };
+      sheet.startMol = () => { seed(); molOn = true; tick(); };
+      sheet.stopMol = () => { molOn = false; };
+    }
     const leave = url => {
       if (busy) return;
       busy = true;
       if (lenis) lenis.stop();
+      if (dest) dest.textContent = pageName(url);
+      if (sheet.startMol) sheet.startMol();
       const cnt = { v: 0 };
       gsap.timeline({ onComplete: () => { try { sessionStorage.setItem("remo-nav", "1"); } catch (e) {} location.href = url; } })
         .set(sheet, { display: "grid", yPercent: 100, opacity: 1 })
         .set(inner, { opacity: 1, y: 0 })
         .to(sheet, { yPercent: 0, duration: 0.75, ease: "expo.inOut" })
-        .from(words, { yPercent: 110, duration: 0.5, ease: "expo.out", stagger: 0.05 }, "-=0.25")
-        .to(cnt, { v: 100, duration: 0.6, ease: "power2.inOut", onUpdate: () => { count.textContent = Math.round(cnt.v); } }, "-=0.45");
+        .from(words, { yPercent: 115, rotate: 6, duration: 0.7, ease: "expo.out", stagger: 0.06 }, "-=0.3")
+        .from(meta.children, { y: 20, opacity: 0, duration: 0.5, ease: "expo.out", stagger: 0.08 }, "-=0.5")
+        .to(cnt, { v: 100, duration: 0.6, ease: "power2.inOut", onUpdate: () => { count.textContent = Math.round(cnt.v); } }, "-=0.6");
     };
     // Chegando de outra página: a folha começa cobrindo e sai para cima
     const enter = () => {
@@ -116,10 +146,13 @@
       try { from = sessionStorage.getItem("remo-nav") === "1"; sessionStorage.removeItem("remo-nav"); } catch (e) {}
       if (!from) return false;
       count.textContent = "100";
-      gsap.timeline({ onComplete: () => gsap.set(sheet, { display: "none" }) })
+      if (dest) dest.textContent = pageName(location.href);
+      if (sheet.startMol) sheet.startMol();
+      gsap.timeline({ onComplete: () => { gsap.set(sheet, { display: "none" }); if (sheet.stopMol) sheet.stopMol(); } })
         .set(sheet, { display: "grid", yPercent: 0, opacity: 1 })
-        .to(inner, { opacity: 0, y: -24, duration: 0.35, ease: "power2.in", delay: 0.1 })
-        .to(sheet, { yPercent: -100, duration: 0.8, ease: "expo.inOut" });
+        .to(words, { yPercent: -115, duration: 0.5, ease: "expo.in", stagger: 0.04, delay: 0.15 })
+        .to(meta.children, { y: -16, opacity: 0, duration: 0.35, ease: "power2.in", stagger: 0.05 }, "<")
+        .to(sheet, { yPercent: -100, duration: 0.8, ease: "expo.inOut" }, "-=0.15");
       return true;
     };
     // Voltar pelo navegador pode restaurar a página com a folha cobrindo
@@ -410,6 +443,12 @@
     if (!motion) return;
     gsap.from($$("h1 .line > span", ph), { yPercent: 110, duration: 1.2, ease: "expo.out", stagger: 0.1, delay: 0.1 });
     gsap.from($$(".eyebrow, .crumbs", ph), { y: 20, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.08 });
+  });
+
+  // ---------- Palavra grande das aberturas: letras sobem ----------
+  $$(".ph-big").forEach(big => {
+    big.innerHTML = [...big.textContent].map(c => `<span class="ch">${c}</span>`).join("");
+    if (motion) gsap.from($$(".ch", big), { yPercent: 115, rotate: 6, duration: 1.1, ease: "expo.out", stagger: 0.05, delay: big.closest(".hero") ? 0.2 : 0.1 });
   });
 
   // ---------- Palavra que troca por sinônimos (hero e aberturas) ----------
