@@ -1221,3 +1221,7 @@ html.tx-in .sheet { display: grid; }
 .hero .ph-home h1 .h-small { font-size: clamp(28px, 3.1vw, 48px); line-height: 1.05; letter-spacing: -.02em; margin-bottom: .12em; }
 .ph-home .ph-side { max-width: none; }
 .ph-home .ph-side .lead { font-size: clamp(17px, 1.3vw, 20px); line-height: 1.55; max-width: none; }
+
+/* ---------- v2.3: Explore embaixo à direita, setores em cima à esquerda ---------- */
+.hero-scroll { left: auto; right: max(24px, calc((100vw - var(--max)) / 2 + 24px)); bottom: 28px; transform: none; }
+.hero-sector { top: 104px; bottom: auto; right: auto; left: max(24px, calc((100vw - var(--max)) / 2 + 24px)); }
