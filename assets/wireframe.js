@@ -173,6 +173,8 @@
     if (!motion) return;
     gsap.from(".hero [data-lines] .line > span", { yPercent: 110, duration: 1.2, ease: "expo.out", stagger: 0.1 });
     gsap.from(".hero [data-reveal]", { y: 30, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.12, delay: 0.35 });
+    if ($(".h-sep")) gsap.from(".h-sep", { scaleX: 0, duration: 1, ease: "expo.inOut", delay: 0.5 });
+    if ($(".hero-scroll")) gsap.from(".hero-scroll", { y: 20, opacity: 0, duration: 1, ease: "expo.out", delay: 0.9 });
   };
   const endIntro = () => {
     document.body.classList.remove("is-loading");
@@ -474,6 +476,7 @@
     setTimeout(() => setInterval(() => {
       if (busy || document.hidden) return;
       busy = true;
+      if (swap.id === "hero-swap" && $(".h-sep")) gsap.to(".h-sep", { width: 96, duration: 0.35, ease: "power2.out", yoyo: true, repeat: 1 });
       $$(".sw-word", swap).slice(0, -1).forEach(w => w.remove());
       wi = (wi + 1) % WORDS.length;
       const cur = $(".sw-word", swap);
