@@ -261,17 +261,13 @@
         $("#hs-no").textContent = String(n + 1).padStart(2, "0");
         $("#hs-label").textContent = slides[n].dataset.label;
         if (hasGsap && motion) {
-          gsap.fromTo(slides[n], { scale: 1.12 }, { scale: 1, duration: DUR + 1.5, ease: "none" });
+          gsap.fromTo(slides[n], { scale: 1.03 }, { scale: 1, duration: DUR + 1.5, ease: "none" });
           gsap.fromTo("#hs-label", { yPercent: 100, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.8, ease: "expo.out" });
           gsap.fromTo("#hs-bar", { scaleX: 0 }, { scaleX: 1, duration: DUR, ease: "none" });
         }
       };
       show(0);
-      let hold = false;
-      const heroEl = document.querySelector(".hero");
-      heroEl.addEventListener("pointerenter", () => { hold = true; gsap.getTweensOf("#hs-bar").forEach(t => t.pause()); });
-      heroEl.addEventListener("pointerleave", () => { hold = false; gsap.getTweensOf("#hs-bar").forEach(t => t.resume()); });
-      if (slides.length > 1 && motion) setInterval(() => { if (hold) return; i = (i + 1) % slides.length; show(i); }, DUR * 1000);
+      if (slides.length > 1 && motion) setInterval(() => { i = (i + 1) % slides.length; show(i); }, DUR * 1000);
     });
   }
 
@@ -364,10 +360,10 @@
   // ---------- Hero: parallax em camadas seguindo o mouse ----------
   const heroBox = $(".hero");
   if (heroBox && motion && finePointer) {
-    const layers = [[".hero-slides", -24, -14], ["#field", -24, -14], [".hero-inner", 14, 8], [".hero-sector", 26, 14]]
+    const layers = [[".hero-slides", -8, -5], ["#field", -8, -5], [".hero-inner", 5, 3], [".hero-sector", 8, 4]]
       .map(([sel, ax, ay]) => { const el = $(sel, heroBox); return el && { x: gsap.quickTo(el, "x", { duration: 1.2, ease: "power3" }), y: gsap.quickTo(el, "y", { duration: 1.2, ease: "power3" }), ax, ay }; })
       .filter(Boolean);
-    gsap.set($(".hero-slides", heroBox), { scale: 1.06 });
+    gsap.set($(".hero-slides", heroBox), { scale: 1.02 });
     heroBox.addEventListener("pointermove", e => {
       const nx = e.clientX / innerWidth - .5, ny = e.clientY / innerHeight - .5;
       layers.forEach(l => { l.x(nx * l.ax); l.y(ny * l.ay); });

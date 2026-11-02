@@ -1265,3 +1265,8 @@ html.tx-in .sheet { display: grid; }
 @keyframes hsDraw2 { 0% { transform: scaleY(0); opacity: 1; } 55% { transform: scaleY(1); opacity: 1; } 85% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: .25; } }
 @keyframes hsHead2 { 0%, 45% { transform: translateY(0); } 60% { transform: translateY(5px); } 75%, 100% { transform: translateY(0); } }
 .hero-scroll:hover { border-color: var(--yellow); }
+
+
+/* ---------- v2.7: degradê preto na base das fotos ---------- */
+.hero .veil { background: linear-gradient(0deg, rgba(0,0,0,.9) 0%, rgba(0,0,0,.6) 24%, rgba(0,0,0,.25) 44%, rgba(0,0,0,0) 62%); }
+.page-hero.photo .ph-veil { background: linear-gradient(0deg, rgba(0,0,0,.9) 0%, rgba(0,0,0,.6) 26%, rgba(0,0,0,.25) 48%, rgba(0,0,0,0) 66%); }
