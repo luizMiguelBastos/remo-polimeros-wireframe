@@ -1270,3 +1270,9 @@ html.tx-in .sheet { display: grid; }
 /* ---------- v2.7: degradê preto na base das fotos ---------- */
 .hero .veil { background: linear-gradient(0deg, rgba(0,0,0,.9) 0%, rgba(0,0,0,.6) 24%, rgba(0,0,0,.25) 44%, rgba(0,0,0,0) 62%); }
 .page-hero.photo .ph-veil { background: linear-gradient(0deg, rgba(0,0,0,.9) 0%, rgba(0,0,0,.6) 26%, rgba(0,0,0,.25) 48%, rgba(0,0,0,0) 66%); }
+
+
+/* ---------- v2.8: seta presa ao bloco do hero, na altura dos botões em qualquer tela ---------- */
+.hero-inner { --hib: clamp(48px, 8vh, 80px); padding-bottom: var(--hib); }
+.hero-inner > .hero-scroll { position: absolute; left: auto; right: 24px; bottom: var(--hib); transform: none; z-index: 2; }
+@media (max-width: 600px) { .hero-inner { --hib: 72px; } .hero-inner > .hero-scroll { right: 16px; } }
