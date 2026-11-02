@@ -174,7 +174,7 @@
     gsap.from(".hero [data-lines] .line > span", { yPercent: 110, duration: 1.2, ease: "expo.out", stagger: 0.1 });
     gsap.from(".hero [data-reveal]", { y: 30, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.12, delay: 0.35 });
     if ($(".h-sep")) gsap.from(".h-sep", { scaleX: 0, duration: 1, ease: "expo.inOut", delay: 0.5 });
-    if ($(".hero-scroll")) gsap.fromTo(".hero-scroll .hs-line", { y: 20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 1, ease: "expo.out", delay: 0.9, clearProps: "opacity,visibility,transform" });
+    if ($(".hero-scroll")) gsap.fromTo(".hero-scroll", { y: 20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 1, ease: "expo.out", delay: 0.9, clearProps: "opacity,visibility,transform" });
   };
   const endIntro = () => {
     document.body.classList.remove("is-loading");
@@ -520,6 +520,17 @@
   if (cue) {
     const hideCue = y => cue.classList.toggle("gone", y > 40);
     if (lenis) lenis.on("scroll", e => hideCue(e.scroll)); else addEventListener("scroll", () => hideCue(scrollY), { passive: true });
+  }
+
+  // ---------- Hero: "Explore" centralizado na altura do subtítulo ----------
+  const cueEl = $(".hero-inner > .hero-scroll"), leadEl = $(".ph-home .ph-side .lead");
+  if (cueEl && leadEl) {
+    const alignCue = () => {
+      const box = cueEl.parentElement.getBoundingClientRect(), l = leadEl.getBoundingClientRect(), c = cueEl.getBoundingClientRect();
+      cueEl.style.bottom = Math.round(box.bottom - l.bottom + (l.height - c.height) / 2) + "px";
+    };
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(alignCue);
+    addEventListener("resize", alignCue);
   }
 
   // ---------- Footer: voltar ao topo ----------

@@ -1283,3 +1283,9 @@ html.tx-in .sheet { display: grid; }
 .hero-scroll.gone { pointer-events: none; background: transparent; border-color: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
 .hero-scroll .hs-line { transition: opacity .5s; }
 .hero-scroll.gone .hs-line { opacity: 0; }
+
+
+/* ---------- v3.0: volta o Explore com o tracinho que desce, na altura dos botões ---------- */
+.hero-inner > .hero-scroll { display: flex; align-items: center; gap: 10px; padding: 0; border: 0; border-radius: 0; background: none; -webkit-backdrop-filter: none; backdrop-filter: none; font: 12px var(--f-mono); color: var(--steel); text-decoration: none; transition: opacity .5s; }
+.hero-inner > .hero-scroll:hover { color: var(--white); border: 0; }
+.hero-inner > .hero-scroll.gone { opacity: 0; }
