@@ -519,6 +519,13 @@
     });
   }
 
+  // ---------- Hero: a seta de rolagem some quando a pessoa começa a rolar ----------
+  const cue = $(".hero-scroll");
+  if (cue) {
+    const hideCue = y => cue.classList.toggle("gone", y > 40);
+    if (lenis) lenis.on("scroll", e => hideCue(e.scroll)); else addEventListener("scroll", () => hideCue(scrollY), { passive: true });
+  }
+
   // ---------- Footer: voltar ao topo ----------
   $$("[data-top]").forEach(a => a.addEventListener("click", e => {
     e.preventDefault(); e.stopPropagation();

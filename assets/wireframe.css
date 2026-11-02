@@ -1240,3 +1240,18 @@ html.tx-in .sheet { display: grid; }
 @media (max-width: 600px) { .hs-txt .mono { display: none; } }
 
 .h-sep { display: block; width: 64px; height: 4px; border-radius: 99px; background: var(--yellow); transform-origin: left; }
+
+
+/* ---------- v2.5: linha que se desenha até a seta (alinhada aos botões) ---------- */
+.hero-scroll { display: block; bottom: clamp(48px, 8vh, 80px); padding: 4px 10px; transition: opacity .5s; }
+.hero-scroll.gone { opacity: 0; pointer-events: none; }
+.hs-line { position: relative; display: block; width: 16px; height: 64px; }
+.hs-line i { position: absolute; left: 50%; top: 0; width: 3px; height: 54px; margin-left: -1.5px; border-radius: 99px; background: var(--white); transform-origin: top; animation: hsDraw 2.2s var(--ease) infinite; }
+.hs-line b { position: absolute; left: 50%; bottom: 2px; width: 14px; height: 14px; margin-left: -7px; animation: hsHead 2.2s var(--ease) infinite; }
+.hs-line b::before, .hs-line b::after { content: ""; position: absolute; bottom: 4px; width: 3px; height: 11px; border-radius: 99px; background: var(--yellow); }
+.hs-line b::before { left: 3px; transform: rotate(-45deg); transform-origin: bottom; }
+.hs-line b::after { right: 3px; transform: rotate(45deg); transform-origin: bottom; }
+@keyframes hsDraw { 0% { transform: scaleY(0); opacity: 1; } 45% { transform: scaleY(1); opacity: 1; } 80% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
+@keyframes hsHead { 0%, 38% { opacity: 0; transform: translateY(-6px); } 52% { opacity: 1; transform: translateY(0); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(4px); } }
+.hero-scroll:hover .hs-line i { background: var(--yellow); }
+@media (prefers-reduced-motion: reduce) { .hs-line i, .hs-line b { animation: none; opacity: 1; transform: none; } }
