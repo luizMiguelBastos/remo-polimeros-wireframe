@@ -1255,3 +1255,13 @@ html.tx-in .sheet { display: grid; }
 @keyframes hsHead { 0%, 38% { opacity: 0; transform: translateY(-6px); } 52% { opacity: 1; transform: translateY(0); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(4px); } }
 .hero-scroll:hover .hs-line i { background: var(--yellow); }
 @media (prefers-reduced-motion: reduce) { .hs-line i, .hs-line b { animation: none; opacity: 1; transform: none; } }
+
+/* ---------- v2.6: seta de rolagem sempre visível sobre qualquer foto ---------- */
+.hero-scroll { padding: 12px 14px; border-radius: 99px; background: rgba(15,22,38,.45); border: 1px solid rgba(244,245,247,.22); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.hs-line { width: 16px; height: 68px; }
+.hs-line::before { content: ""; position: absolute; left: 50%; top: 0; width: 3px; height: 56px; margin-left: -1.5px; border-radius: 99px; background: rgba(244,245,247,.28); }
+.hs-line i { height: 56px; animation: hsDraw2 2s var(--ease) infinite; }
+.hs-line b { opacity: 1; animation: hsHead2 2s var(--ease) infinite; }
+@keyframes hsDraw2 { 0% { transform: scaleY(0); opacity: 1; } 55% { transform: scaleY(1); opacity: 1; } 85% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: .25; } }
+@keyframes hsHead2 { 0%, 45% { transform: translateY(0); } 60% { transform: translateY(5px); } 75%, 100% { transform: translateY(0); } }
+.hero-scroll:hover { border-color: var(--yellow); }
