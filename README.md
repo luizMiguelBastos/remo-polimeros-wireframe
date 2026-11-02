@@ -1,10 +1,10 @@
-# Remo Polímeros · Wireframe v1.3
+# Remo Polímeros · Wireframe v1.4
 
 Wireframe do novo site da Remo Polímeros para validar **usabilidade**, **navegação**, **onde fica cada informação** e a **identidade visual** antes de entrarem fotos reais, vídeos e os movimentos finais.
 
 **Link:** https://luizmiguelbastos.github.io/remo-polimeros-wireframe/
 
-## Estrutura (v1.3)
+## Estrutura (v1.4)
 A home é um ponto de partida: hero com fotos dos setores alternando, dois botões (**Conheça a Remo** e **Com o que trabalhamos**) e 6 cards, um para cada seção. Cada seção é uma página própria.
 
 | Página | Conteúdo |
@@ -21,10 +21,11 @@ A home é um ponto de partida: hero com fotos dos setores alternando, dois botõ
 Os endereços antigos (`materiais`, `institucional`, `como-trabalhamos`, `laboratorio`, `qualidade` e `guia`) redirecionam para as páginas novas. No fim de cada página há um manifesto, uma esteira com as outras seções e o formulário de contato.
 
 ## Identidade visual
-- **Tipografia:** Archivo (títulos em largura expandida, textos em largura normal) + IBM Plex Mono (dados técnicos)
-- **Paleta:** Preto `#000000` (base) · Navy `#001F5F` (logo e detalhes nas seções brancas) · Azul `#2A5BD7` (detalhes sobre o preto) · Signal Yellow `#FFD100` (só destaque sobre o preto) · Slate `#4A5468` · Steel `#A3ABBC` · Polymer White `#F4F5F7`
+- **Tipografia:** Montserrat 800 (títulos) + Poppins 400 (textos) + IBM Plex Mono (dados e rótulos)
+- **Assinatura visual:** a molécula da logo (pontos e linhas) nos eyebrows, nos fundos escuros e no rastro do cursor
+- **Paleta:** Preto `#000000` (base) · Navy `#001F5F` (logo e detalhes nas seções brancas) · Signal Yellow `#FFD100` (só destaque sobre o preto) · Slate `#4A5468` · Steel `#A3ABBC` · Polymer White `#F4F5F7`
 - **Movimento:** abertura com a logo na primeira visita, transição com a logo entre páginas, rolagem suave (Lenis) e animações ligadas à rolagem (GSAP ScrollTrigger). Respeita "reduzir movimento" do sistema.
-- **Texturas:** grão de filme, grade técnica nos fundos escuros e papel pontilhado nos claros.
+- **Texturas:** grão de filme animado, moléculas em baixo contraste nos fundos escuros e cotas técnicas em Navy nas seções brancas.
 - **Imagens:** simuladas no Google Flow (hero, aberturas das páginas, cards, contato, linha do tempo, meio ambiente, dureza e segmentos). Serão trocadas por fotos reais.
 - A logo usada é **provisória** (desenho aproximado); será trocada pelo SVG oficial.
 

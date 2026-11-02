@@ -70,7 +70,7 @@
   const header = $("#header");
   let lastY = 0;
   const onScroll = y => {
-    if (header) header.classList.toggle("hidden", y > lastY && y > 400);
+    if (header) { header.classList.toggle("hidden", y > lastY && y > 400); header.classList.toggle("scrolled", y > 60); }
     lastY = y;
   };
   if (lenis) lenis.on("scroll", e => onScroll(e.scroll));
@@ -226,8 +226,123 @@
         }
       };
       show(0);
-      if (slides.length > 1 && motion) setInterval(() => { i = (i + 1) % slides.length; show(i); }, DUR * 1000);
+      let hold = false;
+      const heroEl = document.querySelector(".hero");
+      heroEl.addEventListener("pointerenter", () => { hold = true; gsap.getTweensOf("#hs-bar").forEach(t => t.pause()); });
+      heroEl.addEventListener("pointerleave", () => { hold = false; gsap.getTweensOf("#hs-bar").forEach(t => t.resume()); });
+      if (slides.length > 1 && motion) setInterval(() => { if (hold) return; i = (i + 1) % slides.length; show(i); }, DUR * 1000);
     });
+  }
+
+  // ---------- Molécula da marca: fundo de pontos e linhas nas seções escuras ----------
+  const molField = host => {
+    const cv = document.createElement("canvas");
+    cv.className = "mol-bg"; cv.setAttribute("aria-hidden", "true");
+    host.prepend(cv);
+    const ctx = cv.getContext("2d");
+    let W = 0, H = 0, nodes = [], mx = -999, my = -999, on = false;
+    const size = () => {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      W = host.clientWidth; H = host.clientHeight;
+      cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const n = Math.round(Math.min(90, W * H / 16000));
+      nodes = Array.from({ length: n }, () => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25, r: 1.2 + Math.random() * 2.2, y2: Math.random() < .06 }));
+    };
+    const LINK = 130;
+    const draw = () => {
+      ctx.clearRect(0, 0, W, H);
+      for (const a of nodes) {
+        if (!reduced) { a.x += a.vx; a.y += a.vy; if (a.x < 0 || a.x > W) a.vx *= -1; if (a.y < 0 || a.y > H) a.vy *= -1; }
+      }
+      ctx.lineCap = "round";
+      for (let i = 0; i < nodes.length; i++) {
+        const a = nodes[i];
+        for (let j = i + 1; j < nodes.length; j++) {
+          const b = nodes[j], d = Math.hypot(a.x - b.x, a.y - b.y);
+          if (d < LINK) { ctx.strokeStyle = `rgba(244,245,247,${(1 - d / LINK) * .1})`; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
+        }
+        const dm = Math.hypot(a.x - mx, a.y - my);
+        if (dm < 180) { ctx.strokeStyle = `rgba(255,209,0,${(1 - dm / 180) * .35})`; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(mx, my); ctx.stroke(); }
+      }
+      for (const a of nodes) {
+        ctx.fillStyle = a.y2 ? "rgba(255,209,0,.7)" : "rgba(244,245,247,.22)";
+        ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2); ctx.fill();
+      }
+    };
+    const loop = () => { if (on) draw(); requestAnimationFrame(loop); };
+    size(); addEventListener("resize", size);
+    host.addEventListener("pointermove", e => { const r = host.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; });
+    host.addEventListener("pointerleave", () => { mx = my = -999; });
+    new IntersectionObserver(([en]) => { on = en.isIntersecting; }).observe(host);
+    if (reduced) { on = true; draw(); } else loop();
+  };
+  $$("[data-mol]").forEach(molField);
+
+  // ---------- Cursor: rastro de moléculas atrás do ponto amarelo ----------
+  if (finePointer && !reduced && $("#cursor")) {
+    const tc = document.createElement("canvas");
+    tc.className = "cursor-trail"; tc.setAttribute("aria-hidden", "true");
+    document.body.appendChild(tc);
+    const tx = tc.getContext("2d");
+    const pts = [];
+    const sizeT = () => { const dpr = Math.min(devicePixelRatio || 1, 2); tc.width = innerWidth * dpr; tc.height = innerHeight * dpr; tx.setTransform(dpr, 0, 0, dpr, 0, 0); };
+    sizeT(); addEventListener("resize", sizeT);
+    addEventListener("pointermove", e => { pts.push({ x: e.clientX, y: e.clientY, t: performance.now() }); if (pts.length > 26) pts.shift(); });
+    const trail = () => {
+      const now = performance.now();
+      while (pts.length && now - pts[0].t > 520) pts.shift();
+      tx.clearRect(0, 0, innerWidth, innerHeight);
+      tx.lineCap = "round"; tx.lineJoin = "round";
+      for (let k = 1; k < pts.length; k++) {
+        const a = pts[k - 1], b = pts[k], life = 1 - (now - b.t) / 520;
+        tx.strokeStyle = `rgba(255,209,0,${life * .55})`; tx.lineWidth = 2 * life + .4;
+        tx.beginPath(); tx.moveTo(a.x, a.y); tx.lineTo(b.x, b.y); tx.stroke();
+        if (k % 5 === 0) { tx.fillStyle = `rgba(255,209,0,${life * .8})`; tx.beginPath(); tx.arc(b.x, b.y, 2.6 * life + 1, 0, Math.PI * 2); tx.fill(); }
+      }
+      requestAnimationFrame(trail);
+    };
+    trail();
+  }
+
+  // ---------- Seções brancas: cotas técnicas em Navy ----------
+  const COTAS = ["Ø 3,0 mm", "± 0,02 mm", "Shore 80D", "MFI 12 g/10 min", "ΔE < 0,5", "23 °C · 50% UR", "ISO 527", "1,05 g/cm³"];
+  $$("section.light").forEach((sec, k) => {
+    const h = document.createElement("div"); h.className = "cota h"; h.setAttribute("aria-hidden", "true");
+    h.innerHTML = `<i></i><span>${COTAS[k % COTAS.length]}</span>`;
+    const v = document.createElement("div"); v.className = "cota v"; v.setAttribute("aria-hidden", "true");
+    v.innerHTML = `<i></i><span>${COTAS[(k + 3) % COTAS.length]}</span>`;
+    sec.prepend(h, v);
+    if (motion) {
+      gsap.from($("i", h), { scaleX: 0, duration: 1.4, ease: "expo.inOut", scrollTrigger: { trigger: sec, start: "top 80%" } });
+      gsap.from($("i", v), { scaleY: 0, duration: 1.4, ease: "expo.inOut", delay: .2, scrollTrigger: { trigger: sec, start: "top 80%" } });
+      gsap.from($$("span", h).concat($$("span", v)), { opacity: 0, duration: .8, delay: .9, scrollTrigger: { trigger: sec, start: "top 80%" } });
+    }
+  });
+
+  // ---------- Hero: parallax em camadas seguindo o mouse ----------
+  const heroBox = $(".hero");
+  if (heroBox && motion && finePointer) {
+    const layers = [[".hero-slides", -24, -14], ["#field", -24, -14], [".hero-inner", 14, 8], [".hero-sector", 26, 14]]
+      .map(([sel, ax, ay]) => { const el = $(sel, heroBox); return el && { x: gsap.quickTo(el, "x", { duration: 1.2, ease: "power3" }), y: gsap.quickTo(el, "y", { duration: 1.2, ease: "power3" }), ax, ay }; })
+      .filter(Boolean);
+    gsap.set($(".hero-slides", heroBox), { scale: 1.06 });
+    heroBox.addEventListener("pointermove", e => {
+      const nx = e.clientX / innerWidth - .5, ny = e.clientY / innerHeight - .5;
+      layers.forEach(l => { l.x(nx * l.ax); l.y(ny * l.ay); });
+    });
+    heroBox.addEventListener("pointerleave", () => layers.forEach(l => { l.x(0); l.y(0); }));
+  }
+
+  // ---------- Header: nome da seção atual ----------
+  const hdrSec = $("#hdr-sec");
+  if (hdrSec && hasGsap) {
+    $$("main section, section.contact-band, section.end-manifesto, section.rail").forEach(sec => {
+      const eb = $(".eyebrow", sec);
+      const name = eb ? eb.textContent.trim() : (sec.getAttribute("aria-label") || "");
+      if (!name || sec.classList.contains("hero")) return;
+      ScrollTrigger.create({ trigger: sec, start: "top 50%", end: "bottom 50%", onToggle: st => { if (st.isActive) { hdrSec.textContent = name; hdrSec.classList.add("on"); } } });
+    });
+    ScrollTrigger.create({ start: 0, end: () => innerHeight * .6, onToggle: st => { if (st.isActive) hdrSec.classList.remove("on"); } });
   }
 
   // ---------- Fotos: aberturas, cards da home, faixa do institucional ----------
@@ -368,17 +483,6 @@
     gsap.from($$(".rail-card", railTrack), { y: 60, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.08, scrollTrigger: { trigger: railTrack, start: "top 85%" } });
   }
 
-  // ---------- Cards da home: inclinação seguindo o cursor ----------
-  if (motion && matchMedia("(hover: hover)").matches) {
-    $$(".hub-card").forEach(card => {
-      card.addEventListener("pointermove", e => {
-        const r = card.getBoundingClientRect();
-        const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
-        gsap.to(card, { rotateY: x * 8, rotateX: -y * 8, duration: 0.6, ease: "power3.out", overwrite: "auto" });
-      });
-      card.addEventListener("pointerleave", () => gsap.to(card, { rotateY: 0, rotateX: 0, duration: 0.8, ease: "expo.out", overwrite: "auto" }));
-    });
-  }
 
   // ---------- Rolagens (em ordem de página, para os pins calcularem certo) ----------
   if (motion) {
