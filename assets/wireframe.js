@@ -240,6 +240,7 @@
     cv.className = "mol-bg"; cv.setAttribute("aria-hidden", "true");
     host.prepend(cv);
     const ctx = cv.getContext("2d");
+    const ink = host.dataset.mol === "ink";
     let W = 0, H = 0, nodes = [], mx = -999, my = -999, on = false;
     const size = () => {
       const dpr = Math.min(devicePixelRatio || 1, 2);
@@ -259,13 +260,13 @@
         const a = nodes[i];
         for (let j = i + 1; j < nodes.length; j++) {
           const b = nodes[j], d = Math.hypot(a.x - b.x, a.y - b.y);
-          if (d < LINK) { ctx.strokeStyle = `rgba(244,245,247,${(1 - d / LINK) * .1})`; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
+          if (d < LINK) { ctx.strokeStyle = ink ? `rgba(1,4,10,${(1 - d / LINK) * .12})` : `rgba(244,245,247,${(1 - d / LINK) * .1})`; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
         }
         const dm = Math.hypot(a.x - mx, a.y - my);
         if (dm < 180) { ctx.strokeStyle = `rgba(255,209,0,${(1 - dm / 180) * .35})`; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(mx, my); ctx.stroke(); }
       }
       for (const a of nodes) {
-        ctx.fillStyle = a.y2 ? "rgba(255,209,0,.7)" : "rgba(244,245,247,.22)";
+        ctx.fillStyle = a.y2 ? "rgba(255,209,0,.85)" : (ink ? "rgba(1,4,10,.22)" : "rgba(244,245,247,.22)");
         ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2); ctx.fill();
       }
     };
@@ -416,14 +417,18 @@
     const WORDS = swap.dataset.words.split("|");
     let wi = 0;
     if (!motion || WORDS.length < 2) return;
+    let busy = false;
     setTimeout(() => setInterval(() => {
+      if (busy || document.hidden) return;
+      busy = true;
+      $$(".sw-word", swap).slice(0, -1).forEach(w => w.remove());
       wi = (wi + 1) % WORDS.length;
       const cur = $(".sw-word", swap);
       const next = document.createElement("span");
       next.className = "sw-word"; next.textContent = WORDS[wi];
       next.style.position = "absolute"; next.style.left = "0"; next.style.top = "0"; next.style.whiteSpace = "nowrap";
       swap.appendChild(next);
-      gsap.timeline({ onComplete: () => { cur.remove(); next.style.position = ""; next.style.whiteSpace = ""; } })
+      gsap.timeline({ onComplete: () => { cur.remove(); next.style.position = ""; next.style.whiteSpace = ""; busy = false; } })
         .to(cur, { yPercent: -110, opacity: 0, duration: 0.6, ease: "expo.in" })
         .fromTo(next, { yPercent: 110, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.35)
         .to(swap, { width: () => next.offsetWidth, duration: 0.6, ease: "expo.inOut" }, 0.2)
@@ -446,6 +451,19 @@
   if (motion && $(".hub-deco")) {
     gsap.from(".hub-deco .hd-blue", { scaleX: 0, duration: 1.2, ease: "expo.inOut", scrollTrigger: { trigger: ".hub-head", start: "top 85%" } });
     gsap.from(".hub-dot", { scale: 0, rotate: 90, duration: 0.8, ease: "back.out(3)", delay: 0.5, scrollTrigger: { trigger: ".hub-head", start: "top 85%" } });
+  }
+
+  // ---------- Escolha por onde começar: letreiro e cards em velocidades diferentes ----------
+  const hmTrack = $(".hm-track");
+  if (hmTrack && motion) {
+    const loopTw = gsap.to(hmTrack, { xPercent: -50, duration: 40, ease: "none", repeat: -1 });
+    ScrollTrigger.create({ trigger: ".hub", start: "top bottom", end: "bottom top", onUpdate: st => { loopTw.timeScale(1 + Math.abs(st.getVelocity()) / 250); gsap.to(loopTw, { timeScale: 1, duration: 1.2, overwrite: true }); } });
+    gsap.matchMedia().add("(min-width: 901px)", () => {
+      $$(".hub-grid .hub-card").forEach((c, k) => {
+        const col = k % 3, amt = [8, -6, 12][col];
+        gsap.fromTo(c, { yPercent: amt }, { yPercent: -amt, ease: "none", scrollTrigger: { trigger: ".hub-grid", start: "top bottom", end: "bottom top", scrub: 1 } });
+      });
+    });
   }
 
   // ---------- Esteira de seções: rolagem lateral presa à rolagem (desktop) ----------
