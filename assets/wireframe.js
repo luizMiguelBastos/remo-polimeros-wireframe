@@ -257,6 +257,38 @@
     });
   }
 
+  // ---------- Tecnologias: régua de dureza ligada à rolagem ----------
+  const hardScale = $("#hard-scale");
+  if (hardScale && hasGsap) {
+    const STOPS = [["50A", "Flexível"], ["60A", "Flexível"], ["70A", "Macio"], ["80A", "Macio"], ["90A", "Semirrígido"], ["40D", "Semirrígido"], ["50D", "Rígido"], ["60D", "Rígido"], ["70D", "Rígido"], ["80D", "Muito rígido"], ["85D", "Muito rígido"]];
+    const setHard = p => {
+      const k = Math.min(STOPS.length - 1, Math.round(p * (STOPS.length - 1)));
+      $("#hs-val").textContent = STOPS[k][0];
+      $("#hs-txt").textContent = STOPS[k][1];
+      gsap.set("#hs-fill", { scaleX: Math.max(0.02, p) });
+      gsap.set("#hs-knob", { left: (p * 100) + "%" });
+    };
+    setHard(motion ? 0 : 1);
+    if (motion) ScrollTrigger.create({ trigger: hardScale, start: "top 85%", end: "top 30%", scrub: true, onUpdate: st => setHard(st.progress) });
+  }
+
+  // ---------- Onde atuamos: as horas do dia acendem no centro da tela ----------
+  const dayRows = $$("#day li");
+  if (dayRows.length) {
+    if (motion) dayRows.forEach(li => ScrollTrigger.create({ trigger: li, start: "top 56%", end: "bottom 44%", toggleClass: "on" }));
+    else dayRows.forEach(li => li.classList.add("on"));
+  }
+
+  // ---------- Cards de segmentos e do meio ambiente entram em cascata ----------
+  if (motion) {
+    [".seg-grid", ".env-grid"].forEach(sel => {
+      const g = $(sel);
+      if (!g) return;
+      const items = [...g.children];
+      gsap.from(items, { y: 70, opacity: 0, duration: 1.1, ease: "expo.out", stagger: 0.1, scrollTrigger: { trigger: g, start: "top 85%" } });
+    });
+  }
+
   // ---------- Cards da home: inclinação seguindo o cursor ----------
   if (motion && matchMedia("(hover: hover)").matches) {
     $$(".hub-card").forEach(card => {

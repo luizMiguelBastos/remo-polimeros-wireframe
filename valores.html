@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Valores · Remo Polímeros · Wireframe v1.2</title>
+  <meta name="description" content="Missão, valores, compromisso ambiental e certificação ISO 9001:2015 da Remo Polímeros.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="assets/wireframe.css?v=1.2">
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="sheet" id="sheet" aria-hidden="true">
+  <div class="sheet-inner">
+    <div class="mark">
+      <svg viewBox="0 0 64 64"><g stroke="#4A5468" stroke-width="2"><line x1="14" y1="16" x2="40" y2="30"/><line x1="40" y1="30" x2="22" y2="50"/><line x1="40" y1="30" x2="54" y2="12"/></g><circle cx="14" cy="16" r="6" fill="#0B1220"/><circle cx="40" cy="30" r="8" fill="#FFD100"/><circle cx="22" cy="50" r="6" fill="#0B1220"/><circle cx="54" cy="12" r="5" fill="#0B1220"/></svg>
+      <div class="word"><span>r</span><span>e</span><span>m</span><span>o</span></div>
+    </div>
+  </div>
+  <div class="sheet-count"><span id="sheet-count">0</span>%</div>
+</div>
+<div class="cursor" id="cursor" aria-hidden="true"><span id="cursor-label"></span></div>
+
+<div class="wf-bar" role="region" aria-label="Controles do wireframe">
+  <strong>WIREFRAME v1.2</strong> · Home com seções em páginas · imagens simuladas (Google Flow)
+  <a href="index.html">Início</a>
+  <span class="spacer"></span>
+  
+  <button type="button" id="toggle-notes" aria-pressed="false">Mostrar notas de UX</button>
+</div>
+
+<header class="site-header" id="header">
+  <div class="wrap">
+    <a href="index.html" class="logo" aria-label="Remo Polímeros, início">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><g stroke="#A3ABBC" stroke-width="3"><line x1="14" y1="16" x2="40" y2="30"/><line x1="40" y1="30" x2="22" y2="50"/><line x1="40" y1="30" x2="54" y2="12"/></g><circle cx="14" cy="16" r="7" fill="#F4F5F7"/><circle cx="40" cy="30" r="9" fill="#FFD100"/><circle cx="22" cy="50" r="7" fill="#F4F5F7"/><circle cx="54" cy="12" r="6" fill="#F4F5F7"/></svg>
+      remo<small>polímeros</small>
+    </a>
+    <nav class="nav" id="nav" aria-label="Principal">
+      <a href="produtos.html">Produtos</a>
+      <a href="historia.html">História</a>
+      <a href="valores.html" aria-current="page">Valores</a>
+      <a href="tecnologias.html">Tecnologias</a>
+      <a href="onde-atuamos.html">Onde atuamos</a>
+      <a href="contato.html">Contato</a>
+    </nav>
+    <a href="valores.html#qualidade" class="iso-badge" title="Certificação ISO"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22.5" fill="none" stroke="currentColor" stroke-opacity=".35"/><circle cx="24" cy="24" r="18" fill="none" stroke="#FFD100" stroke-width="1.5" stroke-dasharray="80 200" transform="rotate(-90 24 24)"/><circle cx="24" cy="6" r="1.6" fill="#FFD100"/><text x="24" y="28.5" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" font-weight="700" font-stretch="125%" fill="currentColor">ISO</text></svg><span><b>ISO 9001:2015*</b><small>Certificada</small></span></a>
+    <a href="contato.html?tipo=amostra" class="btn sm">Solicitar amostra <span class="arr">→</span></a>
+    <button class="btn ghost sm menu-toggle" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+  </div>
+</header>
+
+<main>
+<section class="page-hero photo">
+  <div class="ph-media" style="background-image:url(assets/img/sec-valores.jpg)" aria-hidden="true"></div><div class="ph-veil" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="crumbs"><a href="index.html">Início</a> / Valores</div>
+    <div class="eyebrow">Valores</div>
+    <div class="sec-head" style="margin-bottom:0">
+      <h1 data-lines>
+        <span class="line"><span>O que nos move</span></span>
+        <span class="line"><span><span class="hl">também nos compromete.</span></span></span>
+      </h1>
+      <p class="lead" data-reveal>Ética, cuidado com o meio ambiente e qualidade certificada guiam cada lote que sai da Remo.</p>
+    </div>
+  </div>
+</section>
+
+<section class="light" id="principios">
+  <div class="wrap">
+    <div class="eyebrow">Missão, visão e valores</div>
+    <div class="sec-head">
+      <h2 data-reveal>Princípios que viram prática.</h2>
+      <p class="lead" data-reveal>Dez valores que orientam como desenvolvemos, produzimos e atendemos.</p>
+    </div>
+    <div class="about-values">
+      <div class="mv" data-reveal>
+        <div class="mv-item"><span class="mono">Missão</span><p>Oferecer soluções inteligentes em resinas plásticas, agregando valor ao produto final dos nossos clientes e otimizando recursos e processos da cadeia.</p></div>
+        <div class="mv-item"><span class="mono">Visão</span><p class="mv-big">Criar. Transformar. Evoluir.</p></div>
+      </div>
+      <ol class="values" data-reveal>
+        <li><span>01</span>Somos íntegros com todos e em todos os momentos</li>
+        <li><span>02</span>Acreditamos na indústria brasileira</li>
+        <li><span>03</span>Ética e transparência fazem parte do nosso dia a dia</li>
+        <li><span>04</span>Somos comprometidos e responsáveis</li>
+        <li><span>05</span>Respondemos os clientes com a máxima agilidade e atenção</li>
+        <li><span>06</span>Eficiência da equipe técnica e dos projetos executados</li>
+        <li><span>07</span>Transmitimos confiança nas relações profissionais</li>
+        <li><span>08</span>Somos flexíveis no relacionamento com os clientes</li>
+        <li><span>09</span>Qualidade, preços e prazos competitivos</li>
+        <li><span>10</span>Persistimos no que nos propomos a fazer</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="env" id="meio-ambiente">
+  <div class="wrap">
+    <div class="eyebrow">Compromisso ambiental</div>
+    <div class="sec-head">
+      <h2 data-lines>
+        <span class="line"><span>Cuidado em</span></span>
+        <span class="line"><span><span class="hl">cada etapa.</span></span></span>
+      </h2>
+      <p class="lead" data-reveal>Plástico de engenharia dura mais, pesa menos e pode voltar para a cadeia. Cuidamos para que cada etapa da produção deixe a menor marca possível.</p>
+    </div>
+    <div class="env-stats">
+      <div class="env-stat" data-reveal><b><span data-count="100">0</span>%</b><span>das aparas internas reprocessadas</span></div>
+      <div class="env-stat" data-reveal><b><span data-count="40">0</span>%</b><span>da energia vinda de painéis solares</span></div>
+      <div class="env-stat" data-reveal><b><span data-count="90">0</span>%</b><span>da água de resfriamento em circuito fechado</span></div>
+      <div class="env-stat" data-reveal><b><span data-count="12">0</span> mil m²</b><span>de área verde preservada</span></div>
+    </div>
+    <div class="env-grid">
+      <article class="env-card">
+        <div class="env-img"><i style="background-image:url(assets/img/val-reciclagem.jpg)"></i></div>
+        <span class="mono">01 · Reaproveitamento</span>
+        <h3>Aparas viram matéria-prima</h3>
+        <p>Sobras de produção e purgas são moídas, reprocessadas e voltam para a linha em aplicações compatíveis.</p>
+      </article>
+      <article class="env-card">
+        <div class="env-img"><i style="background-image:url(assets/img/val-agua.jpg)"></i></div>
+        <span class="mono">02 · Água</span>
+        <h3>Resfriamento em circuito fechado</h3>
+        <p>A água que resfria o polímero na extrusão circula, é tratada e volta para o processo, sem descarte industrial.</p>
+      </article>
+      <ul class="env-list">
+        <li><span class="mono">03</span>Energia solar nos telhados da fábrica</li>
+        <li><span class="mono">04</span>Área verde nativa preservada ao redor da unidade</li>
+        <li><span class="mono">05</span>Logística reversa de big bags e embalagens</li>
+        <li><span class="mono">06</span>Grades com conteúdo reciclado (PCR) sob demanda</li>
+      </ul>
+    </div>
+    <p class="note"><b>Rascunho:</b> todos os números e práticas desta seção são provisórios e precisam ser confirmados pela Remo antes de publicar.</p>
+  </div>
+</section>
+
+<section class="iso" id="qualidade" style="padding:clamp(64px,8vw,112px) 0">
+  <div class="wrap iso-stage" id="iso-stage">
+    <div class="seal" id="seal">
+      <svg viewBox="0 0 400 400" aria-hidden="true">
+        <defs><path id="ring" d="M200,200 m-170,0 a170,170 0 1,1 340,0 a170,170 0 1,1 -340,0"/></defs>
+        <g id="ring-g">
+          <circle cx="200" cy="200" r="190" fill="none" stroke="rgba(244,245,247,.14)"/>
+          <text class="ring-text"><textPath href="#ring">Padrão internacional de produção · Qualidade certificada · Rastreabilidade · </textPath></text>
+        </g>
+      </svg>
+      <div class="core"><div><b>ISO</b><span>9001:2015*</span></div></div>
+    </div>
+    <div>
+      <div class="eyebrow">Qualidade e certificação</div>
+      <h2 data-lines class="iso-title">
+        <span class="line"><span>Certificação ISO.</span></span>
+        <span class="line"><span class="hl">Padrão internacional</span></span>
+        <span class="line"><span class="hl">de produção.</span></span>
+      </h2>
+      <p class="lead" data-reveal>Processos auditados e reconhecidos internacionalmente, da formulação à entrega. Cada lote segue normas e procedimentos documentados, com rastreabilidade e melhoria contínua.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin:28px 0 48px" data-reveal>
+        <a href="#" class="btn">Baixar certificado (PDF) <span class="arr">↓</span></a>
+        <a href="contato.html" class="btn ghost">Falar com a Qualidade</a>
+      </div>
+      <div class="q-cards" data-reveal>
+        <article class="q-card" data-cursor="Ver">
+          <span class="gi">01 · Política da Qualidade</span>
+          <b class="q-big">5 compromissos</b>
+          <ol class="q-more">
+            <li>Qualidade, preços e prazos competitivos</li>
+            <li>Colaboradores valorizados e capacitados</li>
+            <li>Persistência e continuidade</li>
+            <li>Melhoria contínua e novas tecnologias</li>
+            <li>Não aceitação de erros</li>
+          </ol>
+        </article>
+        <article class="q-card" data-cursor="Ver">
+          <span class="gi">02 · Parceria LG Chem</span>
+          <b class="q-big">Desde 2001</b>
+          <p class="q-more">Tecnologia da líder da indústria química da Coreia aplicada ao mercado brasileiro, com portfólio e suporte de padrão global.</p>
+        </article>
+        <article class="q-card" data-cursor="Ver">
+          <span class="gi">03 · Rastreabilidade</span>
+          <b class="q-big">Lote a lote</b>
+          <p class="q-more">Normas e procedimentos documentados em cada etapa, da formulação à entrega, com melhoria contínua dos processos.</p>
+        </article>
+      </div>
+      <p class="note"><b>Destaque da ISO:</b> header, esta seção (fixa na tela enquanto o selo gira) e rodapé. * Número provisório; certificado em PDF pendente.</p>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta">
+  <div class="wrap">
+    <div class="eyebrow">Próximo passo</div>
+    <h2 data-lines>
+      <span class="line"><span>O material certo</span></span>
+      <span class="line"><span>começa <span class="hl">aqui.</span></span></span>
+    </h2>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:32px">
+      <a href="contato.html" class="btn">Fale com um especialista <span class="arr">→</span></a>
+      <a href="index.html#explorar" class="btn ghost">Ver outras seções</a>
+    </div>
+  </div>
+</section>
+
+<section id="contato" class="contact-band">
+  <div class="cb-media" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="eyebrow">Fale com um especialista</div>
+  </div>
+  <div class="wrap contact">
+    <div class="contact-side">
+      <h2 data-reveal class="cb-title">Vamos desenvolver o seu material.</h2>
+      <p class="lead" data-reveal>Resposta da equipe técnica em até 1 dia útil.</p>
+      <ul class="contact-list">
+        <li><span>Telefone</span>+55 (11) 2175-1000</li>
+        <li><span>WhatsApp</span>[número a definir]</li>
+        <li><span>E-mail</span>remo@remopolimeros.com.br</li>
+        <li><span>Endereço</span>Rod. Presidente Dutra, S/N, km 207,8 · Bonsucesso · Guarulhos/SP · 07178-580</li>
+      </ul>
+    </div>
+    <form id="contact-form" novalidate>
+      <div class="prefill" id="prefill"><i id="prefill-sw"></i><span id="prefill-txt"></span></div>
+      <div class="field">
+        <label for="tipo">Como podemos ajudar?</label>
+        <select id="tipo" required>
+          <option>Solicitar amostra de cor</option>
+          <option>Desenvolver um material sob medida</option>
+          <option>Cotação de produto do portfólio</option>
+          <option>Suporte técnico</option>
+          <option>Outro assunto</option>
+        </select>
+      </div>
+      <div class="row">
+        <div class="field"><label for="nome">Nome *</label><input id="nome" required autocomplete="name"><span class="err">Informe seu nome.</span></div>
+        <div class="field"><label for="empresa">Empresa *</label><input id="empresa" required autocomplete="organization"><span class="err">Informe a empresa.</span></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="email">E-mail *</label><input id="email" type="email" required autocomplete="email"><span class="err">Informe um e-mail válido.</span></div>
+        <div class="field"><label for="tel">Telefone</label><input id="tel" type="tel" autocomplete="tel"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="cidade">Cidade</label><input id="cidade" autocomplete="address-level2"></div>
+        <div class="field"><label for="uf">UF</label><input id="uf" maxlength="2" autocomplete="address-level1"></div>
+      </div>
+      <div class="field"><label for="msg">Mensagem</label><textarea id="msg" placeholder="Aplicação, processo, resina atual, cor de referência…"></textarea></div>
+      <label class="consent"><input type="checkbox" id="lgpd" required> Li e concordo com a <a href="#" style="color:var(--white)">Política de Privacidade</a> (LGPD).</label>
+      <button class="btn" type="submit">Enviar solicitação <span class="arr">→</span></button>
+      <div class="form-ok" id="form-ok" role="status">Recebemos sua solicitação. Nossa equipe técnica responde em até 1 dia útil. (simulação do wireframe, nada foi enviado)</div>
+    </form>
+  </div>
+</section>
+</main>
+
+<!-- CONTATO (todas as páginas) -->
+<section id="contato" class="contact-band">
+  <div class="cb-media" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="eyebrow">Fale com um especialista</div>
+  </div>
+  <div class="wrap contact">
+    <div class="contact-side">
+      <h2 data-reveal class="cb-title">Vamos desenvolver o seu material.</h2>
+      <p class="lead" data-reveal>Resposta da equipe técnica em até 1 dia útil.</p>
+      <ul class="contact-list">
+        <li><span>Telefone</span>+55 (11) 2175-1000</li>
+        <li><span>WhatsApp</span>[número a definir]</li>
+        <li><span>E-mail</span>remo@remopolimeros.com.br</li>
+        <li><span>Endereço</span>Rod. Presidente Dutra, S/N, km 207,8 · Bonsucesso · Guarulhos/SP · 07178-580</li>
+      </ul>
+    </div>
+    <form id="contact-form" novalidate>
+      <div class="prefill" id="prefill"><i id="prefill-sw"></i><span id="prefill-txt"></span></div>
+      <div class="field">
+        <label for="tipo">Como podemos ajudar?</label>
+        <select id="tipo" required>
+          <option>Solicitar amostra de cor</option>
+          <option>Desenvolver um material sob medida</option>
+          <option>Cotação de produto do portfólio</option>
+          <option>Suporte técnico</option>
+          <option>Outro assunto</option>
+        </select>
+      </div>
+      <div class="row">
+        <div class="field"><label for="nome">Nome *</label><input id="nome" required autocomplete="name"><span class="err">Informe seu nome.</span></div>
+        <div class="field"><label for="empresa">Empresa *</label><input id="empresa" required autocomplete="organization"><span class="err">Informe a empresa.</span></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="email">E-mail *</label><input id="email" type="email" required autocomplete="email"><span class="err">Informe um e-mail válido.</span></div>
+        <div class="field"><label for="tel">Telefone</label><input id="tel" type="tel" autocomplete="tel"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="cidade">Cidade</label><input id="cidade" autocomplete="address-level2"></div>
+        <div class="field"><label for="uf">UF</label><input id="uf" maxlength="2" autocomplete="address-level1"></div>
+      </div>
+      <div class="field"><label for="msg">Mensagem</label><textarea id="msg" placeholder="Aplicação, processo, resina atual, cor de referência…"></textarea></div>
+      <label class="consent"><input type="checkbox" id="lgpd" required> Li e concordo com a <a href="#" style="color:var(--white)">Política de Privacidade</a> (LGPD).</label>
+      <button class="btn" type="submit">Enviar solicitação <span class="arr">→</span></button>
+      <div class="form-ok" id="form-ok" role="status">Recebemos sua solicitação. Nossa equipe técnica responde em até 1 dia útil. (simulação do wireframe, nada foi enviado)</div>
+    </form>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="grid">
+      <div>
+        <a href="index.html" class="logo" style="color:var(--white)">remo<small>polímeros</small></a>
+        <p class="f-legal-name">[Razão social a definir]<br>CNPJ [a definir]</p>
+        <div class="iso-seal-foot"><svg viewBox="0 0 48 48" class="big" aria-hidden="true"><circle cx="24" cy="24" r="22.5" fill="none" stroke="currentColor" stroke-opacity=".35"/><circle cx="24" cy="24" r="18" fill="none" stroke="#FFD100" stroke-width="1.5" stroke-dasharray="80 200" transform="rotate(-90 24 24)"/><circle cx="24" cy="6" r="1.6" fill="#FFD100"/><text x="24" y="28.5" text-anchor="middle" font-family="Archivo, sans-serif" font-size="12" font-weight="700" font-stretch="125%" fill="currentColor">ISO</text></svg><span><b>ISO 9001:2015*</b><small>Parceira LG Chem desde 2001</small></span></div>
+      </div>
+      <div><h4>Navegue</h4><ul class="f-links"><li><a href="produtos.html">Produtos</a></li><li><a href="historia.html">História</a></li><li><a href="valores.html">Valores</a></li><li><a href="tecnologias.html">Tecnologias</a></li><li><a href="onde-atuamos.html">Onde atuamos</a></li><li><a href="contato.html">Contato</a></li></ul></div>
+      <div><h4>Contato</h4><ul><li>+55 (11) 2175-1000</li><li>remo@remopolimeros.com.br</li><li>Rod. Pres. Dutra, km 207,8<br>Guarulhos/SP</li></ul></div>
+    </div>
+    <div class="bottom"><span>© 2026 [Razão social] · Capital 100% nacional desde 1989 · <a href="#">Política de Privacidade</a></span><span>* Número da certificação ISO provisório</span></div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="assets/data.js?v=1.2"></script>
+<script src="assets/wireframe.js?v=1.2"></script>
+</body>
+</html>
