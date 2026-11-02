@@ -1276,3 +1276,10 @@ html.tx-in .sheet { display: grid; }
 .hero-inner { --hib: clamp(48px, 8vh, 80px); padding-bottom: var(--hib); }
 .hero-inner > .hero-scroll { position: absolute; left: auto; right: 24px; bottom: var(--hib); transform: none; z-index: 2; }
 @media (max-width: 600px) { .hero-inner { --hib: 72px; } .hero-inner > .hero-scroll { right: 16px; } }
+
+
+/* ---------- v2.9: sumir ao rolar sem disputar a opacidade da entrada ---------- */
+.hero-scroll, .hero-scroll.gone { opacity: 1; transition: border-color .3s, background .3s; }
+.hero-scroll.gone { pointer-events: none; background: transparent; border-color: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.hero-scroll .hs-line { transition: opacity .5s; }
+.hero-scroll.gone .hs-line { opacity: 0; }
