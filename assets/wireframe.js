@@ -95,7 +95,7 @@
   // ---------- Transição entre páginas (página branca com a logo) ----------
   const pageTx = (() => {
     const sheet = $("#sheet");
-    if (!sheet || !motion) { if (sheet) sheet.remove(); return null; }
+    if (!sheet || !motion) { if (sheet) sheet.remove(); document.documentElement.classList.remove("tx-in"); return null; }
     const words = $$(".word span", sheet), inner = $(".sheet-inner", sheet), count = $("#sheet-count");
     let busy = false;
     // Nome da página de destino e moléculas animadas na folha
@@ -144,15 +144,23 @@
     const enter = () => {
       let from = false;
       try { from = sessionStorage.getItem("remo-nav") === "1"; sessionStorage.removeItem("remo-nav"); } catch (e) {}
-      if (!from) return false;
+      if (!from) { document.documentElement.classList.remove("tx-in"); return false; }
       count.textContent = "100";
       if (dest) dest.textContent = pageName(location.href);
       if (sheet.startMol) sheet.startMol();
-      gsap.timeline({ onComplete: () => { gsap.set(sheet, { display: "none" }); if (sheet.stopMol) sheet.stopMol(); } })
-        .set(sheet, { display: "grid", yPercent: 0, opacity: 1 })
+      gsap.set(sheet, { display: "grid", yPercent: 0, opacity: 1 });
+      // A folha só sobe depois que a foto da abertura carregou (no máximo 1,5 s)
+      const media = $(".page-hero .ph-media") || $(".hero-slides .slide");
+      const src = media && (media.dataset.src || (media.style.backgroundImage.match(/url\(["']?([^"')]+)/) || [])[1]);
+      const ready = new Promise(ok => {
+        if (!src) return ok();
+        const im = new Image(); im.onload = im.onerror = () => ok(); im.src = src;
+        setTimeout(ok, 1500);
+      });
+      ready.then(() => gsap.timeline({ onComplete: () => { gsap.set(sheet, { display: "none" }); document.documentElement.classList.remove("tx-in"); if (sheet.stopMol) sheet.stopMol(); } })
         .to(words, { yPercent: -115, duration: 0.5, ease: "expo.in", stagger: 0.04, delay: 0.15 })
         .to(meta.children, { y: -16, opacity: 0, duration: 0.35, ease: "power2.in", stagger: 0.05 }, "<")
-        .to(sheet, { yPercent: -100, duration: 0.8, ease: "expo.inOut" }, "-=0.15");
+        .to(sheet, { yPercent: -100, duration: 0.8, ease: "expo.inOut" }, "-=0.15"));
       return true;
     };
     // Voltar pelo navegador pode restaurar a página com a folha cobrindo

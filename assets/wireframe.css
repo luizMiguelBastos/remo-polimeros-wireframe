@@ -1169,3 +1169,40 @@ h1 .line { white-space: nowrap; }
 .sheet-dest::before { content: ""; width: 28px; height: 2px; border-radius: 99px; background: var(--yellow); }
 .sheet-count { font-size: 14px; color: var(--ink); }
 @media (max-width: 600px) { .sheet .sheet-big { font-size: 34vw; } }
+
+
+/* ---------- v2.0 ---------- */
+/* Header escuro com efeito glass desde o topo; a foto passa por baixo dele */
+.site-header, .site-header.scrolled { background: rgba(15,22,38,.42); color: var(--white); border-bottom: 1px solid rgba(244,245,247,.12); -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4); }
+.site-header.scrolled { background: rgba(15,22,38,.6); }
+.site-header .logo { color: var(--white); }
+.site-header .nav a { color: rgba(244,245,247,.72); }
+.site-header .nav a:hover, .site-header .nav a[aria-current] { color: var(--white); }
+.site-header .btn { background: var(--white); border-color: var(--white); color: var(--ink); }
+.site-header .btn::before { background: var(--yellow); }
+.site-header .btn:hover { color: var(--ink); border-color: var(--yellow); }
+.site-header .btn.ghost { background: transparent; color: var(--white); border-color: rgba(244,245,247,.3); }
+.hdr-sec { color: rgba(244,245,247,.7); }
+@media (max-width: 900px) { .nav.open { background: rgba(15,22,38,.92); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); border-bottom-color: rgba(244,245,247,.12); } .nav.open a { color: var(--white); } }
+.hero, .page-hero.photo { margin-top: -73px; }
+.page-hero.photo { padding-top: 180px; }
+
+/* Hero principal: título grande e textos de apoio, como no footer */
+.ph-home { align-items: flex-end; gap: 24px 64px; }
+.hero .ph-home h1 { flex: 0 1 auto; margin: 0; font-size: clamp(36px, 4.2vw, 64px); line-height: .96; letter-spacing: -.03em; }
+.ph-side { flex: 1 1 300px; max-width: 420px; padding-bottom: 6px; }
+.ph-side .lead { font-size: 15px; line-height: 1.55; margin: 0 0 20px; max-width: 42ch; color: rgba(244,245,247,.88); text-shadow: 0 1px 12px rgba(0,0,0,.6); }
+.ph-side .ph-cta { margin: 0 !important; padding: 0; }
+
+/* Transições sempre brancas: a folha já aparece antes do JS ao chegar de outra página */
+html.tx-in, html.tx-in body { background: var(--white); }
+html.tx-in .sheet { display: grid; }
+
+/* Abertura da primeira visita em branco, com a identidade do footer */
+.preloader { background-color: var(--white); color: var(--ink); background-image: radial-gradient(rgba(15,22,38,.14) 1px, transparent 1.2px); background-size: 18px 18px; place-items: end start; padding: 0 clamp(24px, 5vw, 72px) clamp(32px, 6vw, 72px); }
+.pre-inner { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 18px 48px; }
+.preloader .word { font: 600 clamp(110px, 20vw, 320px)/.8 var(--f-sans); font-stretch: 125%; letter-spacing: -.055em; color: var(--ink); padding-bottom: .03em; }
+.preloader .count { color: var(--ink); font-size: 14px; }
+@media (max-width: 600px) { .preloader .word { font-size: 34vw; } }
+.hero { min-height: calc(100svh - 43px); }
+.hero-sector { top: 104px; bottom: auto; }
