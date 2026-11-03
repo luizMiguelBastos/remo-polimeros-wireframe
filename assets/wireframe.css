@@ -1579,3 +1579,21 @@ h1 .line, h1 .swap { padding-bottom: .18em; margin-bottom: -.18em; }
 .pm-link:hover b { color: var(--white); }
 .pm-nav:has(.pm-link:hover) .pm-link:not(:hover) { transform: scale(.95); filter: blur(3px); opacity: .55; }
 @media (hover: none) { .pm-nav:hover .pm-link:not(:hover) { transform: none; filter: none; opacity: 1; } }
+
+/* ---------- v5.4: ver mais nas aplicações, navegação na base do topo, curvas de fluxo no escuro ---------- */
+.pa-list .pa-extra { display: none; }
+.pa-list.show-all .pa-extra { display: flex; }
+.pa-more { margin-top: 14px; padding: 4px 0; border: 0; background: none; font-size: 12px; letter-spacing: .04em; color: var(--slate); cursor: pointer; border-bottom: 1px solid var(--yellow); }
+.pa-more:hover { color: var(--ink); }
+
+/* Base do topo: voltar e próxima resina */
+.p-nav { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line-d); }
+.p-nav-link { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; color: var(--steel); text-decoration: none; transition: color .3s; }
+.p-nav-link b { font: 600 15px var(--f-sans); font-stretch: 125%; color: var(--white); }
+.p-nav-link .arr-l, .p-nav-link .arr-r { display: inline-block; color: var(--yellow); transition: transform .4s var(--ease); }
+.p-nav-link:hover { color: var(--white); }
+.p-nav-link:hover .arr-l { transform: translateX(-6px); }
+.p-nav-link:hover .arr-r { transform: translateX(6px); }
+
+/* Curvas de fluxo ficam atrás do conteúdo, como as moléculas */
+.p-grades > .wrap { position: relative; z-index: 1; }

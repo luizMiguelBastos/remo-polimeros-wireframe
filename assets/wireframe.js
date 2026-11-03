@@ -316,7 +316,48 @@
     new IntersectionObserver(([en]) => { on = en.isIntersecting; }).observe(host);
     if (reduced) { on = true; draw(); } else loop();
   };
-  $$("[data-mol]").forEach(molField);
+  // Fundos escuros: curvas de fluxo, como polímero escorrendo na extrusão
+  const flowField = host => {
+    const cv = document.createElement("canvas");
+    cv.className = "mol-bg flow-bg"; cv.setAttribute("aria-hidden", "true");
+    host.prepend(cv);
+    const ctx = cv.getContext("2d");
+    let W = 0, H = 0, lines = [], mx = -999, my = -999, on = false, t = 0;
+    const size = () => {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      W = host.clientWidth; H = host.clientHeight;
+      cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const n = Math.max(8, Math.min(22, Math.round(H / 46)));
+      lines = Array.from({ length: n }, (_, i) => ({
+        y: (i + .5) * H / n, a1: 10 + Math.random() * 22, f1: .0018 + Math.random() * .0016, p1: Math.random() * 6.3,
+        a2: 4 + Math.random() * 8, f2: .006 + Math.random() * .004, p2: Math.random() * 6.3, s: .25 + Math.random() * .35, y2: Math.random() < .12
+      }));
+    };
+    const draw = () => {
+      ctx.clearRect(0, 0, W, H);
+      if (!reduced) t += 1;
+      for (const l of lines) {
+        ctx.beginPath();
+        for (let x = -10; x <= W + 10; x += 12) {
+          let y = l.y + Math.sin(x * l.f1 + l.p1 + t * .004 * l.s) * l.a1 + Math.sin(x * l.f2 + l.p2 - t * .007 * l.s) * l.a2;
+          const dx = x - mx, dy = y - my, d = Math.hypot(dx, dy);
+          if (d < 160) y += (dy >= 0 ? 1 : -1) * (1 - d / 160) * 18;
+          x === -10 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = l.y2 ? "rgba(255,209,0,.3)" : "rgba(110,140,205,.22)";
+        ctx.lineWidth = l.y2 ? 1.2 : 1;
+        ctx.stroke();
+      }
+    };
+    const loop = () => { if (on) draw(); requestAnimationFrame(loop); };
+    size(); addEventListener("resize", size);
+    if (window.ResizeObserver) { let lw = W, lh = H; new ResizeObserver(() => { if (host.clientWidth !== lw || host.clientHeight !== lh) { size(); lw = W; lh = H; } }).observe(host); }
+    host.addEventListener("pointermove", e => { const r = host.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; });
+    host.addEventListener("pointerleave", () => { mx = my = -999; });
+    new IntersectionObserver(([en]) => { on = en.isIntersecting; }).observe(host);
+    if (reduced) { on = true; draw(); } else loop();
+  };
+  $$("[data-mol]").forEach(host => (host.dataset.mol === "ink" ? molField : flowField)(host));
 
   // ---------- Cursor: rastro de moléculas atrás do ponto amarelo ----------
   if (finePointer && !reduced && $("#cursor")) {
@@ -902,30 +943,43 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.3`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.4`;
     if (m.name.length > 6) $(".p-hero .big").classList.add("long");
     $$("[data-f]").forEach(el => {
       const k = el.dataset.f;
-      if (k === "apps") el.innerHTML = m.apps.map((a, i) => `<li class="pa-item"><span class="pa-no">${String(i + 1).padStart(2, "0")}</span><span class="pa-name">${a}</span></li>`).join("");
+      if (k === "apps") {
+        // Padrão: 4 aplicações visíveis; o resto abre pelo "Ver mais"
+        const SHOW = 4;
+        el.innerHTML = m.apps.map((a, i) => `<li class="pa-item${i >= SHOW ? " pa-extra" : ""}"><span class="pa-no">${String(i + 1).padStart(2, "0")}</span><span class="pa-name">${a}</span></li>`).join("");
+        if (m.apps.length > SHOW) {
+          el.insertAdjacentHTML("afterend", `<button type="button" class="pa-more mono" aria-expanded="false">Ver mais (+${m.apps.length - SHOW})</button>`);
+          const more = el.nextElementSibling;
+          more.addEventListener("click", () => {
+            const open = more.getAttribute("aria-expanded") !== "true";
+            more.setAttribute("aria-expanded", String(open));
+            el.classList.toggle("show-all", open);
+            more.textContent = open ? "Ver menos" : `Ver mais (+${m.apps.length - SHOW})`;
+            if (open && motion) gsap.from($$(".pa-extra", el), { x: -20, opacity: 0, duration: .6, ease: "expo.out", stagger: .06 });
+            if (hasGsap) ScrollTrigger.refresh();
+          });
+        }
+      }
       else if (k === "traits") el.innerHTML = m.traits.map(t => `<span class="chip">${t}</span>`).join("");
       else if (k === "sheets") el.textContent = m.sheets;
       else el.textContent = m[k];
     });
     $("#grades").innerHTML = m.grades.map(g =>
       `<div class="grade"><div><b>${g[0]}</b><small>${g[1]}</small></div><div style="display:flex;gap:16px"><a href="#">Ficha técnica PDF ↓</a><a href="contato.html?tipo=amostra">Pedir amostra</a></div></div>`).join("");
-    // Outros produtos: linha anterior e próxima, em volta para o índice
-    const at = M.indexOf(m), prev = M[(at - 1 + M.length) % M.length], next = M[(at + 1) % M.length];
-    const pmLink = (x, dir) => `<a class="pm-link ${dir}" href="produto.html?linha=${x.id}" data-cursor="Ver">
-        <span class="pm-dir mono">${dir === "prev" ? "← Linha anterior" : "Próxima linha →"}</span>
-        <b>${x.name}</b><small>${x.full}</small></a>`;
-    $("#pm-nav").innerHTML = pmLink(prev, "prev") + pmLink(next, "next");
+    // Base do topo: volta para o índice e próxima resina
+    const next = M[(M.indexOf(m) + 1) % M.length];
+    $("#p-next").href = `produto.html?linha=${next.id}`;
+    $("#p-next b").textContent = next.name;
     if (motion) {
       gsap.from("#grades .grade", { y: 20, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.06, scrollTrigger: { trigger: "#grades", start: "top 85%" } });
       gsap.from(".p-info > *", { y: 30, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.08, delay: 0.2 });
       gsap.fromTo(".p-media", { clipPath: "inset(0 0 0 100%)" }, { clipPath: "inset(0 0 0 0%)", duration: 1.4, ease: "expo.inOut", delay: 0.3 });
       gsap.from(".pa-item", { x: -30, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.08, scrollTrigger: { trigger: ".pa-list", start: "top 85%" } });
-      // A entrada anima o bloco inteiro: os botões têm transição própria no hover (desfoque e escala)
-      gsap.from("#pm-nav", { y: 40, opacity: 0, duration: 0.9, ease: "expo.out", scrollTrigger: { trigger: "#pm-nav", start: "top 85%" } });
+      gsap.from(".p-nav", { opacity: 0, duration: 1, ease: "power2.out", delay: 0.9 });
       gsap.fromTo(".pa-photos .ph", { clipPath: "inset(100% 0 0 0)" }, { clipPath: "inset(0% 0 0 0)", duration: 1.3, ease: "expo.inOut", stagger: 0.12, scrollTrigger: { trigger: ".pa-photos", start: "top 85%" } });
     }
   }
