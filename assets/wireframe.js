@@ -173,7 +173,7 @@
     if (!motion) return;
     gsap.from(".hero [data-lines] .line > span", { yPercent: 110, duration: 1.2, ease: "expo.out", stagger: 0.1 });
     gsap.from(".hero [data-reveal]", { y: 30, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.12, delay: 0.35 });
-    if ($(".h-sep")) gsap.from(".h-sep", { scaleX: 0, duration: 1, ease: "expo.inOut", delay: 0.5 });
+    if ($(".hero .h-sep")) gsap.from(".hero .h-sep", { scaleX: 0, duration: 1, ease: "expo.inOut", delay: 0.5 });
     if ($(".hero-scroll")) gsap.fromTo(".hero-scroll", { y: 20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 1, ease: "expo.out", delay: 0.9, clearProps: "opacity,visibility,transform" });
   };
   const endIntro = () => {
