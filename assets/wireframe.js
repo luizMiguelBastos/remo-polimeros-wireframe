@@ -463,13 +463,15 @@
     if (motion) gsap.from($$(".ch", big), { yPercent: 115, rotate: 6, duration: 1.1, ease: "expo.out", stagger: 0.05, delay: big.closest(".hero") ? 0.2 : 0.1 });
   });
 
-  // ---------- Hero principal: subtítulo com a mesma largura da linha grande do título ----------
-  const bigLine = $(".hero .h-big"), heroLead = $(".ph-home .ph-side .lead");
-  if (bigLine && heroLead) {
-    const fit = () => { heroLead.style.width = Math.max(280, Math.round(bigLine.getBoundingClientRect().width)) + "px"; heroLead.style.maxWidth = "100%"; };
+  // ---------- Hero e aberturas: subtítulo com a mesma largura da linha grande do título ----------
+  $$(".ph-home").forEach(box => {
+    const bigLine = $(".h-big", box), lead = $(".ph-side .lead", box);
+    if (!bigLine || !lead) return;
+    // Deixa espaço à direita para o "Explore" quando a frase grande é muito longa
+    const fit = () => { lead.style.width = Math.max(280, Math.round(bigLine.getBoundingClientRect().width)) + "px"; lead.style.maxWidth = innerWidth > 700 ? "calc(100% - 160px)" : "100%"; };
     (document.fonts ? document.fonts.ready : Promise.resolve()).then(fit);
     addEventListener("resize", fit);
-  }
+  });
 
   // ---------- Palavra que troca por sinônimos (hero e aberturas) ----------
   $$(".swap[data-words]").forEach((swap, n) => {
@@ -531,16 +533,20 @@
     if (lenis) lenis.on("scroll", e => hideCue(e.scroll)); else addEventListener("scroll", () => hideCue(scrollY), { passive: true });
   }
 
-  // ---------- Hero: "Explore" centralizado na altura do subtítulo ----------
-  const cueEl = $(".hero-inner > .hero-scroll"), leadEl = $(".ph-home .ph-side .lead");
-  if (cueEl && leadEl) {
+  // ---------- Hero e aberturas: "Explore" centralizado na altura do subtítulo ----------
+  $$(".hero-inner > .hero-scroll, .ph-wrap > .hero-scroll").forEach(cueEl => {
+    const leadEl = $(".ph-home .ph-side .lead", cueEl.parentElement);
+    if (!leadEl) return;
     const alignCue = () => {
+      // Desconta o deslocamento das animações de entrada para medir a posição final
+      const ly = hasGsap ? (gsap.getProperty(leadEl, "y") || 0) : 0, cy = hasGsap ? (gsap.getProperty(cueEl, "y") || 0) : 0;
       const box = cueEl.parentElement.getBoundingClientRect(), l = leadEl.getBoundingClientRect(), c = cueEl.getBoundingClientRect();
-      cueEl.style.bottom = Math.round(box.bottom - l.bottom + (l.height - c.height) / 2) + "px";
+      cueEl.style.bottom = Math.round(box.bottom - (l.bottom - ly) + (l.height - c.height) / 2) + "px";
     };
     (document.fonts ? document.fonts.ready : Promise.resolve()).then(alignCue);
+    setTimeout(alignCue, 2600);
     addEventListener("resize", alignCue);
-  }
+  });
 
   // ---------- Aberturas internas: "Explore" leva à próxima seção e some ao rolar ----------
   $$(".page-cue").forEach(pc => {
