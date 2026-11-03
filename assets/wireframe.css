@@ -1512,3 +1512,50 @@ h1 .line, h1 .swap { padding-bottom: .18em; margin-bottom: -.18em; }
 .rail-free .rail-track { padding-left: max(24px, calc((100% - var(--max)) / 2 + 24px)); scroll-padding-left: max(24px, calc((100% - var(--max)) / 2 + 24px)); }
 @media (max-width: 700px) { .p-hero .big.long { font-size: 13vw; line-height: .9; } }
 @media (max-width: 700px) { .p-apps .cota.v { display: none; } }
+
+/* ---------- v5.2: topo com imagem até a borda, aplicações em tópicos, outros produtos ---------- */
+.p-top { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 56px; margin-top: 8px; align-items: stretch; }
+.p-info .big { margin: 0 0 28px; font-size: clamp(72px, 9.5vw, 150px); overflow-wrap: anywhere; }
+.p-info .big.long { font-size: clamp(56px, 6.4vw, 104px); line-height: .9; }
+/* Imagem: do topo do nome até a linha do ISO, encostada na borda direita da tela */
+.p-media { min-height: 420px; height: auto; margin-right: calc(-1 * ((100vw - min(100vw, var(--max))) / 2 + 24px)); border-right: 0; border-radius: 8px 0 0 8px; }
+
+/* Onde é usado: tópicos */
+.pa-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-l); }
+.pa-item { display: flex; align-items: baseline; gap: 20px; padding: 18px 0; border-bottom: 1px solid var(--line-l); position: relative; }
+.pa-item::after { content: ""; position: absolute; left: 0; bottom: -1px; height: 2px; width: 100%; background: var(--yellow); transform: scaleX(0); transform-origin: left; transition: transform .6s var(--ease); }
+.pa-item:hover::after { transform: scaleX(1); }
+.pa-item .pa-no { font: 12px var(--f-mono); color: var(--slate); display: inline-flex; align-items: center; gap: 10px; min-width: 44px; }
+.pa-item .pa-no::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--yellow); }
+.pa-item .pa-name { font: 500 clamp(19px, 1.6vw, 24px)/1.3 var(--f-sans); color: var(--ink); transition: transform .5s var(--ease); }
+.pa-item:hover .pa-name { transform: translateX(8px); }
+
+/* Outros produtos: volta para o índice + anterior e próxima */
+.p-more { border-top: 1px solid var(--line-l); }
+.p-more + .rail { border-top: 1px solid var(--line-l); }
+.pm-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-bottom: 36px; }
+.pm-head h2 { margin: 0; }
+.pm-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pm-link { position: relative; isolation: isolate; display: flex; flex-direction: column; gap: 8px; padding: 28px; border: 1px solid var(--line-l); border-radius: 8px; color: var(--ink); text-decoration: none; overflow: hidden; transition: color .4s, border-color .4s; }
+.pm-link.next { text-align: right; align-items: flex-end; }
+.pm-link::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--night); transform: scaleY(0); transform-origin: bottom; transition: transform .55s var(--ease); }
+.pm-link:hover { color: var(--white); border-color: var(--night); }
+.pm-link:hover::before { transform: scaleY(1); }
+.pm-link .pm-dir { font-size: 12px; color: var(--slate); transition: color .4s; }
+.pm-link:hover .pm-dir { color: var(--yellow); }
+.pm-link b { font: 600 clamp(36px, 4vw, 60px)/.95 var(--f-sans); font-stretch: 125%; letter-spacing: -.035em; }
+.pm-link small { font: 12px var(--f-mono); color: var(--slate); transition: color .4s; }
+.pm-link:hover small { color: var(--steel); }
+
+@media (max-width: 900px) {
+  .p-top { grid-template-columns: 1fr; gap: 32px; }
+  .p-media { min-height: 260px; margin-right: -24px; }
+}
+@media (max-width: 700px) {
+  .p-info .big { font-size: 22vw; }
+  .p-info .big.long { font-size: 13vw; }
+  .pm-nav { grid-template-columns: 1fr; }
+  .pm-link { padding: 22px; }
+  .pm-link b { font-size: 34px; }
+}
+.p-hero { overflow-x: clip; }
