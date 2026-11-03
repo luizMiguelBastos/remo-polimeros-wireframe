@@ -1559,3 +1559,23 @@ h1 .line, h1 .swap { padding-bottom: .18em; margin-bottom: -.18em; }
   .pm-link b { font-size: 34px; }
 }
 .p-hero { overflow-x: clip; }
+
+/* ---------- v5.3: grades no azul escuro, hover dos outros produtos, imagem na margem ---------- */
+/* Imagem do topo termina na mesma margem do botão "Sobre nós" */
+.p-media { margin-right: 0; border-right: 1px dashed var(--line-d); border-radius: var(--radius); }
+@media (max-width: 900px) { .p-media { margin-right: 0; } }
+
+/* Grades no mesmo azul escuro do topo */
+.p-grades { background: var(--night); color: var(--white); }
+.p-grades .grade { border-top-color: var(--line-d); }
+.p-grades .grade b { color: var(--white); }
+.p-grades .grade small { color: var(--steel); }
+.p-grades .grade a { color: var(--white); }
+.p-grades .grade a:hover { color: var(--yellow); }
+.p-grades .chip { border-color: var(--line-d); color: var(--steel); }
+
+/* Outros produtos: texto branco no hover e o outro bloco recua desfocado */
+.pm-link { transition: color .4s, border-color .4s, transform .6s var(--ease), filter .6s var(--ease), opacity .6s var(--ease); }
+.pm-link:hover b { color: var(--white); }
+.pm-nav:has(.pm-link:hover) .pm-link:not(:hover) { transform: scale(.95); filter: blur(3px); opacity: .55; }
+@media (hover: none) { .pm-nav:hover .pm-link:not(:hover) { transform: none; filter: none; opacity: 1; } }

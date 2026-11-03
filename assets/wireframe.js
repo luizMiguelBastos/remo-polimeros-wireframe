@@ -902,7 +902,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.2`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.3`;
     if (m.name.length > 6) $(".p-hero .big").classList.add("long");
     $$("[data-f]").forEach(el => {
       const k = el.dataset.f;
@@ -924,7 +924,8 @@
       gsap.from(".p-info > *", { y: 30, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.08, delay: 0.2 });
       gsap.fromTo(".p-media", { clipPath: "inset(0 0 0 100%)" }, { clipPath: "inset(0 0 0 0%)", duration: 1.4, ease: "expo.inOut", delay: 0.3 });
       gsap.from(".pa-item", { x: -30, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.08, scrollTrigger: { trigger: ".pa-list", start: "top 85%" } });
-      gsap.from(".pm-link", { y: 40, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.1, scrollTrigger: { trigger: "#pm-nav", start: "top 85%" } });
+      // A entrada anima o bloco inteiro: os botões têm transição própria no hover (desfoque e escala)
+      gsap.from("#pm-nav", { y: 40, opacity: 0, duration: 0.9, ease: "expo.out", scrollTrigger: { trigger: "#pm-nav", start: "top 85%" } });
       gsap.fromTo(".pa-photos .ph", { clipPath: "inset(100% 0 0 0)" }, { clipPath: "inset(0% 0 0 0)", duration: 1.3, ease: "expo.inOut", stagger: 0.12, scrollTrigger: { trigger: ".pa-photos", start: "top 85%" } });
     }
   }
