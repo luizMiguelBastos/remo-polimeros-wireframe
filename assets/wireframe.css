@@ -1314,21 +1314,3 @@ html.tx-in .sheet { display: grid; }
 .hero-sector::before { background: radial-gradient(ellipse 62% 70% at 45% 50%, rgba(0,0,0,.24) 0%, rgba(0,0,0,.12) 50%, rgba(0,0,0,0) 80%); }
 .hero-sector .hs-bar { background: rgba(244,245,247,.18); }
 .hero-sector .hs-bar i { background: var(--yellow); }
-
-
-/* ---------- v4.0: faixa de vidro atrás da logo, com gradiente que se adapta ao fundo ---------- */
-.site-header .wrap { align-items: stretch; }
-.site-header .wrap > * { align-self: center; }
-.site-header .logo { position: relative; isolation: isolate; align-self: stretch; height: auto; padding: 0 72px 0 0; transition: color .5s; }
-.site-header .logo::before { content: ""; position: absolute; z-index: -1; top: 0; bottom: 0; left: -50vw; right: 0; pointer-events: none;
-  background: var(--band, rgba(244,245,247,.6)); transition: background .6s;
-  -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4);
-  -webkit-mask-image: linear-gradient(100deg, #000 0%, #000 calc(100% - 150px), rgba(0,0,0,.6) calc(100% - 70px), transparent 100%);
-          mask-image: linear-gradient(100deg, #000 0%, #000 calc(100% - 150px), rgba(0,0,0,.6) calc(100% - 70px), transparent 100%); }
-/* Fundo escuro atrás do header: faixa clara, logo colorida e texto escuro */
-.site-header.band-light { --band: rgba(244,245,247,.62); }
-.site-header.band-light .logo { color: var(--ink); }
-/* Fundo claro atrás do header: faixa escura, logo branca e texto branco */
-.site-header.band-dark { --band: rgba(15,22,38,.72); }
-.site-header.band-dark .logo { color: var(--white); }
-@media (max-width: 600px) { .site-header .logo { padding-right: 48px; } }

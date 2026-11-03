@@ -258,7 +258,6 @@
       const DUR = 8;
       const show = n => {
         slides.forEach((sl, k) => sl.classList.toggle("on", k === n));
-        document.dispatchEvent(new CustomEvent("heroslide", { detail: slides[n].dataset.src }));
         $("#hs-no").textContent = String(n + 1).padStart(2, "0");
         $("#hs-label").textContent = slides[n].dataset.label;
         if (hasGsap && motion) {
@@ -532,54 +531,6 @@
     };
     (document.fonts ? document.fonts.ready : Promise.resolve()).then(alignCue);
     addEventListener("resize", alignCue);
-  }
-
-  // ---------- Header: a faixa da logo muda de cor conforme o fundo que está atrás dela ----------
-  const hdr = $("#header"), mark = $(".site-header .logo-mark");
-  if (hdr && mark) {
-    const lumCache = {};
-    // Luminosidade média do canto superior esquerdo da foto (onde fica a logo)
-    const imageLum = src => lumCache[src] || (lumCache[src] = new Promise(ok => {
-      const im = new Image();
-      im.onload = () => {
-        const cv = document.createElement("canvas"); cv.width = 48; cv.height = 16;
-        const cx = cv.getContext("2d");
-        cx.drawImage(im, 0, 0, im.naturalWidth * 0.4, im.naturalHeight * 0.18, 0, 0, 48, 16);
-        const d = cx.getImageData(0, 0, 48, 16).data; let sum = 0;
-        for (let k = 0; k < d.length; k += 4) sum += 0.2126 * d[k] + 0.7152 * d[k + 1] + 0.0722 * d[k + 2];
-        ok(sum / (d.length / 4) / 255);
-      };
-      im.onerror = () => ok(0);
-      im.src = src;
-    }));
-    let heroSrc = null;
-    const pageMedia = $(".page-hero .ph-media");
-    if (pageMedia) heroSrc = (pageMedia.style.backgroundImage.match(/url\(["']?([^"')]+)/) || [])[1] || null;
-    const setMode = light => {
-      hdr.classList.toggle("band-dark", light);
-      hdr.classList.toggle("band-light", !light);
-      const want = light ? mark.dataset.onDark : mark.dataset.onLight;
-      if (want && !mark.src.endsWith(want)) mark.src = want;
-    };
-    const update = async () => {
-      const y = hdr.getBoundingClientRect().bottom + 2;
-      const under = document.elementsFromPoint(Math.min(120, innerWidth / 4), y).find(el => el.closest("section, footer") && !el.closest("#header"));
-      const sec = under && under.closest("section, footer");
-      if (sec && (sec.classList.contains("hero") || sec.classList.contains("page-hero")) && heroSrc) {
-        // Foto escura atrás: faixa clara. Foto clara: faixa escura. A base escurecida da foto pesa no cálculo.
-        setMode((await imageLum(heroSrc)) > 0.62);
-      } else if (sec) {
-        const light = sec.classList.contains("light") || sec.classList.contains("footer") || sec.classList.contains("rail");
-        setMode(light);
-      }
-    };
-    document.addEventListener("heroslide", e => { heroSrc = e.detail; update(); });
-    let ticking = false;
-    const onScrollBand = () => { if (ticking) return; ticking = true; requestAnimationFrame(() => { ticking = false; update(); }); };
-    if (lenis) lenis.on("scroll", onScrollBand); else addEventListener("scroll", onScrollBand, { passive: true });
-    addEventListener("resize", onScrollBand);
-    setMode(false);
-    update();
   }
 
   // ---------- Footer: voltar ao topo ----------
