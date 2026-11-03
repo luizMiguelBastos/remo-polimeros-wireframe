@@ -1428,3 +1428,25 @@ h1 .line, h1 .swap { padding-bottom: .18em; margin-bottom: -.18em; }
   .cd-table { font-size: 13px; }
   .cd-table thead b { font-size: 18px; }
 }
+
+/* ---------- v5.0: fundo escuro do hover cobre a linha inteira, até o "Comparar" ---------- */
+.mat-head::before { display: none; }
+.mat-top { position: relative; isolation: isolate; }
+.mat-top::before { content: ""; position: absolute; inset: 0 -16px; z-index: -1; background: var(--night); border-radius: 8px; transform: scaleY(0); transform-origin: bottom; transition: transform .55s var(--ease); }
+.mat-top:hover::before { transform: scaleY(1); }
+.mat-row.open .mat-top::before { transform: scaleY(0); }
+.mat-top:hover .mat-head .nm, .mat-top:hover .mat-head .fl, .mat-top:hover .mat-head .no, .mat-top:hover .mat-head .gc, .mat-top:hover .mat-head .pl { color: var(--white); }
+.mat-top:hover .mat-head .gc { border-color: rgba(244,245,247,.3); }
+.mat-top:hover .mat-head .pl { border-color: var(--yellow); }
+.mat-row.open .mat-top:hover .mat-head .nm, .mat-row.open .mat-top:hover .mat-head .no, .mat-row.open .mat-top:hover .mat-head .gc { color: var(--ink); }
+.mat-row.open .mat-top:hover .mat-head .fl { color: var(--slate); }
+.mat-row.open .mat-top:hover .mat-head .gc { border-color: var(--line-l); }
+.mat-row.open .mat-top:hover .mat-head .pl { color: var(--ink); }
+/* "Comparar" amarelo sobre o fundo escuro */
+.mat-top:hover .mat-cmp, .mat-top:hover .mat-cmp.on { color: var(--yellow); background: none; }
+.mat-top:hover .mat-cmp.on i { background: var(--yellow); border-color: var(--yellow); }
+.mat-top:hover .mat-cmp.on i::after { border-color: var(--night); }
+.mat-row.open .mat-top:hover .mat-cmp { color: var(--slate); }
+.mat-row.open .mat-top:hover .mat-cmp.on { color: var(--ink); }
+.mat-row.open .mat-top:hover .mat-cmp.on i { background: var(--night); border-color: var(--night); }
+.mat-row.open .mat-top:hover .mat-cmp.on i::after { border-color: var(--yellow); }
