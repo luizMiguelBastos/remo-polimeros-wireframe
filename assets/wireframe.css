@@ -1309,3 +1309,8 @@ html.tx-in .sheet { display: grid; }
   background: radial-gradient(ellipse 62% 70% at 45% 50%, rgba(0,0,0,.5) 0%, rgba(0,0,0,.28) 50%, rgba(0,0,0,0) 80%); filter: blur(6px); }
 .hero-sector .hs-bar { background: rgba(244,245,247,.4); }
 .hero-sector .hs-bar i { background: #13185A; }
+
+/* ---------- v3.5: indicador de setores mais sutil, barra amarela ---------- */
+.hero-sector::before { background: radial-gradient(ellipse 62% 70% at 45% 50%, rgba(0,0,0,.24) 0%, rgba(0,0,0,.12) 50%, rgba(0,0,0,0) 80%); }
+.hero-sector .hs-bar { background: rgba(244,245,247,.18); }
+.hero-sector .hs-bar i { background: var(--yellow); }
