@@ -694,7 +694,6 @@ body { background-image: linear-gradient(rgba(244,245,247,.028) 1px, transparent
 .hero-slides .slide.on { opacity: 1; }
 .hero.has-photos #field { display: none; }
 .hero-sector { position: absolute; z-index: 2; right: 24px; bottom: clamp(40px, 7vh, 72px); display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; align-items: baseline; min-width: 220px; font: 12px var(--f-mono); color: var(--steel); text-transform: uppercase; letter-spacing: .08em; }
-.hero-sector .hs-no { color: var(--yellow); }
 .hero-sector .hs-label { color: var(--white); overflow: hidden; display: block; }
 .hero-sector .hs-bar { grid-column: 1 / -1; height: 2px; background: var(--line-d); overflow: hidden; }
 .hero-sector .hs-bar i { display: block; height: 100%; background: var(--yellow); transform-origin: left; transform: scaleX(0); }
@@ -1303,3 +1302,10 @@ html.tx-in .sheet { display: grid; }
 .eyebrow::before, .light .eyebrow::before, .hero .eyebrow::before { width: 18px; height: 16px;
   -webkit-mask: url(logo/remo-simbolo-mono.svg) center / contain no-repeat; mask: url(logo/remo-simbolo-mono.svg) center / contain no-repeat; }
 @media (max-width: 600px) { .sheet-mark { height: 22vw; } .site-header .logo .logo-mark { height: 28px; } }
+
+/* ---------- v3.4: indicador de setores com barra azul e sombra escura atrás ---------- */
+.hero-sector { isolation: isolate; }
+.hero-sector::before { content: ""; position: absolute; z-index: -1; left: -28px; right: -36px; top: -22px; bottom: -22px; pointer-events: none;
+  background: radial-gradient(ellipse 62% 70% at 45% 50%, rgba(0,0,0,.5) 0%, rgba(0,0,0,.28) 50%, rgba(0,0,0,0) 80%); filter: blur(6px); }
+.hero-sector .hs-bar { background: rgba(244,245,247,.4); }
+.hero-sector .hs-bar i { background: #13185A; }
