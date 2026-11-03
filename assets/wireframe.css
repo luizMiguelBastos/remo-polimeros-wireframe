@@ -1314,17 +1314,3 @@ html.tx-in .sheet { display: grid; }
 .hero-sector::before { background: radial-gradient(ellipse 62% 70% at 45% 50%, rgba(0,0,0,.24) 0%, rgba(0,0,0,.12) 50%, rgba(0,0,0,0) 80%); }
 .hero-sector .hs-bar { background: rgba(244,245,247,.18); }
 .hero-sector .hs-bar i { background: var(--yellow); }
-
-/* ---------- v3.8: header claro com efeito de vidro ---------- */
-.site-header, .site-header.scrolled { background: rgba(244,245,247,.55); color: var(--ink); border-bottom: 1px solid rgba(255,255,255,.5); box-shadow: inset 0 1px 0 rgba(255,255,255,.6);
-  -webkit-backdrop-filter: blur(20px) saturate(1.6); backdrop-filter: blur(20px) saturate(1.6); }
-.site-header.scrolled { background: rgba(244,245,247,.72); }
-.site-header .logo { color: var(--ink); }
-.site-header .nav a { color: var(--slate); }
-.site-header .nav a:hover, .site-header .nav a[aria-current] { color: var(--ink); }
-.site-header .btn { background: var(--night); border-color: var(--night); color: var(--white); }
-.site-header .btn::before { background: var(--yellow); }
-.site-header .btn:hover { color: var(--ink); border-color: var(--yellow); }
-.site-header .btn.ghost { background: transparent; color: var(--ink); border-color: var(--line-l); }
-.hdr-sec { color: var(--slate); }
-@media (max-width: 900px) { .nav.open { background: rgba(244,245,247,.92); border-bottom-color: var(--line-l); } .nav.open a { color: var(--ink); } }
