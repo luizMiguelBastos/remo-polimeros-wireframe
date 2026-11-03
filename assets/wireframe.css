@@ -1608,3 +1608,7 @@ h1 .line, h1 .swap { padding-bottom: .18em; margin-bottom: -.18em; }
 @media (max-width: 700px) { .p-nav-pn { gap: 14px; } .p-nav-sep { display: none; } }
 .p-info { min-width: 0; }
 @media (max-width: 900px) { .p-top { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- v5.6: topo da linha de produto só com as ondas (sem o quadriculado do fundo) ---------- */
+.p-hero { background: var(--night); }
+body:has(#product-page) { background-image: none; }
