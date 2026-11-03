@@ -341,10 +341,10 @@
         for (let x = -10; x <= W + 10; x += 12) {
           let y = l.y + Math.sin(x * l.f1 + l.p1 + t * .004 * l.s) * l.a1 + Math.sin(x * l.f2 + l.p2 - t * .007 * l.s) * l.a2;
           const dx = x - mx, dy = y - my, d = Math.hypot(dx, dy);
-          if (d < 160) y += (dy >= 0 ? 1 : -1) * (1 - d / 160) * 18;
+          if (d < 160) y += (dy >= 0 ? 1 : -1) * (1 - d / 160) * 10;
           x === -10 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
         }
-        ctx.strokeStyle = l.y2 ? "rgba(255,209,0,.3)" : "rgba(110,140,205,.22)";
+        ctx.strokeStyle = l.y2 ? "rgba(255,209,0,.09)" : "rgba(110,140,205,.075)";
         ctx.lineWidth = l.y2 ? 1.2 : 1;
         ctx.stroke();
       }
@@ -357,6 +357,8 @@
     new IntersectionObserver(([en]) => { on = en.isIntersecting; }).observe(host);
     if (reduced) { on = true; draw(); } else loop();
   };
+  // Toda seção azul-escura sem foto de fundo ganha as curvas de fluxo
+  $$("main section:not(.light):not(.hero):not(.page-hero):not(.px-band):not([data-mol])").forEach(sec => sec.setAttribute("data-mol", ""));
   $$("[data-mol]").forEach(host => (host.dataset.mol === "ink" ? molField : flowField)(host));
 
   // ---------- Cursor: rastro de moléculas atrás do ponto amarelo ----------
@@ -943,8 +945,18 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.4`;
-    if (m.name.length > 6) $(".p-hero .big").classList.add("long");
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.5`;
+    // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
+    const nameEl = $(".p-hero .big");
+    const fitName = () => {
+      nameEl.style.fontSize = "";
+      const max = parseFloat(getComputedStyle(nameEl).fontSize);
+      const fit = max * nameEl.parentElement.clientWidth / nameEl.scrollWidth;
+      nameEl.style.fontSize = Math.min(max, fit) + "px";
+      nameEl.style.minHeight = max * 0.82 + "px";
+    };
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(fitName);
+    addEventListener("resize", fitName);
     $$("[data-f]").forEach(el => {
       const k = el.dataset.f;
       if (k === "apps") {
@@ -971,7 +983,9 @@
     $("#grades").innerHTML = m.grades.map(g =>
       `<div class="grade"><div><b>${g[0]}</b><small>${g[1]}</small></div><div style="display:flex;gap:16px"><a href="#">Ficha técnica PDF ↓</a><a href="contato.html?tipo=amostra">Pedir amostra</a></div></div>`).join("");
     // Base do topo: volta para o índice e próxima resina
-    const next = M[(M.indexOf(m) + 1) % M.length];
+    const at = M.indexOf(m), prev = M[(at - 1 + M.length) % M.length], next = M[(at + 1) % M.length];
+    $("#p-prev").href = `produto.html?linha=${prev.id}`;
+    $("#p-prev b").textContent = prev.name;
     $("#p-next").href = `produto.html?linha=${next.id}`;
     $("#p-next b").textContent = next.name;
     if (motion) {

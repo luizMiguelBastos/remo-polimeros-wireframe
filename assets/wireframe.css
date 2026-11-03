@@ -1597,3 +1597,14 @@ h1 .line, h1 .swap { padding-bottom: .18em; margin-bottom: -.18em; }
 
 /* Curvas de fluxo ficam atrás do conteúdo, como as moléculas */
 .p-grades > .wrap { position: relative; z-index: 1; }
+
+/* ---------- v5.5: anterior e próxima, nome em uma linha, ondas subliminares ---------- */
+.p-nav-pn { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+.p-nav-sep { width: 1px; height: 16px; background: var(--line-d); }
+.p-info .big { white-space: nowrap; overflow-wrap: normal; display: flex; align-items: flex-end; }
+/* Ondas atrás de tudo, sem mexer no conteúdo da seção */
+[data-mol]:not([data-mol="ink"]) { isolation: isolate; }
+.flow-bg { z-index: -1; }
+@media (max-width: 700px) { .p-nav-pn { gap: 14px; } .p-nav-sep { display: none; } }
+.p-info { min-width: 0; }
+@media (max-width: 900px) { .p-top { grid-template-columns: minmax(0, 1fr); } }
