@@ -748,10 +748,13 @@
   if (idx) {
     idx.innerHTML = M.map((m, i) => `
       <li class="mat-row" data-id="${m.id}">
-        <button class="mat-head" type="button" aria-expanded="false">
-          <span class="no">0${i + 1}</span><span class="nm">${m.name}</span><span class="fl">${m.full}</span>
-          <span class="gc">${m.sheets} fichas</span><span class="pl">+</span>
-        </button>
+        <div class="mat-top">
+          <button class="mat-head" type="button" aria-expanded="false">
+            <span class="no">0${i + 1}</span><span class="nm">${m.name}</span><span class="fl">${m.full}</span>
+            <span class="gc">${m.sheets} fichas</span><span class="pl">+</span>
+          </button>
+          <button class="mat-cmp" type="button" aria-pressed="false" data-cmp="${m.id}"><i aria-hidden="true"></i><span>Comparar</span></button>
+        </div>
         <div class="mat-body"><div class="mat-inner">
           <div>
             <p>${m.desc}</p>
@@ -804,33 +807,76 @@
     if (motion) gsap.from($$("tbody tr", mx), { y: 30, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.08, scrollTrigger: { trigger: mx, start: "top 85%" } });
   }
 
-  // ---------- Produtos: comparador de duas linhas ----------
-  const cmpA = $("#cmp-a"), cmpB = $("#cmp-b"), cmpT = $("#cmp-table");
-  if (cmpA && cmpB && cmpT) {
+  // ---------- Produtos: comparar até 3 linhas a partir do índice ----------
+  if (idx) {
     const PROPS = [["impacto", "Resistência ao impacto"], ["chama", "Anti-chama"], ["transparencia", "Transparência"], ["temperatura", "Alta temperatura"], ["rigidez", "Rigidez"], ["uv", "Uso externo (UV)"]];
     const SEGN = { automotivo: "Automotivo", eletro: "Eletroeletrônicos", "linha-branca": "Linha branca", construcao: "Construção civil", embalagens: "Embalagens e cosméticos" };
-    const opts = M.map(m => `<option value="${m.id}">${m.name}</option>`).join("");
-    cmpA.innerHTML = opts; cmpB.innerHTML = opts;
-    cmpA.value = "abs"; cmpB.value = "pc";
-    const render = () => {
-      const a = M.find(m => m.id === cmpA.value), b = M.find(m => m.id === cmpB.value);
-      const cell = (m, k) => { const on = m.props.includes(k); return `<div class="cmp-cell"><span class="cmp-bar${on ? "" : " off"}"><i style="transform:scaleX(${on ? 1 : .12})"></i></span><span class="${on ? "ok" : "no"}">${on ? "Atende" : "Não indicado"}</span></div>`; };
-      const rows = [
-        `<div class="cmp-row cmp-head" role="row"><span>Linha</span><div class="cmp-cell"><div><b>${a.name}</b><small>${a.full}</small></div></div><div class="cmp-cell"><div><b>${b.name}</b><small>${b.full}</small></div></div></div>`,
-        ...PROPS.map(([k, label]) => `<div class="cmp-row" role="row"><span>${label}</span>${cell(a, k)}${cell(b, k)}</div>`),
-        `<div class="cmp-row" role="row"><span>Segmentos</span><div class="cmp-cell">${a.segments.map(x => SEGN[x]).join(", ")}</div><div class="cmp-cell">${b.segments.map(x => SEGN[x]).join(", ")}</div></div>`,
-        `<div class="cmp-row" role="row"><span>Grades e fichas</span><div class="cmp-cell">${a.grades.length} grades · ${a.sheets} fichas</div><div class="cmp-cell">${b.grades.length} grades · ${b.sheets} fichas</div></div>`,
-        `<div class="cmp-row" role="row"><span></span><div class="cmp-cell cmp-cta"><a class="btn sm" href="produto.html?linha=${a.id}">Ver ${a.name} <span class="arr">→</span></a></div><div class="cmp-cell cmp-cta"><a class="btn sm" href="produto.html?linha=${b.id}">Ver ${b.name} <span class="arr">→</span></a></div></div>`
-      ];
-      cmpT.innerHTML = rows.join("");
-      if (motion) {
-        gsap.from($$(".cmp-bar i", cmpT), { scaleX: 0, duration: 0.9, ease: "expo.out", stagger: 0.04 });
-        gsap.from($$(".cmp-head b", cmpT), { yPercent: 60, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.08 });
-      }
+    const MAX = 3;
+    let picked = [];
+    document.body.insertAdjacentHTML("beforeend", `
+      <div class="cmp-bar-fix" id="cmp-bar" aria-live="polite">
+        <span class="cb-lbl mono">Comparar</span><div class="cb-chips" id="cb-chips"></div>
+        <span class="cb-msg mono" id="cb-msg"></span>
+        <button type="button" class="cb-clear mono" id="cb-clear">Limpar</button>
+        <button type="button" class="btn sm cb-go" id="cb-go">Comparar <span class="arr">→</span></button>
+      </div>
+      <div class="cmp-drawer" id="cmp-drawer" role="dialog" aria-modal="true" aria-labelledby="cd-title" hidden>
+        <div class="cd-scrim" data-close></div>
+        <div class="cd-panel" tabindex="-1">
+          <div class="cd-head"><h3 id="cd-title">Comparação</h3><button type="button" class="cd-x" data-close aria-label="Fechar">×</button></div>
+          <div class="cd-body" id="cd-body" data-lenis-prevent></div>
+          <p class="cd-foot mono">A indicação final é sempre validada pela equipe técnica.</p>
+        </div>
+      </div>`);
+    const bar = $("#cmp-bar"), chips = $("#cb-chips"), msg = $("#cb-msg"), go = $("#cb-go"), drawer = $("#cmp-drawer"), panel = $(".cd-panel", drawer);
+    const sync = () => {
+      $$(".mat-cmp", idx).forEach(b => { const on = picked.includes(b.dataset.cmp); b.classList.toggle("on", on); b.setAttribute("aria-pressed", String(on)); $("span", b).textContent = on ? "Comparando" : "Comparar"; });
+      chips.innerHTML = picked.map(id => `<button type="button" class="cb-chip" data-rm="${id}" aria-label="Tirar ${M.find(m => m.id === id).name}">${M.find(m => m.id === id).name}<b aria-hidden="true">×</b></button>`).join("");
+      go.disabled = picked.length < 2;
+      go.firstChild.textContent = `Comparar (${picked.length}) `;
+      bar.classList.toggle("show", picked.length > 0);
     };
-    cmpA.addEventListener("change", render); cmpB.addEventListener("change", render);
-    render();
-    if (motion) gsap.from(cmpT, { y: 40, opacity: 0, duration: 1, ease: "expo.out", scrollTrigger: { trigger: cmpT, start: "top 85%" } });
+    const say = t => { msg.textContent = t; clearTimeout(say.t); say.t = setTimeout(() => { msg.textContent = ""; }, 2600); };
+    idx.addEventListener("click", e => {
+      const b = e.target.closest(".mat-cmp");
+      if (!b) return;
+      const id = b.dataset.cmp;
+      if (picked.includes(id)) picked = picked.filter(x => x !== id);
+      else if (picked.length >= MAX) { say("Máximo de 3 linhas"); return; }
+      else picked.push(id);
+      if (picked.length === 1) say("Marque mais uma para comparar");
+      sync();
+    });
+    chips.addEventListener("click", e => { const c = e.target.closest("[data-rm]"); if (c) { picked = picked.filter(x => x !== c.dataset.rm); sync(); } });
+    $("#cb-clear").addEventListener("click", () => { picked = []; sync(); });
+    let lastFocus = null;
+    const close = () => {
+      if (drawer.hidden) return;
+      drawer.classList.remove("open");
+      setTimeout(() => { drawer.hidden = true; }, 450);
+      if (lenis) lenis.start();
+      if (lastFocus) lastFocus.focus();
+    };
+    go.addEventListener("click", () => {
+      if (picked.length < 2) return;
+      const L = picked.map(id => M.find(m => m.id === id));
+      const row = (label, f) => `<tr><th scope="row">${label}</th>${L.map(m => `<td>${f(m)}</td>`).join("")}</tr>`;
+      $("#cd-body").innerHTML = `<table class="cd-table">
+        <thead><tr><td></td>${L.map(m => `<th scope="col"><b>${m.name}</b><small>${m.full}</small></th>`).join("")}</tr></thead>
+        <tbody>
+          ${PROPS.map(([k, label]) => row(label, m => m.props.includes(k) ? '<span class="ok" aria-label="Atende">✓</span>' : '<span class="no" aria-label="Não indicado">–</span>')).join("")}
+          ${row("Segmentos", m => m.segments.map(x => SEGN[x]).join(", "))}
+          ${row("Grades e fichas", m => `${m.grades.length} grades · ${m.sheets} fichas`)}
+          ${row("", m => `<a class="cd-link" href="produto.html?linha=${m.id}">Ver ${m.name} →</a>`)}
+        </tbody></table>`;
+      lastFocus = document.activeElement;
+      drawer.hidden = false;
+      requestAnimationFrame(() => { drawer.classList.add("open"); panel.focus(); });
+      if (lenis) lenis.stop();
+    });
+    drawer.addEventListener("click", e => { if (e.target.closest("[data-close]")) close(); });
+    addEventListener("keydown", e => { if (e.key === "Escape") close(); });
+    sync();
   }
 
   // ---------- Formulário ----------
