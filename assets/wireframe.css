@@ -1294,3 +1294,12 @@ html.tx-in .sheet { display: grid; }
 .ph-home { position: relative; isolation: isolate; }
 .ph-home::before { content: ""; position: absolute; z-index: -1; left: -12%; right: -18%; top: -22%; bottom: -18%; pointer-events: none;
   background: radial-gradient(ellipse 60% 62% at 38% 52%, rgba(0,0,0,.55) 0%, rgba(0,0,0,.32) 45%, rgba(0,0,0,0) 78%); filter: blur(8px); }
+
+
+/* ---------- v3.3: símbolo oficial vetorizado ---------- */
+.site-header .logo { gap: 12px; }
+.site-header .logo .logo-mark { display: block; width: auto; height: 34px; }
+.sheet-mark { display: block; width: auto; height: clamp(80px, 13vw, 210px); align-self: flex-end; margin-bottom: .2em; }
+.eyebrow::before, .light .eyebrow::before, .hero .eyebrow::before { width: 18px; height: 16px;
+  -webkit-mask: url(logo/remo-simbolo-mono.svg) center / contain no-repeat; mask: url(logo/remo-simbolo-mono.svg) center / contain no-repeat; }
+@media (max-width: 600px) { .sheet-mark { height: 22vw; } .site-header .logo .logo-mark { height: 28px; } }
