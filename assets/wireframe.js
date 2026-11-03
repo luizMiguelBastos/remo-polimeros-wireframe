@@ -565,11 +565,11 @@
   }));
 
   // ---------- Esteira de seções: rolagem lateral presa à rolagem (desktop) ----------
-  const railTrack = $(".rail-track");
+  const railTrack = $(".rail:not(.rail-free) .rail-track");
   if (railTrack && motion) {
     gsap.matchMedia().add("(min-width: 901px)", () => {
       const dist = () => Math.max(0, railTrack.scrollWidth - innerWidth + 24);
-      gsap.to(railTrack, { x: () => -dist(), ease: "none", scrollTrigger: { trigger: ".rail-pin", start: "top top", end: () => "+=" + dist(), pin: true, scrub: 1, invalidateOnRefresh: true } });
+      gsap.to(railTrack, { x: () => -dist(), ease: "none", scrollTrigger: { trigger: railTrack.closest(".rail-pin"), start: "top top", end: () => "+=" + dist(), pin: true, scrub: 1, invalidateOnRefresh: true } });
     });
     gsap.from($$(".rail-card", railTrack), { y: 60, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.08, scrollTrigger: { trigger: railTrack, start: "top 85%" } });
   }
@@ -902,20 +902,46 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v1.1`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.1`;
+    if (m.name.length > 6) $(".p-hero .big").classList.add("long");
     $$("[data-f]").forEach(el => {
       const k = el.dataset.f;
-      if (k === "apps") el.innerHTML = m.apps.map(a => `<li>${a}</li>`).join("");
+      if (k === "apps") el.innerHTML = m.apps.map((a, i) => `<li class="pa-card"><span class="pa-no">${String(i + 1).padStart(2, "0")}</span><span class="pa-name">${a}</span></li>`).join("");
       else if (k === "traits") el.innerHTML = m.traits.map(t => `<span class="chip">${t}</span>`).join("");
       else if (k === "sheets") el.textContent = m.sheets;
       else el.textContent = m[k];
     });
     $("#grades").innerHTML = m.grades.map(g =>
       `<div class="grade"><div><b>${g[0]}</b><small>${g[1]}</small></div><div style="display:flex;gap:16px"><a href="#">Ficha técnica PDF ↓</a><a href="contato.html?tipo=amostra">Pedir amostra</a></div></div>`).join("");
-    $("#other-lines").innerHTML = M.filter(x => x.id !== m.id).map(x => `<a class="btn ghost sm" href="produto.html?linha=${x.id}" data-cursor="Ver">${x.name}</a>`).join("");
+    // Outras linhas: cards da esteira com o nome da matéria no lugar da foto
+    const others = $("#other-lines");
+    others.innerHTML = M.filter(x => x.id !== m.id).map(x => `
+      <a class="hub-card rail-card line-card" href="produto.html?linha=${x.id}" data-cursor="Ver">
+        <span class="lc-top"><b${x.name.length > 6 ? ' class="long"' : ""}>${x.name}</b><small>${x.full}</small></span>
+        <span class="hc-no">${String(M.indexOf(x) + 1).padStart(2, "0")}</span>
+        <span class="hc-title">${x.name}</span>
+        <span class="hc-desc">${x.desc.split(/(?<=\.)\s/)[0]}</span>
+        <span class="lc-meta mono">${x.grades.length} grades · ${x.sheets} fichas</span>
+        <span class="hc-go" aria-hidden="true">→</span>
+      </a>`).join("");
+    // Esteira livre: arrasta com o mouse e anda pelas setas, sem travar a rolagem da página
+    let drag = null, moved = false;
+    others.addEventListener("pointerdown", e => { if (e.pointerType !== "mouse") return; drag = { x: e.clientX, left: others.scrollLeft }; moved = false; });
+    addEventListener("pointermove", e => { if (!drag) return; const dx = e.clientX - drag.x; if (Math.abs(dx) > 4) { moved = true; others.classList.add("dragging"); } others.scrollLeft = drag.left - dx; });
+    addEventListener("pointerup", () => { drag = null; others.classList.remove("dragging"); });
+    others.addEventListener("click", e => { if (moved) { e.preventDefault(); moved = false; } }, true);
+    others.addEventListener("dragstart", e => e.preventDefault());
+    $$(".rf-btn").forEach(b => b.addEventListener("click", () => {
+      const step = ($(".rail-card", others) || {}).offsetWidth || 320;
+      others.scrollBy({ left: (step + 14) * +b.dataset.dir, behavior: "smooth" });
+    }));
     if (motion) {
       gsap.from(".p-hero .big", { yPercent: 30, opacity: 0, duration: 1.2, ease: "expo.out" });
       gsap.from("#grades .grade", { y: 20, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.06, scrollTrigger: { trigger: "#grades", start: "top 85%" } });
+      gsap.from(".p-top > *", { y: 30, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.12, delay: 0.3 });
+      gsap.from(".pa-card", { y: 50, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.08, scrollTrigger: { trigger: ".pa-cards", start: "top 85%" } });
+      gsap.fromTo(".pa-photos .ph", { clipPath: "inset(100% 0 0 0)" }, { clipPath: "inset(0% 0 0 0)", duration: 1.3, ease: "expo.inOut", stagger: 0.12, scrollTrigger: { trigger: ".pa-photos", start: "top 85%" } });
+      gsap.from($$(".rail-card", others), { y: 60, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.06, scrollTrigger: { trigger: others, start: "top 85%" } });
     }
   }
 
