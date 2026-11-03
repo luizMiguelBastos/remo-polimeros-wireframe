@@ -1314,3 +1314,9 @@ html.tx-in .sheet { display: grid; }
 .hero-sector::before { background: radial-gradient(ellipse 62% 70% at 45% 50%, rgba(0,0,0,.24) 0%, rgba(0,0,0,.12) 50%, rgba(0,0,0,0) 80%); }
 .hero-sector .hs-bar { background: rgba(244,245,247,.18); }
 .hero-sector .hs-bar i { background: var(--yellow); }
+
+
+/* ---------- v4.2: logo no footer e barra de setores à direita ---------- */
+.f-logo { display: inline-flex; align-items: flex-end; gap: .14em; }
+.f-logo .f-mark { display: block; height: .74em; width: auto; margin-bottom: .04em; }
+.hero-sector { left: auto; right: max(24px, calc((100vw - var(--max)) / 2 + 24px)); text-align: right; }

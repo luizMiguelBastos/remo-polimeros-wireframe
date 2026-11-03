@@ -380,7 +380,13 @@
       if (!name || sec.classList.contains("hero")) return;
       ScrollTrigger.create({ trigger: sec, start: "top 50%", end: "bottom 50%", onToggle: st => { if (st.isActive) { hdrSec.textContent = name; hdrSec.classList.add("on"); } } });
     });
-    ScrollTrigger.create({ start: 0, end: () => innerHeight * .6, onToggle: st => { if (st.isActive) hdrSec.classList.remove("on"); } });
+    // Na home, o primeiro trecho também tem nome: "Home"
+    const homeHero = $("section.hero");
+    ScrollTrigger.create({ start: 0, end: () => innerHeight * .6, onToggle: st => {
+      if (!st.isActive) return;
+      if (homeHero) { hdrSec.textContent = "Home"; hdrSec.classList.add("on"); } else hdrSec.classList.remove("on");
+    } });
+    if (homeHero && scrollY < innerHeight * .6) { hdrSec.textContent = "Home"; hdrSec.classList.add("on"); }
   }
 
   // ---------- Fotos: aberturas, cards da home, faixa do institucional ----------
