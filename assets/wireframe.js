@@ -453,11 +453,13 @@
     if (!motion) return;
     gsap.from($$("h1 .line > span", ph), { yPercent: 110, duration: 1.2, ease: "expo.out", stagger: 0.1, delay: 0.1 });
     gsap.from($$(".eyebrow, .crumbs", ph), { y: 20, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.08 });
+    if ($(".h-sep", ph)) gsap.from($(".h-sep", ph), { scaleX: 0, duration: 1, ease: "expo.inOut", delay: 0.5 });
+    if ($(".page-cue", ph)) gsap.fromTo($(".page-cue", ph), { y: 20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 1, ease: "expo.out", delay: 0.9, clearProps: "opacity,visibility,transform" });
   });
 
   // ---------- Palavra grande das aberturas: letras sobem ----------
   $$(".ph-big").forEach(big => {
-    big.innerHTML = [...big.textContent].map(c => `<span class="ch">${c}</span>`).join("");
+    big.innerHTML = [...big.textContent].map(c => c === " " ? " " : `<span class="ch">${c}</span>`).join("");
     if (motion) gsap.from($$(".ch", big), { yPercent: 115, rotate: 6, duration: 1.1, ease: "expo.out", stagger: 0.05, delay: big.closest(".hero") ? 0.2 : 0.1 });
   });
 
@@ -478,7 +480,8 @@
     setTimeout(() => setInterval(() => {
       if (busy || document.hidden) return;
       busy = true;
-      if (swap.id === "hero-swap" && $(".h-sep")) gsap.to(".h-sep", { width: 96, duration: 0.35, ease: "power2.out", yoyo: true, repeat: 1 });
+      const sep = swap.closest(".ph-home, .ph-txt") && $(".h-sep", swap.closest(".ph-home, .ph-txt"));
+      if (sep) gsap.to(sep, { width: 96, duration: 0.35, ease: "power2.out", yoyo: true, repeat: 1 });
       $$(".sw-word", swap).slice(0, -1).forEach(w => w.remove());
       wi = (wi + 1) % WORDS.length;
       const cur = $(".sw-word", swap);
@@ -538,6 +541,14 @@
     (document.fonts ? document.fonts.ready : Promise.resolve()).then(alignCue);
     addEventListener("resize", alignCue);
   }
+
+  // ---------- Aberturas internas: "Explore" leva à próxima seção e some ao rolar ----------
+  $$(".page-cue").forEach(pc => {
+    const next = pc.closest("section").nextElementSibling;
+    pc.addEventListener("click", e => { e.preventDefault(); e.stopPropagation(); if (next) scrollToEl(next); });
+    const hide = y => pc.classList.toggle("gone", y > 40);
+    if (lenis) lenis.on("scroll", e => hide(e.scroll)); else addEventListener("scroll", () => hide(scrollY), { passive: true });
+  });
 
   // ---------- Footer: voltar ao topo ----------
   $$("[data-top]").forEach(a => a.addEventListener("click", e => {

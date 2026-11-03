@@ -1326,3 +1326,20 @@ html.tx-in .sheet { display: grid; }
 .f-logo .f-mark { transform: translateY(.17em); }
 /* Header: nome da seção centralizado na altura de "remo" (as letras dividem a mesma linha de base) */
 .hdr-sec { transform: translateY(3px); }
+
+
+/* ---------- v4.5: aberturas internas no mesmo padrão (palavra à esquerda, texto à direita) ---------- */
+.page-hero .ph-id { flex-wrap: nowrap; align-items: flex-end; gap: 24px 56px; }
+.page-hero .ph-big { display: block; flex: 0 1 auto; font-size: clamp(56px, 6.8vw, 100px); }
+.page-hero .ph-big .ch { white-space: normal; }
+.page-hero .ph-txt { flex: 1 1 340px; min-width: 300px; max-width: 460px; }
+.page-hero .h-sep { margin: 4px 0 16px; }
+.page-hero .page-cue { position: absolute; z-index: 2; right: max(24px, calc((100vw - var(--max)) / 2 + 24px)); bottom: 28px; left: auto; transform: none; text-decoration: none; transition: opacity .5s; }
+.page-hero .page-cue.gone { opacity: 0; pointer-events: none; }
+@media (max-width: 900px) {
+  .page-hero .ph-id { flex-wrap: wrap; }
+  .page-hero .ph-txt { max-width: none; }
+}
+@media (max-width: 600px) { .page-hero .page-cue { right: 16px; bottom: auto; top: 96px; } }
+.page-hero .page-cue { display: flex; align-items: center; gap: 10px; padding: 0; border: 0; border-radius: 0; background: none; -webkit-backdrop-filter: none; backdrop-filter: none; font: 12px var(--f-mono); color: var(--steel); }
+.page-hero .page-cue:hover { color: var(--white); border: 0; }
