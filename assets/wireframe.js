@@ -255,7 +255,7 @@
       if (!slides.length) { sector.remove(); return; }
       document.querySelector(".hero").classList.add("has-photos");
       let i = 0;
-      const DUR = 6;
+      const DUR = 8;
       const show = n => {
         slides.forEach((sl, k) => sl.classList.toggle("on", k === n));
         $("#hs-no").textContent = String(n + 1).padStart(2, "0");
