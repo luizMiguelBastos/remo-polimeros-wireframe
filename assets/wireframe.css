@@ -1320,3 +1320,9 @@ html.tx-in .sheet { display: grid; }
 .f-logo { display: inline-flex; align-items: flex-end; gap: .14em; }
 .f-logo .f-mark { display: block; height: .74em; width: auto; margin-bottom: .04em; }
 .hero-sector { left: auto; right: max(24px, calc((100vw - var(--max)) / 2 + 24px)); text-align: right; }
+
+/* ---------- v4.3: alinhamentos ópticos da logo ---------- */
+/* Footer: símbolo centralizado na altura das letras minúsculas de "remo" */
+.f-logo .f-mark { transform: translateY(.17em); }
+/* Header: nome da seção centralizado na altura de "remo" (as letras dividem a mesma linha de base) */
+.hdr-sec { transform: translateY(3px); }
