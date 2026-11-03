@@ -283,7 +283,7 @@
       const dpr = Math.min(devicePixelRatio || 1, 2);
       W = host.clientWidth; H = host.clientHeight;
       cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const n = Math.round(Math.min(90, W * H / 16000));
+      const n = Math.round(Math.min(90, W * H / 16000) * (+host.dataset.molDensity || 1));
       nodes = Array.from({ length: n }, () => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25, r: 1.2 + Math.random() * 2.2, y2: Math.random() < .45 }));
     };
     const LINK = 130;
@@ -309,6 +309,8 @@
     };
     const loop = () => { if (on) draw(); requestAnimationFrame(loop); };
     size(); addEventListener("resize", size);
+    // A seção muda de altura depois da carga (conteúdo animado, fontes): redesenha no tamanho novo para não esticar
+    if (window.ResizeObserver) { let lw = W, lh = H; new ResizeObserver(() => { if (host.clientWidth !== lw || host.clientHeight !== lh) { size(); lw = W; lh = H; } }).observe(host); }
     host.addEventListener("pointermove", e => { const r = host.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; });
     host.addEventListener("pointerleave", () => { mx = my = -999; });
     new IntersectionObserver(([en]) => { on = en.isIntersecting; }).observe(host);
