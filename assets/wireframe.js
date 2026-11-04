@@ -844,7 +844,7 @@
       <li class="mat-row" data-id="${m.id}">
         <div class="mat-top">
           <button class="mat-head" type="button" aria-expanded="false">
-            <span class="no">0${i + 1}</span><span class="nm">${m.name}</span><span class="fl">${m.full}</span>
+            <span class="no"><i class="no-mol" aria-hidden="true"><b></b></i>0${i + 1}</span><span class="nm">${m.name}</span><span class="fl">${m.full}</span>
             <span class="gc">${m.sheets} fichas</span><span class="pl">+</span>
           </button>
           <button class="mat-cmp" type="button" aria-pressed="false" data-cmp="${m.id}"><i aria-hidden="true"></i><span>Comparar</span></button>
@@ -868,13 +868,6 @@
       </li>`).join("");
 
     if (motion) gsap.from($$(".mat-row", idx), { y: 50, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.06, scrollTrigger: { trigger: idx, start: "top 85%" } });
-    // Hover: brilho suave que acompanha o cursor dentro da linha
-    if (finePointer) idx.addEventListener("pointermove", e => {
-      const top = e.target.closest(".mat-top"); if (!top) return;
-      const r = top.getBoundingClientRect();
-      top.style.setProperty("--mx", `${e.clientX - r.left + 16}px`);
-      top.style.setProperty("--my", `${e.clientY - r.top}px`);
-    });
     const refresh = () => { if (hasGsap) ScrollTrigger.refresh(); };
     const toggle = row => {
       const body = $(".mat-body", row), btn = $(".mat-head", row);
@@ -1001,7 +994,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.13`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.14`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
