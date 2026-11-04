@@ -174,6 +174,7 @@
     const box = $("#hero-iso"); if (!box) return;
     const svg = $("svg", box), w = box.offsetWidth, h = box.offsetHeight, k = h * .6;
     svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+    box.style.setProperty("--k", `${k}px`);
     const pts = `${k},.5 ${w - .5},.5 ${w - k},${h - .5} .5,${h - .5}`;
     $$("polygon", svg).forEach(p => p.setAttribute("points", pts));
   };
@@ -963,7 +964,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.7`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.8`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {

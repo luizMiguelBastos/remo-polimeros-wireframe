@@ -1628,3 +1628,17 @@ body:has(#product-page) { background-image: none; }
 .hero-iso b { color: var(--white); font-weight: 500; }
 @media (prefers-reduced-motion: reduce) { .hero-iso .hi-run, .hero-iso .hi-dot::after { animation: none; } .hero-iso .hi-run { opacity: 0; } }
 @media (max-width: 600px) { .hero-iso { top: 84px; font-size: 10px; padding: 8px 20px 8px 17px; gap: 8px; } }
+
+/* ---------- v5.8: selo ISO em vidro branco + barra de setor com um gradiente por elemento ---------- */
+.hero-iso { color: rgba(15,22,38,.72); }
+.hero-iso b { color: var(--night); font-weight: 600; }
+.hero-iso .hi-glass { position: absolute; inset: 0; z-index: -1; background: rgba(244,245,247,.62); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); clip-path: polygon(var(--k, 18px) 0, 100% 0, calc(100% - var(--k, 18px)) 100%, 0 100%); }
+.hero-iso { isolation: isolate; }
+.hero-iso .hi-line { stroke: rgba(255,255,255,.7); }
+.hero-iso .hi-run { stroke-width: 2; opacity: 1; }
+.hero-iso .hi-dot { box-shadow: 0 0 0 1.5px rgba(15,22,38,.75); }
+
+.hero-sector::before { display: none; }
+.hero-sector .hs-no, .hero-sector .hs-label { padding: 10px 22px; margin: -10px -22px; background: radial-gradient(closest-side, rgba(15,22,38,.82), rgba(15,22,38,.6) 50%, rgba(15,22,38,0)); }
+.hero-sector .hs-bar { box-shadow: 0 0 18px 8px rgba(15,22,38,.6); }
+.hero-sector .hs-label { justify-self: end; } .hero-sector .hs-no { justify-self: start; }
