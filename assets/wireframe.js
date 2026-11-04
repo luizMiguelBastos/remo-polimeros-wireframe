@@ -973,7 +973,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.9`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.10`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {

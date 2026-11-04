@@ -1645,3 +1645,7 @@ body:has(#product-page) { background-image: none; }
 
 /* ---------- v5.9: barra de setor mais suave, legibilidade com sombra leve no texto ---------- */
 .hero-sector .hs-no, .hero-sector .hs-label { text-shadow: 0 1px 8px rgba(15,22,38,.45); }
+
+/* ---------- v5.10: gradientes da barra de setor bem sutis, bordas que somem no fundo ---------- */
+.hero-sector .hs-no, .hero-sector .hs-label { padding: 18px 36px; margin: -18px -36px; background: radial-gradient(closest-side, rgba(15,22,38,.26) 0%, rgba(15,22,38,.18) 30%, rgba(15,22,38,.08) 62%, rgba(15,22,38,.02) 85%, rgba(15,22,38,0) 100%); text-shadow: 0 0 10px rgba(15,22,38,.35); }
+.hero-sector .hs-bar { box-shadow: 0 0 22px 1px rgba(15,22,38,.16); }
