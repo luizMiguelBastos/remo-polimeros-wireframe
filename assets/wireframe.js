@@ -320,14 +320,26 @@
       const dpr = Math.min(devicePixelRatio || 1, 2);
       W = host.clientWidth; H = host.clientHeight;
       cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const n = Math.round(Math.min(90, W * H / 16000) * (+host.dataset.molDensity || 1));
-      nodes = Array.from({ length: n }, () => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25, r: 1.2 + Math.random() * 2.2, y2: Math.random() < .45 }));
+      // data-mol-edge: moléculas só nas faixas laterais, deixando o miolo livre para o conteúdo
+      band = edge ? Math.min(W / 2, Math.max(120, (W - Math.min(W, 1320)) / 2 + 40)) : 0;
+      const area = edge ? 2 * band * H : W * H;
+      const n = Math.round(Math.min(90, area / 16000) * (+host.dataset.molDensity || 1));
+      nodes = Array.from({ length: n }, (_, i) => {
+        const x = edge ? (i % 2 ? W - Math.random() * band : Math.random() * band) : Math.random() * W;
+        return { x, y: Math.random() * H, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25, r: 1.2 + Math.random() * 2.2, y2: Math.random() < .45, right: edge && i % 2 === 1 };
+      });
     };
+    const edge = "molEdge" in host.dataset;
+    let band = 0;
     const LINK = 130;
     const draw = () => {
       ctx.clearRect(0, 0, W, H);
       for (const a of nodes) {
-        if (!reduced) { a.x += a.vx; a.y += a.vy; if (a.x < 0 || a.x > W) a.vx *= -1; if (a.y < 0 || a.y > H) a.vy *= -1; }
+        if (!reduced) {
+          a.x += a.vx; a.y += a.vy;
+          if (a.x < 0 || a.x > W) a.vx *= -1; if (a.y < 0 || a.y > H) a.vy *= -1;
+          if (edge && (a.right ? a.x < W - band : a.x > band)) { a.x -= a.vx; a.vx *= -1; }
+        }
       }
       ctx.lineCap = "round";
       for (let i = 0; i < nodes.length; i++) {
@@ -856,6 +868,13 @@
       </li>`).join("");
 
     if (motion) gsap.from($$(".mat-row", idx), { y: 50, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.06, scrollTrigger: { trigger: idx, start: "top 85%" } });
+    // Hover: brilho suave que acompanha o cursor dentro da linha
+    if (finePointer) idx.addEventListener("pointermove", e => {
+      const top = e.target.closest(".mat-top"); if (!top) return;
+      const r = top.getBoundingClientRect();
+      top.style.setProperty("--mx", `${e.clientX - r.left + 16}px`);
+      top.style.setProperty("--my", `${e.clientY - r.top}px`);
+    });
     const refresh = () => { if (hasGsap) ScrollTrigger.refresh(); };
     const toggle = row => {
       const body = $(".mat-body", row), btn = $(".mat-head", row);
@@ -982,7 +1001,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.12`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.13`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {

@@ -1668,3 +1668,19 @@ body:has(#product-page) { background-image: none; }
 .preloader .sheet-lockup .sheet-meta { display: grid; padding: 22px 0 0; justify-items: center; }
 .preloader .sheet-lockup .sheet-dest { color: var(--slate); }
 @media (max-width: 600px) { .preloader .sheet-lockup .sheet-mark { height: 56px; } .preloader .sheet-lockup .word { font-size: 44px; } }
+
+/* ---------- v5.13: índice "Escolha a linha" com hover sutil (luz que segue o mouse) ---------- */
+.mat-top::before { display: none; }
+.mat-top::after { content: ""; position: absolute; inset: 0 -16px; z-index: -1; border-radius: 8px; pointer-events: none; opacity: 0; transition: opacity .4s var(--ease);
+  background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), rgba(255,209,0,.18), rgba(110,140,205,.10) 45%, rgba(110,140,205,0) 72%); }
+.mat-top:hover::after { opacity: 1; }
+.mat-row.open .mat-top:hover::after { opacity: .5; }
+.mat-top:hover .mat-head .nm, .mat-top:hover .mat-head .no, .mat-top:hover .mat-head .gc { color: var(--ink); }
+.mat-top:hover .mat-head .fl { color: var(--slate); }
+.mat-top:hover .mat-head .gc { border-color: var(--line-l); }
+.mat-head .nm { transition: transform .5s var(--ease), color .35s; }
+.mat-top:hover .mat-head .nm { transform: translateX(12px); }
+.mat-top:hover .mat-head .pl { background: var(--yellow); border-color: var(--yellow); color: var(--ink); }
+.mat-top:hover .mat-cmp, .mat-top:hover .mat-cmp.on { color: var(--ink); background: rgba(11,18,32,.05); }
+.mat-top:hover .mat-cmp.on i { background: var(--night); border-color: var(--night); }
+.mat-top:hover .mat-cmp.on i::after { border-color: var(--yellow); }
