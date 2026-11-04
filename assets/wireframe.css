@@ -1649,3 +1649,12 @@ body:has(#product-page) { background-image: none; }
 /* ---------- v5.10: gradientes da barra de setor bem sutis, bordas que somem no fundo ---------- */
 .hero-sector .hs-no, .hero-sector .hs-label { padding: 18px 36px; margin: -18px -36px; background: radial-gradient(closest-side, rgba(15,22,38,.26) 0%, rgba(15,22,38,.18) 30%, rgba(15,22,38,.08) 62%, rgba(15,22,38,.02) 85%, rgba(15,22,38,0) 100%); text-shadow: 0 0 10px rgba(15,22,38,.35); }
 .hero-sector .hs-bar { box-shadow: 0 0 22px 1px rgba(15,22,38,.16); }
+
+/* ---------- v5.11: transição com a marca empilhada no centro ---------- */
+.sheet { place-items: center; padding: 0; }
+.sheet .sheet-lockup { display: flex; flex-direction: column; align-items: center; gap: 0; text-align: center; }
+.sheet .sheet-lockup .sheet-mark { align-self: center; height: clamp(64px, 7vw, 104px); margin: 0 0 14px; }
+.sheet .sheet-lockup .sheet-big { font: 600 clamp(48px, 5.4vw, 84px)/.9 var(--f-sans); font-stretch: 125%; letter-spacing: -.03em; color: var(--ink); padding-bottom: .06em; }
+.sheet .sheet-lockup .sheet-meta { padding: 22px 0 0; justify-items: center; }
+.sheet .sheet-lockup .sheet-dest { color: var(--slate); }
+@media (max-width: 600px) { .sheet .sheet-lockup .sheet-mark { height: 56px; } .sheet .sheet-lockup .sheet-big { font-size: 44px; } }

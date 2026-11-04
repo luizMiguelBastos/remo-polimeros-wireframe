@@ -96,7 +96,7 @@
   const pageTx = (() => {
     const sheet = $("#sheet");
     if (!sheet || !motion) { if (sheet) sheet.remove(); document.documentElement.classList.remove("tx-in"); return null; }
-    const words = $$(".word span", sheet), inner = $(".sheet-inner", sheet), count = $("#sheet-count");
+    const words = $$(".word span", sheet), inner = $(".sheet-inner", sheet);
     let busy = false;
     // Nome da página de destino e moléculas animadas na folha
     const PAGE = { "index.html": "Início", "": "Início", "produtos.html": "Produtos", "produto.html": "Produtos", "historia.html": "História", "valores.html": "Valores", "tecnologias.html": "Tecnologias", "onde-atuamos.html": "Onde atuamos", "contato.html": "Contato" };
@@ -109,15 +109,22 @@
       const seed = () => {
         const dpr = Math.min(devicePixelRatio || 1, 2);
         molC.width = innerWidth * dpr; molC.height = innerHeight * dpr; mctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        nodes = Array.from({ length: 46 }, () => ({ x: Math.random() * innerWidth, y: Math.random() * innerHeight, vx: (Math.random() - .5) * 1.4, vy: (Math.random() - .5) * 1.4, r: 1.6 + Math.random() * 2.6, y2: Math.random() < .45 }));
+        // Poucas moléculas, lentas, nas bordas: nunca entram na elipse central da logo
+        const spot = () => { let x, y; do { x = Math.random() * innerWidth; y = Math.random() * innerHeight; } while (inCore(x, y, 1.15)); return [x, y]; };
+        nodes = Array.from({ length: 11 }, () => { const [x, y] = spot(); return { x, y, vx: (Math.random() - .5) * .45, vy: (Math.random() - .5) * .45, r: 1.8 + Math.random() * 2.4, y2: Math.random() < .4 }; });
       };
+      const inCore = (x, y, s = 1) => { const cx = innerWidth / 2, cy = innerHeight / 2, rx = Math.max(220, innerWidth * .26) * s, ry = Math.max(200, innerHeight * .3) * s; return ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 < 1; };
       const tick = () => {
         if (!molOn) return;
         mctx.clearRect(0, 0, innerWidth, innerHeight); mctx.lineCap = "round";
-        for (const a of nodes) { a.x += a.vx; a.y += a.vy; if (a.x < 0 || a.x > innerWidth) a.vx *= -1; if (a.y < 0 || a.y > innerHeight) a.vy *= -1; }
+        for (const a of nodes) {
+          a.x += a.vx; a.y += a.vy;
+          if (a.x < 0 || a.x > innerWidth) a.vx *= -1; if (a.y < 0 || a.y > innerHeight) a.vy *= -1;
+          if (inCore(a.x, a.y)) { a.x -= a.vx; a.y -= a.vy; const dx = a.x - innerWidth / 2, dy = a.y - innerHeight / 2, m = Math.hypot(dx, dy) || 1, sp = Math.hypot(a.vx, a.vy); a.vx = dx / m * sp; a.vy = dy / m * sp; }
+        }
         for (let i = 0; i < nodes.length; i++) for (let k = i + 1; k < nodes.length; k++) {
           const a = nodes[i], b = nodes[k], d = Math.hypot(a.x - b.x, a.y - b.y);
-          if (d < 170) { const al = (1 - d / 170) * .32; mctx.strokeStyle = a.y2 ? `rgba(255,209,0,${al})` : `rgba(0,31,95,${al})`; mctx.lineWidth = 1.2; mctx.beginPath(); mctx.moveTo(a.x, a.y); mctx.lineTo(b.x, b.y); mctx.stroke(); }
+          if (d < 260) { const al = (1 - d / 260) * .3; mctx.strokeStyle = a.y2 ? `rgba(255,209,0,${al})` : `rgba(0,31,95,${al})`; mctx.lineWidth = 1.2; mctx.beginPath(); mctx.moveTo(a.x, a.y); mctx.lineTo(b.x, b.y); mctx.stroke(); }
         }
         for (const a of nodes) { mctx.fillStyle = a.y2 ? "rgba(255,209,0,.9)" : "rgba(0,31,95,.6)"; mctx.beginPath(); mctx.arc(a.x, a.y, a.r, 0, Math.PI * 2); mctx.fill(); }
         requestAnimationFrame(tick);
@@ -131,20 +138,19 @@
       if (lenis) lenis.stop();
       if (dest) dest.textContent = pageName(url);
       if (sheet.startMol) sheet.startMol();
-      const cnt = { v: 0 };
       gsap.timeline({ onComplete: () => { try { sessionStorage.setItem("remo-nav", "1"); } catch (e) {} location.href = url; } })
         .set(sheet, { display: "grid", yPercent: 100, opacity: 1 })
         .set(inner, { opacity: 1, y: 0 })
         .to(sheet, { yPercent: 0, duration: 0.75, ease: "expo.inOut" })
-        .from(meta.children, { y: 20, opacity: 0, duration: 0.5, ease: "expo.out", stagger: 0.08 }, "-=0.3")
-        .to(cnt, { v: 100, duration: 0.6, ease: "power2.inOut", onUpdate: () => { count.textContent = Math.round(cnt.v); } }, "-=0.6");
+        .from([$(".sheet-mark", sheet), meta], { y: 20, opacity: 0, duration: 0.5, ease: "expo.out", stagger: 0.1 }, "-=0.3")
+        .from(words, { yPercent: 110, duration: 0.6, ease: "expo.out", stagger: 0.04 }, "-=0.45");
     };
     // Chegando de outra página: a folha começa cobrindo e sai para cima
     const enter = () => {
       let from = false;
       try { from = sessionStorage.getItem("remo-nav") === "1"; sessionStorage.removeItem("remo-nav"); } catch (e) {}
       if (!from) { document.documentElement.classList.remove("tx-in"); return false; }
-      count.textContent = "100";
+      // (sem contador: a folha nova só mostra a logo e o destino)
       if (dest) dest.textContent = pageName(location.href);
       if (sheet.startMol) sheet.startMol();
       gsap.set(sheet, { display: "grid", yPercent: 0, opacity: 1 });
@@ -157,7 +163,7 @@
         setTimeout(ok, 1500);
       });
       ready.then(() => gsap.timeline({ onComplete: () => { gsap.set(sheet, { display: "none" }); document.documentElement.classList.remove("tx-in"); if (sheet.stopMol) sheet.stopMol(); } })
-        .to(meta.children, { y: -16, opacity: 0, duration: 0.35, ease: "power2.in", stagger: 0.05, delay: 0.15 })
+        .to(inner, { y: -16, opacity: 0, duration: 0.35, ease: "power2.in", delay: 0.15 })
         .to(sheet, { yPercent: -100, duration: 0.8, ease: "expo.inOut" }, "-=0.15"));
       return true;
     };
@@ -973,7 +979,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.10`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.11`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
