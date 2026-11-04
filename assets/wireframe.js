@@ -174,9 +174,18 @@
     const box = $("#hero-iso"); if (!box) return;
     const svg = $("svg", box), w = box.offsetWidth, h = box.offsetHeight, k = h * .6;
     svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
-    box.style.setProperty("--k", `${k}px`);
-    const pts = `${k},.5 ${w - .5},.5 ${w - k},${h - .5} .5,${h - .5}`;
-    $$("polygon", svg).forEach(p => p.setAttribute("points", pts));
+    // Paralelogramo com os quatro vértices arredondados (curva no canto, raio r)
+    const pts = [[k, .75], [w - .75, .75], [w - k, h - .75], [.75, h - .75]], r = 6;
+    const lerp = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+    const near = (a, b) => { const d = Math.hypot(b[0] - a[0], b[1] - a[1]); return lerp(a, b, Math.min(.5, r / d)); };
+    let d = "";
+    pts.forEach((p, i) => {
+      const prev = pts[(i + 3) % 4], next = pts[(i + 1) % 4], a = near(p, prev), b = near(p, next);
+      d += `${i ? "L" : "M"}${a[0].toFixed(2)},${a[1].toFixed(2)} Q${p[0].toFixed(2)},${p[1].toFixed(2)} ${b[0].toFixed(2)},${b[1].toFixed(2)} `;
+    });
+    d += "Z";
+    $$("path", svg).forEach(p => p.setAttribute("d", d));
+    $(".hi-glass", box).style.clipPath = `path("${d}")`;
   };
   fitIso();
   addEventListener("resize", fitIso);
@@ -964,7 +973,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.8`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.9`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {

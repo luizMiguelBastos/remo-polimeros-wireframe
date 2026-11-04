@@ -1616,7 +1616,7 @@ body:has(#product-page) { background-image: none; }
 /* ---------- v5.7: selo ISO inclinado no canto superior esquerdo do hero ---------- */
 .hero-iso { position: absolute; z-index: 2; top: 95px; left: max(24px, calc((100% - var(--max)) / 2 + 24px)); display: flex; align-items: center; gap: 10px; padding: 9px 26px 9px 22px; font: 11px/1 var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: rgba(244,245,247,.6); pointer-events: none; }
 .hero-iso svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.hero-iso polygon { fill: none; stroke-linejoin: round; }
+.hero-iso path { fill: none; stroke-linejoin: round; }
 .hero-iso .hi-line { stroke: rgba(244,245,247,.28); stroke-width: 1; stroke-dasharray: 100; stroke-dashoffset: 0; }
 .hero-iso .hi-run { stroke: var(--yellow); stroke-width: 1.5; stroke-dasharray: 7 93; stroke-dashoffset: 0; opacity: .85; animation: hi-run 7s linear infinite; }
 @keyframes hi-run { to { stroke-dashoffset: -100; } }
@@ -1632,13 +1632,16 @@ body:has(#product-page) { background-image: none; }
 /* ---------- v5.8: selo ISO em vidro branco + barra de setor com um gradiente por elemento ---------- */
 .hero-iso { color: rgba(15,22,38,.72); }
 .hero-iso b { color: var(--night); font-weight: 600; }
-.hero-iso .hi-glass { position: absolute; inset: 0; z-index: -1; background: rgba(244,245,247,.62); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); clip-path: polygon(var(--k, 18px) 0, 100% 0, calc(100% - var(--k, 18px)) 100%, 0 100%); }
+.hero-iso .hi-glass { position: absolute; inset: 0; z-index: -1; background: rgba(244,245,247,.46); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); clip-path: polygon(18px 0, 100% 0, calc(100% - 18px) 100%, 0 100%); }
 .hero-iso { isolation: isolate; }
 .hero-iso .hi-line { stroke: rgba(255,255,255,.7); }
 .hero-iso .hi-run { stroke-width: 2; opacity: 1; }
-.hero-iso .hi-dot { box-shadow: 0 0 0 1.5px rgba(15,22,38,.75); }
+.hero-iso .hi-dot { box-shadow: none; }
 
 .hero-sector::before { display: none; }
-.hero-sector .hs-no, .hero-sector .hs-label { padding: 10px 22px; margin: -10px -22px; background: radial-gradient(closest-side, rgba(15,22,38,.82), rgba(15,22,38,.6) 50%, rgba(15,22,38,0)); }
-.hero-sector .hs-bar { box-shadow: 0 0 18px 8px rgba(15,22,38,.6); }
+.hero-sector .hs-no, .hero-sector .hs-label { padding: 10px 22px; margin: -10px -22px; background: radial-gradient(closest-side, rgba(15,22,38,.5), rgba(15,22,38,.3) 55%, rgba(15,22,38,0)); }
+.hero-sector .hs-bar { box-shadow: 0 0 14px 5px rgba(15,22,38,.32); }
 .hero-sector .hs-label { justify-self: end; } .hero-sector .hs-no { justify-self: start; }
+
+/* ---------- v5.9: barra de setor mais suave, legibilidade com sombra leve no texto ---------- */
+.hero-sector .hs-no, .hero-sector .hs-label { text-shadow: 0 1px 8px rgba(15,22,38,.45); }
