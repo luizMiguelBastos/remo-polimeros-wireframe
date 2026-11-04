@@ -1612,3 +1612,19 @@ h1 .line, h1 .swap { padding-bottom: .18em; margin-bottom: -.18em; }
 /* ---------- v5.6: topo da linha de produto só com as ondas (sem o quadriculado do fundo) ---------- */
 .p-hero { background: var(--night); }
 body:has(#product-page) { background-image: none; }
+
+/* ---------- v5.7: selo ISO inclinado no canto superior esquerdo do hero ---------- */
+.hero-iso { position: absolute; z-index: 2; top: 95px; left: max(24px, calc((100% - var(--max)) / 2 + 24px)); display: flex; align-items: center; gap: 10px; padding: 9px 26px 9px 22px; font: 11px/1 var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: rgba(244,245,247,.6); pointer-events: none; }
+.hero-iso svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.hero-iso polygon { fill: none; stroke-linejoin: round; }
+.hero-iso .hi-line { stroke: rgba(244,245,247,.28); stroke-width: 1; stroke-dasharray: 100; stroke-dashoffset: 0; }
+.hero-iso .hi-run { stroke: var(--yellow); stroke-width: 1.5; stroke-dasharray: 7 93; stroke-dashoffset: 0; opacity: .85; animation: hi-run 7s linear infinite; }
+@keyframes hi-run { to { stroke-dashoffset: -100; } }
+.hero-iso .hi-dot { position: relative; width: 6px; height: 6px; border-radius: 50%; background: var(--yellow); flex: none; }
+.hero-iso .hi-dot::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--yellow); animation: hi-pulse 2.4s ease-out infinite; }
+@keyframes hi-pulse { 0% { transform: scale(1); opacity: .6; } 100% { transform: scale(3.2); opacity: 0; } }
+.hero-iso .hi-txt { display: block; overflow: hidden; white-space: nowrap; }
+.hero-iso .hi-in { display: block; }
+.hero-iso b { color: var(--white); font-weight: 500; }
+@media (prefers-reduced-motion: reduce) { .hero-iso .hi-run, .hero-iso .hi-dot::after { animation: none; } .hero-iso .hi-run { opacity: 0; } }
+@media (max-width: 600px) { .hero-iso { top: 84px; font-size: 10px; padding: 8px 20px 8px 17px; gap: 8px; } }

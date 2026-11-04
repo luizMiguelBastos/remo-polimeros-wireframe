@@ -169,11 +169,29 @@
 
   // ---------- Abertura ----------
   const pre = $("#preloader");
+  // Selo ISO: contorno inclinado medido em px para o traço e o brilho ficarem exatos
+  const fitIso = () => {
+    const box = $("#hero-iso"); if (!box) return;
+    const svg = $("svg", box), w = box.offsetWidth, h = box.offsetHeight, k = h * .6;
+    svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+    const pts = `${k},.5 ${w - .5},.5 ${w - k},${h - .5} .5,${h - .5}`;
+    $$("polygon", svg).forEach(p => p.setAttribute("points", pts));
+  };
+  fitIso();
+  addEventListener("resize", fitIso);
+  if (document.fonts) document.fonts.ready.then(fitIso);
   const heroIn = () => {
     if (!motion) return;
     gsap.from(".hero [data-lines] .line > span", { yPercent: 110, duration: 1.2, ease: "expo.out", stagger: 0.1 });
     gsap.from(".hero [data-reveal]", { y: 30, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.12, delay: 0.35 });
     if ($(".hero .h-sep")) gsap.from(".hero .h-sep", { scaleX: 0, duration: 1, ease: "expo.inOut", delay: 0.5 });
+    if ($("#hero-iso")) {
+      gsap.timeline({ delay: 0.6 })
+        .from("#hero-iso .hi-line", { strokeDashoffset: 100, duration: 1.4, ease: "power2.inOut" })
+        .from("#hero-iso .hi-run", { opacity: 0, duration: 0.6 }, "-=0.3")
+        .from("#hero-iso .hi-dot", { scale: 0, duration: 0.5, ease: "back.out(3)" }, "-=1")
+        .from("#hero-iso .hi-in", { yPercent: 110, duration: 0.9, ease: "expo.out" }, "-=0.8");
+    }
     if ($(".hero-scroll")) gsap.fromTo(".hero-scroll", { y: 20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 1, ease: "expo.out", delay: 0.9, clearProps: "opacity,visibility,transform" });
   };
   const endIntro = () => {
@@ -405,7 +423,7 @@
   // ---------- Hero: parallax em camadas seguindo o mouse ----------
   const heroBox = $(".hero");
   if (heroBox && motion && finePointer) {
-    const layers = [[".hero-slides", -8, -5], ["#field", -8, -5], [".hero-inner", 5, 3], [".hero-sector", 8, 4]]
+    const layers = [[".hero-slides", -8, -5], ["#field", -8, -5], [".hero-inner", 5, 3], [".hero-sector", 8, 4], [".hero-iso", 10, 6]]
       .map(([sel, ax, ay]) => { const el = $(sel, heroBox); return el && { x: gsap.quickTo(el, "x", { duration: 1.2, ease: "power3" }), y: gsap.quickTo(el, "y", { duration: 1.2, ease: "power3" }), ax, ay }; })
       .filter(Boolean);
     gsap.set($(".hero-slides", heroBox), { scale: 1.02 });
@@ -945,7 +963,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.6`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.7`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
