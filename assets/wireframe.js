@@ -93,6 +93,38 @@
   } else if (cur) cur.remove();
 
   // ---------- Transição entre páginas (página branca com a logo) ----------
+  // Moléculas da folha de transição e da abertura: poucas, lentas, nas bordas
+  const molSheet = molC => {
+    let molOn = false;
+    const mctx = molC.getContext("2d");
+    let nodes = [];
+    const seed = () => {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      molC.width = innerWidth * dpr; molC.height = innerHeight * dpr; mctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      // Poucas moléculas, lentas, nas bordas: nunca entram na elipse central da logo
+      const spot = () => { let x, y; do { x = Math.random() * innerWidth; y = Math.random() * innerHeight; } while (inCore(x, y, 1.15)); return [x, y]; };
+      nodes = Array.from({ length: 11 }, () => { const [x, y] = spot(); return { x, y, vx: (Math.random() - .5) * .45, vy: (Math.random() - .5) * .45, r: 1.8 + Math.random() * 2.4, y2: Math.random() < .4 }; });
+    };
+    const inCore = (x, y, s = 1) => { const cx = innerWidth / 2, cy = innerHeight / 2, rx = Math.max(220, innerWidth * .26) * s, ry = Math.max(200, innerHeight * .3) * s; return ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 < 1; };
+    const tick = () => {
+      if (!molOn) return;
+      mctx.clearRect(0, 0, innerWidth, innerHeight); mctx.lineCap = "round";
+      for (const a of nodes) {
+        a.x += a.vx; a.y += a.vy;
+        if (a.x < 0 || a.x > innerWidth) a.vx *= -1; if (a.y < 0 || a.y > innerHeight) a.vy *= -1;
+        if (inCore(a.x, a.y)) { a.x -= a.vx; a.y -= a.vy; const dx = a.x - innerWidth / 2, dy = a.y - innerHeight / 2, m = Math.hypot(dx, dy) || 1, sp = Math.hypot(a.vx, a.vy); a.vx = dx / m * sp; a.vy = dy / m * sp; }
+      }
+      for (let i = 0; i < nodes.length; i++) for (let k = i + 1; k < nodes.length; k++) {
+        const a = nodes[i], b = nodes[k], d = Math.hypot(a.x - b.x, a.y - b.y);
+        if (d < 260) { const al = (1 - d / 260) * .3; mctx.strokeStyle = a.y2 ? `rgba(255,209,0,${al})` : `rgba(0,31,95,${al})`; mctx.lineWidth = 1.2; mctx.beginPath(); mctx.moveTo(a.x, a.y); mctx.lineTo(b.x, b.y); mctx.stroke(); }
+      }
+      for (const a of nodes) { mctx.fillStyle = a.y2 ? "rgba(255,209,0,.9)" : "rgba(0,31,95,.6)"; mctx.beginPath(); mctx.arc(a.x, a.y, a.r, 0, Math.PI * 2); mctx.fill(); }
+      requestAnimationFrame(tick);
+    };
+    const start = () => { seed(); molOn = true; tick(); };
+    const stop = () => { molOn = false; };
+    return { start, stop };
+  };
   const pageTx = (() => {
     const sheet = $("#sheet");
     if (!sheet || !motion) { if (sheet) sheet.remove(); document.documentElement.classList.remove("tx-in"); return null; }
@@ -102,36 +134,7 @@
     const PAGE = { "index.html": "Início", "": "Início", "produtos.html": "Produtos", "produto.html": "Produtos", "historia.html": "História", "valores.html": "Valores", "tecnologias.html": "Tecnologias", "onde-atuamos.html": "Onde atuamos", "contato.html": "Contato" };
     const dest = $("#sheet-dest"), meta = $(".sheet-meta", sheet), molC = $("#sheet-mol", sheet);
     const pageName = href => PAGE[new URL(href, location.href).pathname.split("/").pop()] || "Remo";
-    let molOn = false;
-    if (molC) {
-      const mctx = molC.getContext("2d");
-      let nodes = [];
-      const seed = () => {
-        const dpr = Math.min(devicePixelRatio || 1, 2);
-        molC.width = innerWidth * dpr; molC.height = innerHeight * dpr; mctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        // Poucas moléculas, lentas, nas bordas: nunca entram na elipse central da logo
-        const spot = () => { let x, y; do { x = Math.random() * innerWidth; y = Math.random() * innerHeight; } while (inCore(x, y, 1.15)); return [x, y]; };
-        nodes = Array.from({ length: 11 }, () => { const [x, y] = spot(); return { x, y, vx: (Math.random() - .5) * .45, vy: (Math.random() - .5) * .45, r: 1.8 + Math.random() * 2.4, y2: Math.random() < .4 }; });
-      };
-      const inCore = (x, y, s = 1) => { const cx = innerWidth / 2, cy = innerHeight / 2, rx = Math.max(220, innerWidth * .26) * s, ry = Math.max(200, innerHeight * .3) * s; return ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 < 1; };
-      const tick = () => {
-        if (!molOn) return;
-        mctx.clearRect(0, 0, innerWidth, innerHeight); mctx.lineCap = "round";
-        for (const a of nodes) {
-          a.x += a.vx; a.y += a.vy;
-          if (a.x < 0 || a.x > innerWidth) a.vx *= -1; if (a.y < 0 || a.y > innerHeight) a.vy *= -1;
-          if (inCore(a.x, a.y)) { a.x -= a.vx; a.y -= a.vy; const dx = a.x - innerWidth / 2, dy = a.y - innerHeight / 2, m = Math.hypot(dx, dy) || 1, sp = Math.hypot(a.vx, a.vy); a.vx = dx / m * sp; a.vy = dy / m * sp; }
-        }
-        for (let i = 0; i < nodes.length; i++) for (let k = i + 1; k < nodes.length; k++) {
-          const a = nodes[i], b = nodes[k], d = Math.hypot(a.x - b.x, a.y - b.y);
-          if (d < 260) { const al = (1 - d / 260) * .3; mctx.strokeStyle = a.y2 ? `rgba(255,209,0,${al})` : `rgba(0,31,95,${al})`; mctx.lineWidth = 1.2; mctx.beginPath(); mctx.moveTo(a.x, a.y); mctx.lineTo(b.x, b.y); mctx.stroke(); }
-        }
-        for (const a of nodes) { mctx.fillStyle = a.y2 ? "rgba(255,209,0,.9)" : "rgba(0,31,95,.6)"; mctx.beginPath(); mctx.arc(a.x, a.y, a.r, 0, Math.PI * 2); mctx.fill(); }
-        requestAnimationFrame(tick);
-      };
-      sheet.startMol = () => { seed(); molOn = true; tick(); };
-      sheet.stopMol = () => { molOn = false; };
-    }
+    if (molC) { const m = molSheet(molC); sheet.startMol = m.start; sheet.stopMol = m.stop; }
     const leave = url => {
       if (busy) return;
       busy = true;
@@ -222,15 +225,15 @@
       const short = sessionStorage.getItem("remo-intro") === "1";
       try { sessionStorage.setItem("remo-intro", "1"); } catch (e) {}
       const d = short ? 0.5 : 1;
-      const lines = $$("svg line", pre);
-      lines.forEach(l => { const len = l.getTotalLength(); l.style.strokeDasharray = len; l.style.strokeDashoffset = len; });
-      const cnt = { v: 0 };
-      const tl = gsap.timeline({ onComplete: () => { pre.remove(); endIntro(); } });
-      tl.from($$("svg circle", pre), { scale: 0, transformOrigin: "50% 50%", duration: 0.5 * d, ease: "back.out(2)", stagger: 0.08 * d })
-        .to(lines, { strokeDashoffset: 0, duration: 0.5 * d, ease: "power2.inOut", stagger: 0.06 * d }, "-=0.2")
-        .from($$(".word span", pre), { yPercent: 110, duration: 0.6 * d, ease: "expo.out", stagger: 0.05 * d }, "-=0.4")
-        .to(cnt, { v: 100, duration: 1.4 * d, ease: "power2.inOut", onUpdate: () => { $("#count").textContent = Math.round(cnt.v); } }, 0)
-        .to(pre, { yPercent: -100, duration: 0.9, ease: "expo.inOut" }, "+=0.15")
+      // Abertura igual à folha de transição: marca empilhada, destino, pontilhado e moléculas
+      const pm = $(".sheet-mol", pre), mol = pm ? molSheet(pm) : null;
+      if (mol) mol.start();
+      const tl = gsap.timeline({ onComplete: () => { if (mol) mol.stop(); pre.remove(); endIntro(); } });
+      tl.from($(".sheet-mark", pre), { y: 20, opacity: 0, duration: 0.6 * d, ease: "expo.out" }, 0.1)
+        .from($$(".word span", pre), { yPercent: 110, duration: 0.7 * d, ease: "expo.out", stagger: 0.05 * d }, "-=0.35")
+        .from($(".sheet-meta", pre), { y: 14, opacity: 0, duration: 0.5 * d, ease: "expo.out" }, "-=0.4")
+        .to($(".pre-inner", pre), { y: -16, opacity: 0, duration: 0.35, ease: "power2.in" }, "+=" + (0.6 * d))
+        .to(pre, { yPercent: -100, duration: 0.9, ease: "expo.inOut" }, "-=0.15")
         .add(heroIn, "-=0.45");
     }
   } else if (arrived) heroIn();
@@ -979,7 +982,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.11`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.12`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {

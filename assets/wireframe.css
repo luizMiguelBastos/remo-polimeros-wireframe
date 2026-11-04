@@ -1658,3 +1658,13 @@ body:has(#product-page) { background-image: none; }
 .sheet .sheet-lockup .sheet-meta { padding: 22px 0 0; justify-items: center; }
 .sheet .sheet-lockup .sheet-dest { color: var(--slate); }
 @media (max-width: 600px) { .sheet .sheet-lockup .sheet-mark { height: 56px; } .sheet .sheet-lockup .sheet-big { font-size: 44px; } }
+
+/* ---------- v5.12: abertura da home igual à nova transição (marca empilhada no centro) ---------- */
+.preloader { place-items: center; padding: 0; }
+.preloader .sheet-mol { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.preloader .sheet-lockup { position: relative; display: flex; flex-direction: column; align-items: center; gap: 0; text-align: center; }
+.preloader .sheet-lockup .sheet-mark { align-self: center; height: clamp(64px, 7vw, 104px); margin: 0 0 14px; }
+.preloader .sheet-lockup .word { font: 600 clamp(48px, 5.4vw, 84px)/.9 var(--f-sans); font-stretch: 125%; letter-spacing: -.03em; color: var(--ink); padding-bottom: .06em; overflow: hidden; }
+.preloader .sheet-lockup .sheet-meta { display: grid; padding: 22px 0 0; justify-items: center; }
+.preloader .sheet-lockup .sheet-dest { color: var(--slate); }
+@media (max-width: 600px) { .preloader .sheet-lockup .sheet-mark { height: 56px; } .preloader .sheet-lockup .word { font-size: 44px; } }
