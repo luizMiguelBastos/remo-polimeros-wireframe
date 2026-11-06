@@ -16,15 +16,6 @@
     "pmma": "rgba(255,255,255,.22)", "pom": "rgba(242,242,242,1)", "san": "rgba(190,230,255,.3)"
   };
 
-  // ---------- Notas de UX ----------
-  const tn = $("#toggle-notes");
-  if (tn) tn.addEventListener("click", () => {
-    const on = document.body.classList.toggle("show-notes");
-    tn.setAttribute("aria-pressed", String(on));
-    tn.textContent = on ? "Ocultar notas de UX" : "Mostrar notas de UX";
-    if (hasGsap) ScrollTrigger.refresh();
-  });
-
   // ---------- Menu mobile ----------
   const mt = $(".menu-toggle"), nav = $("#nav");
   if (mt && nav) {
@@ -995,7 +986,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.15`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.16`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
