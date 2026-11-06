@@ -228,8 +228,6 @@
         .add(heroIn, "-=0.45");
     }
   } else if (arrived) heroIn();
-  const replay = $("#replay");
-  if (replay) replay.addEventListener("click", () => { try { sessionStorage.removeItem("remo-intro"); } catch (e) {} scrollTo(0, 0); location.reload(); });
 
   // ---------- Fundo do hero: campo de grânulos (substitui o vídeo nesta fase) ----------
   const cv = $("#field");
@@ -986,7 +984,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.16`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.17`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {

@@ -1781,3 +1781,7 @@ body:has(#product-page) { background-image: none; }
   .site-header .menu-toggle { margin-left: 0; }
   .nav.open { top: var(--hdr); }
 }
+
+/* ---------- v5.17: sem a barra preta do wireframe ---------- */
+/* A abertura da home descontava os 43 px da barra; agora ocupa a tela inteira */
+.hero { min-height: 100svh; }

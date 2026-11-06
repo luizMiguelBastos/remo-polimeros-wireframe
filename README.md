@@ -1,4 +1,4 @@
-# Remo Polímeros · Wireframe v5.16
+# Remo Polímeros · Wireframe v5.17
 
 Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e distribuidora de resinas de engenharia desde 1989; site atual: remopolimeros.com.br). Serve para validar **usabilidade**, **navegação**, **onde fica cada informação** e a **identidade visual** antes das fotos reais. A meta é um site nível Awwwards: movimento, credibilidade e cara de feito sob medida.
 
@@ -27,10 +27,10 @@ Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e d
 - **Commit:** `vX.Y: resumo em português`, terminando com `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
 - **Arquivos:** perguntar antes de apagar qualquer um, mesmo sem uso.
 - **README:** atualizar a cada versão junto com o resto (estado, histórico, pendências).
-- **Versão (furar cache):** a cada versão, trocar `?v=X.Y` em todos os HTML, o rótulo `WIREFRAME vX.Y` da barra superior e o título dinâmico da página de produto em `wireframe.js`:
+- **Versão (furar cache):** a cada versão, trocar `?v=X.Y` em todos os HTML, o comentário `<!-- WIREFRAME vX.Y -->` no topo do `<body>` (a barra superior saiu na v5.17; o comentário mantém a conferência do deploy por `curl | grep`) e o título dinâmico da página de produto em `wireframe.js`:
   ```bash
-  for f in *.html; do sed -i '' -E 's/\?v=5\.15/?v=5.16/g; s/WIREFRAME v5\.15/WIREFRAME v5.16/g; s/Wireframe v5\.15/Wireframe v5.16/g' "$f"; done
-  sed -i '' 's/Wireframe v5\.15/Wireframe v5.16/' assets/wireframe.js
+  for f in *.html; do sed -i '' -E 's/\?v=5\.17/?v=5.18/g; s/WIREFRAME v5\.17/WIREFRAME v5.18/g; s/Wireframe v5\.17/Wireframe v5.18/g' "$f"; done
+  sed -i '' 's/Wireframe v5\.17/Wireframe v5.18/' assets/wireframe.js
   ```
 - **Testes no desktop:** servidor local `python3 -m http.server 8765` na pasta do projeto; testar no **Chrome real do Luiz** (extensão Claude in Chrome: aba própria, ações em lote, zoom para detalhes, fechar a aba no fim). Conferir 1440 px, console e rolagem lateral. Simular chegada de outra página: `sessionStorage.setItem('remo-nav','1')`; rever a abertura completa: `sessionStorage.clear()` e recarregar.
 - **Tudo que muda no desktop precisa ter o seu padrão no celular.** Nenhuma alteração é dada como pronta sem a validação mobile abaixo. Se algo não couber, adaptar (empilhar, reduzir, esconder detalhe decorativo) e dizer ao Luiz o que mudou no mobile.
@@ -128,9 +128,9 @@ Construção: triângulo amarelo arredondado ao fundo (só contorno); triângulo
 
 - Endereços antigos (`materiais`, `institucional`, `como-trabalhamos`, `laboratorio`, `qualidade`, `guia`) redirecionam por meta refresh.
 - Fim das páginas: faixa de números → esteira horizontal "Para onde agora?" (cards das outras seções, com pin no desktop) → contato → footer.
-- Barra superior do wireframe: rótulo da versão e "Rever abertura". O botão "Mostrar notas de UX" foi **removido na v5.16** (as anotações `.note` continuam no HTML, sempre ocultas).
+- **Sem barra superior do wireframe** (removida na v5.17, junto com "Rever abertura"; o botão "Mostrar notas de UX" saiu na v5.16). A versão fica só no comentário `<!-- WIREFRAME vX.Y -->`. As anotações `.note` continuam no HTML, sempre ocultas. Para rever a abertura: `sessionStorage.clear()` e recarregar.
 
-## 6. Componentes (estado atual, v5.16)
+## 6. Componentes (estado atual, v5.17)
 
 ### 6.1 Hero principal (home) — aprovado, não mexer na tipografia nem na organização
 - Tudo à esquerda e embaixo: rótulo "Polímeros especiais · Desde 1989", título "Polímeros de engenharia," (menor, branco) + "feitos sob medida." (grande, amarelo), palavra que troca a cada 3 s (sob medida, para você, personalizados, com precisão, do seu jeito), traço amarelo que se desenha e estica a cada troca, texto de apoio, botões "Sobre nós" e "Nossos produtos".
@@ -213,12 +213,14 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 | v5.14 | Hover do índice com mini molécula e traço em degradê amarelo → azul |
 | v5.15 | Ajustes de celular: "Explore" escondido na home, rótulos legíveis, moléculas fora dos botões, grades empilhadas, aceite LGPD corrigido, botão do footer visível |
 | v5.16 | Responsividade em notebooks (1280 a 1600 px e telas baixas): margens, header, botões e respiro proporcionais; títulos das aberturas pela altura; "Sobre nós" à direita entre 901 e 1080 px; botão "Mostrar notas de UX" removido |
+| v5.17 | Barra preta do wireframe removida (versão vira comentário no HTML); abertura da home ocupa a tela inteira |
 
 ## 10. Pendências e pontos em aberto (não agir sem pedido)
 
 - **ISO 9000 × 9001:2015:** o selo do hero diz "ISO 9000" (pedido do Luiz); página de produto, valores e outros pontos ainda dizem "ISO 9001:2015*". Não unificado.
 - **Celular não verificado:** abertura e transição em tela vertical; capturas de Valores, Tecnologias, Onde atuamos e Contato (só a rolagem lateral foi medida).
 - **Desktop após v5.15:** aceite da LGPD e botão do footer mudaram também no desktop e não foram conferidos lá.
+- **Escala proporcional ao Mac (em standby, não executar sem pedido):** o Luiz quer o site o mais parecido possível com o Mac (referência 1710 px de largura) em qualquer tela. Plano A: `zoom` no `html` calculado por JS (largura / 1710, entre 0,75 e 1,3, só acima de 901 px), compensando alturas em `svh`, removendo os ajustes de tamanho da v5.16. Plano B (mais robusto, ~1 a 2 h): trocar os `px` do CSS por uma unidade proporcional, regra por regra.
 - **v5.16 não conferido:** menu aberto entre 901 e 1080 px, abertura e transição em 1280 × 690, Chrome real do Luiz (só headless).
 - **CSS sem uso:** regras `.pm-*`, `.rail-free` e hovers antigos do índice anulados por blocos mais novos.
 - **Abertura de Produtos:** sugestões para o lado direito vazio (opções A a D) nunca escolhidas.
