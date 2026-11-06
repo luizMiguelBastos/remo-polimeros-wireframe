@@ -321,7 +321,8 @@
       W = host.clientWidth; H = host.clientHeight;
       cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       // data-mol-edge: moléculas só nas faixas laterais, deixando o miolo livre para o conteúdo
-      band = edge ? Math.min(W / 2, Math.max(120, (W - Math.min(W, 1320)) / 2 + 40)) : 0;
+      // No celular a faixa fica só na margem de 24 px, sem passar por cima dos botões das linhas
+      band = !edge ? 0 : W < 700 ? 22 : Math.min(W / 2, Math.max(120, (W - Math.min(W, 1320)) / 2 + 40));
       const area = edge ? 2 * band * H : W * H;
       const n = Math.round(Math.min(90, area / 16000) * (+host.dataset.molDensity || 1));
       nodes = Array.from({ length: n }, (_, i) => {
@@ -994,7 +995,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.14`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.15`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {

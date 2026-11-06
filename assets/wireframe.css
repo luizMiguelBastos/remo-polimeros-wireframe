@@ -1699,3 +1699,23 @@ body:has(#product-page) { background-image: none; }
 .mat-top:hover .no-mol::after, .mat-row.open .no-mol::after { transform: scale(1); transition-delay: .3s; }
 .mat-row::after { background: linear-gradient(90deg, var(--yellow) 0%, var(--yellow) 35%, #001F5F 100%); }
 @media (max-width: 900px) { .no-mol { width: 8px; } .no-mol b, .no-mol::after { display: none; } }
+
+/* ---------- v5.15: ajustes de celular ---------- */
+/* Aceite da LGPD em texto corrido (antes cada pedaço virava uma coluna do flex) */
+.consent { display: block; position: relative; padding-left: 28px; line-height: 1.6; }
+.consent input { position: absolute; left: 0; top: 2px; margin: 0; }
+/* Botão do rodapé visível sobre o fundo branco */
+.footer .f-cta { background: var(--night); color: var(--white); border-color: var(--night); }
+.footer .f-cta:hover { color: var(--ink); border-color: var(--yellow); }
+@media (max-width: 600px) {
+  /* Hero da home: "Explore" saía por cima do texto de apoio */
+  .hero .hero-inner > .hero-scroll { display: none; }
+  /* Rótulos das aberturas legíveis sobre fotos claras */
+  .hero-inner .eyebrow, .page-hero .eyebrow { color: rgba(244,245,247,.9); text-shadow: 0 1px 12px rgba(0,0,0,.7); }
+  /* Grades da página da linha: links abaixo do nome, sem espremer o texto */
+  .p-grades .grade { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .p-grades .grade > div:last-child { flex-wrap: wrap; }
+}
+@media (max-width: 600px) {
+  .hero-inner .eyebrow, .page-hero .eyebrow { width: fit-content; padding: 10px 26px 10px 18px; margin-left: -18px; background: radial-gradient(closest-side, rgba(15,22,38,.55), rgba(15,22,38,.32) 55%, rgba(15,22,38,0)); }
+}
