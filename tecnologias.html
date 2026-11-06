@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tecnologias · Remo Polímeros · Wireframe v5.18</title>
+  <title>Tecnologias · Remo Polímeros · Wireframe v5.19</title>
   <meta name="description" content="Laboratório de cores, dureza sob medida e as etapas de desenvolvimento da Remo Polímeros.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
   <script>try{if(sessionStorage.getItem("remo-nav")==="1")document.documentElement.classList.add("tx-in")}catch(e){}</script>
   <link rel="preload" as="image" href="assets/img/sec-laboratorio.jpg">
-  <link rel="icon" type="image/svg+xml" href="assets/logo/remo-simbolo.svg?v=5.18">
-  <link rel="stylesheet" href="assets/wireframe.css?v=5.18">
+  <link rel="icon" type="image/svg+xml" href="assets/logo/remo-simbolo.svg?v=5.19">
+  <link rel="stylesheet" href="assets/wireframe.css?v=5.19">
 </head>
 <body>
 
@@ -20,18 +20,18 @@
 <div class="sheet" id="sheet" aria-hidden="true">
   <canvas class="sheet-mol" id="sheet-mol"></canvas>
   <div class="sheet-inner sheet-lockup">
-    <img src="assets/logo/remo-simbolo.svg?v=5.18" alt="" class="sheet-mark">
+    <img src="assets/logo/remo-simbolo.svg?v=5.19" alt="" class="sheet-mark">
     <div class="word sheet-big"><span>r</span><span>e</span><span>m</span><span>o</span></div>
     <div class="sheet-meta"><span class="sheet-dest mono" id="sheet-dest"></span></div>
   </div>
 </div>
 <div class="cursor" id="cursor" aria-hidden="true"><span id="cursor-label"></span></div>
 
-<!-- WIREFRAME v5.18 -->
+<!-- WIREFRAME v5.19 -->
 
 <header class="site-header" id="header">
   <div class="wrap">
-    <a href="index.html" class="logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo-branco.svg?v=5.18" alt="" class="logo-mark" width="40" height="36">remo
+    <a href="index.html" class="logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo-branco.svg?v=5.19" alt="" class="logo-mark" width="40" height="36">remo
     </a>
     <span class="hdr-sec" id="hdr-sec" aria-hidden="true"></span>
     <nav class="nav" id="nav" aria-label="Principal">
@@ -66,7 +66,7 @@
   </div>
 </section>
 
-<section class="light" id="laboratorio">
+<section class="light" id="laboratorio" data-mol="ink" data-mol-edge data-mol-density=".8">
   <div class="wrap">
     <div class="eyebrow">01 · Laboratório de cores</div>
     <div class="sec-head">
@@ -82,32 +82,104 @@
     </div>
 
     <div class="eyebrow" style="margin-top:96px">Efeitos especiais</div>
-    <div class="fx-grid">
-        <div class="fx-card" data-reveal>
-          <div class="fx-stage"><div class="pellet" data-fx="solido" style="--c:rgba(0,31,95,1);--gloss:.75;--glow:0"></div></div>
-          <span>Sólido</span>
+    <ol class="mat-index fx-index" id="fx-index" aria-label="Efeitos especiais de cor">
+      <li class="mat-row">
+        <div class="mat-top">
+          <button class="mat-head" type="button" aria-expanded="false">
+            <span class="no"><i class="no-mol" aria-hidden="true"><b></b></i>01</span><span class="nm">Sólido</span><span class="fl">cor plena e uniforme</span><span class="pl">+</span>
+          </button>
         </div>
-        <div class="fx-card" data-reveal>
-          <div class="fx-stage"><div class="pellet" data-fx="metalico" style="--c:rgba(150,155,165,1);--gloss:.75;--glow:0"></div></div>
-          <span>Metálico</span>
+        <div class="mat-body"><div class="mat-inner">
+          <div>
+            <p>Cor homogênea em toda a peça, ajustada ao padrão Pantone, RAL ou à peça enviada pelo cliente.</p>
+            <b class="mi-lbl">Aplicações típicas</b>
+            <ul><li>Carcaças de eletroeletrônicos</li><li>Peças internas automotivas</li><li>Utilidades domésticas</li></ul>
+            <a class="btn" href="contato.html?tipo=amostra">Solicitar amostra deste efeito <span class="arr">→</span></a>
+          </div>
+          <div class="mi-media" style="background-image:url(assets/img/fx-solido.jpg)"><span class="mono">[foto · sólido]</span></div>
+        </div></div>
+      </li>
+      <li class="mat-row">
+        <div class="mat-top">
+          <button class="mat-head" type="button" aria-expanded="false">
+            <span class="no"><i class="no-mol" aria-hidden="true"><b></b></i>02</span><span class="nm">Metálico</span><span class="fl">partículas que refletem a luz</span><span class="pl">+</span>
+          </button>
         </div>
-        <div class="fx-card" data-reveal>
-          <div class="fx-stage"><div class="pellet" data-fx="fluorescente" style="--c:rgba(190,255,0,1);--gloss:.75;--glow:.8"></div></div>
-          <span>Fluorescente</span>
+        <div class="mat-body"><div class="mat-inner">
+          <div>
+            <p>Pigmentos metálicos dispersos na resina dão aparência de metal sem pintura, eliminando uma etapa do processo.</p>
+            <b class="mi-lbl">Aplicações típicas</b>
+            <ul><li>Acabamentos automotivos</li><li>Eletroportáteis</li><li>Embalagens de cosméticos</li></ul>
+            <a class="btn" href="contato.html?tipo=amostra">Solicitar amostra deste efeito <span class="arr">→</span></a>
+          </div>
+          <div class="mi-media" style="background-image:url(assets/img/fx-metalico.jpg)"><span class="mono">[foto · metálico]</span></div>
+        </div></div>
+      </li>
+      <li class="mat-row">
+        <div class="mat-top">
+          <button class="mat-head" type="button" aria-expanded="false">
+            <span class="no"><i class="no-mol" aria-hidden="true"><b></b></i>03</span><span class="nm">Fluorescente</span><span class="fl">cores vivas de alta visibilidade</span><span class="pl">+</span>
+          </button>
         </div>
-        <div class="fx-card" data-reveal>
-          <div class="fx-stage"><div class="pellet" data-fx="fosforescente" style="--c:rgba(120,255,170,1);--gloss:.75;--glow:.45"></div></div>
-          <span>Fosforescente</span>
+        <div class="mat-body"><div class="mat-inner">
+          <div>
+            <p>Pigmentos fluorescentes intensificam a cor sob luz natural e UV, para peças que precisam ser vistas de longe.</p>
+            <b class="mi-lbl">Aplicações típicas</b>
+            <ul><li>EPIs e sinalização</li><li>Artigos esportivos</li><li>Brinquedos</li></ul>
+            <a class="btn" href="contato.html?tipo=amostra">Solicitar amostra deste efeito <span class="arr">→</span></a>
+          </div>
+          <div class="mi-media" style="background-image:url(assets/img/fx-fluorescente.jpg)"><span class="mono">[foto · fluorescente]</span></div>
+        </div></div>
+      </li>
+      <li class="mat-row">
+        <div class="mat-top">
+          <button class="mat-head" type="button" aria-expanded="false">
+            <span class="no"><i class="no-mol" aria-hidden="true"><b></b></i>04</span><span class="nm">Fosforescente</span><span class="fl">brilho no escuro</span><span class="pl">+</span>
+          </button>
         </div>
-        <div class="fx-card" data-reveal>
-          <div class="fx-stage"><div class="pellet" data-fx="madeira" style="--c:rgba(160,95,45,1);--gloss:.75;--glow:0"></div></div>
-          <span>Madeira</span>
+        <div class="mat-body"><div class="mat-inner">
+          <div>
+            <p>A peça absorve luz e a devolve no escuro por um período, sem energia elétrica.</p>
+            <b class="mi-lbl">Aplicações típicas</b>
+            <ul><li>Sinalização de emergência</li><li>Interruptores e comandos</li><li>Itens de segurança</li></ul>
+            <a class="btn" href="contato.html?tipo=amostra">Solicitar amostra deste efeito <span class="arr">→</span></a>
+          </div>
+          <div class="mi-media" style="background-image:url(assets/img/fx-fosforescente.jpg)"><span class="mono">[foto · fosforescente]</span></div>
+        </div></div>
+      </li>
+      <li class="mat-row">
+        <div class="mat-top">
+          <button class="mat-head" type="button" aria-expanded="false">
+            <span class="no"><i class="no-mol" aria-hidden="true"><b></b></i>05</span><span class="nm">Madeira</span><span class="fl">veios formados na injeção</span><span class="pl">+</span>
+          </button>
         </div>
-        <div class="fx-card" data-reveal>
-          <div class="fx-stage"><div class="pellet" data-fx="granito" style="--c:rgba(110,110,115,1);--gloss:.75;--glow:0"></div></div>
-          <span>Granito</span>
+        <div class="mat-body"><div class="mat-inner">
+          <div>
+            <p>Veios e tonalidades de madeira formados na própria injeção, com a durabilidade e a manutenção do plástico.</p>
+            <b class="mi-lbl">Aplicações típicas</b>
+            <ul><li>Móveis e acabamentos</li><li>Utilidades domésticas</li><li>Decoração</li></ul>
+            <a class="btn" href="contato.html?tipo=amostra">Solicitar amostra deste efeito <span class="arr">→</span></a>
+          </div>
+          <div class="mi-media" style="background-image:url(assets/img/fx-madeira.jpg)"><span class="mono">[foto · madeira]</span></div>
+        </div></div>
+      </li>
+      <li class="mat-row">
+        <div class="mat-top">
+          <button class="mat-head" type="button" aria-expanded="false">
+            <span class="no"><i class="no-mol" aria-hidden="true"><b></b></i>06</span><span class="nm">Granito</span><span class="fl">textura mesclada de pedra</span><span class="pl">+</span>
+          </button>
         </div>
-    </div>
+        <div class="mat-body"><div class="mat-inner">
+          <div>
+            <p>Partículas de contraste criam o aspecto de pedra natural em peças leves e fáceis de limpar.</p>
+            <b class="mi-lbl">Aplicações típicas</b>
+            <ul><li>Linha branca</li><li>Construção civil</li><li>Bancadas e louças</li></ul>
+            <a class="btn" href="contato.html?tipo=amostra">Solicitar amostra deste efeito <span class="arr">→</span></a>
+          </div>
+          <div class="mi-media" style="background-image:url(assets/img/fx-granito.jpg)"><span class="mono">[foto · granito]</span></div>
+        </div></div>
+      </li>
+    </ol>
 
     <div class="lab-info">
       <div data-reveal>
@@ -155,18 +227,83 @@
       </div>
       <div class="hard-img" data-reveal><i style="background-image:url(assets/img/tec-dureza.jpg)"></i></div>
     </div>
-    <div class="hard-scale" id="hard-scale" aria-label="Escala de dureza Shore, do flexível ao rígido">
-      <div class="hs-read"><span class="mono">Shore</span><b id="hs-val">60A</b><span id="hs-txt">Flexível</span></div>
-      <div class="hs-track"><i id="hs-fill"></i><span class="hs-knob" id="hs-knob"></span></div>
-      <div class="hs-ticks mono"><span>50A</span><span>70A</span><span>90A</span><span>50D</span><span>70D</span><span>85D</span></div>
-    </div>
+    <ol class="mat-index hard-index" id="hard-index" aria-label="Faixas de dureza, do flexível ao rígido">
+      <li class="mat-row">
+        <div class="mat-top">
+          <button class="mat-head" type="button" aria-expanded="false">
+            <span class="no"><i class="no-mol" aria-hidden="true"><b></b></i>01</span><span class="nm">Flexível</span><span class="fl">Shore 50A a 70A</span><span class="pl">+</span>
+          </button>
+        </div>
+        <div class="mat-body"><div class="mat-inner">
+          <div>
+            <p>Peças que dobram e voltam à forma, com toque macio e boa vedação.</p>
+            <b class="mi-lbl">Peças típicas</b>
+            <ul><li>Vedações e batentes</li><li>Pegas e empunhaduras</li><li>Coxins antivibração</li></ul>
+            <p class="mi-how"><span class="mono">Como chegamos lá</span>Modificadores de impacto e aditivos de flexibilidade.</p>
+            <a class="btn" href="contato.html?tipo=amostra">Pedir amostra nesta faixa <span class="arr">→</span></a>
+          </div>
+          <div class="mi-media" style="background-image:url(assets/img/dz-flexivel.jpg)"><span class="mono">[foto · flexível]</span></div>
+        </div></div>
+      </li>
+      <li class="mat-row">
+        <div class="mat-top">
+          <button class="mat-head" type="button" aria-expanded="false">
+            <span class="no"><i class="no-mol" aria-hidden="true"><b></b></i>02</span><span class="nm">Semiflexível</span><span class="fl">Shore 80A a 90A</span><span class="pl">+</span>
+          </button>
+        </div>
+        <div class="mat-body"><div class="mat-inner">
+          <div>
+            <p>Flexibilidade com firmeza para encaixes, tampas e perfis que trabalham com pressão.</p>
+            <b class="mi-lbl">Peças típicas</b>
+            <ul><li>Tampas e clipes</li><li>Perfis e mangueiras</li><li>Solados técnicos</li></ul>
+            <p class="mi-how"><span class="mono">Como chegamos lá</span>Blendas e modificadores de impacto.</p>
+            <a class="btn" href="contato.html?tipo=amostra">Pedir amostra nesta faixa <span class="arr">→</span></a>
+          </div>
+          <div class="mi-media" style="background-image:url(assets/img/dz-semiflexivel.jpg)"><span class="mono">[foto · semiflexível]</span></div>
+        </div></div>
+      </li>
+      <li class="mat-row">
+        <div class="mat-top">
+          <button class="mat-head" type="button" aria-expanded="false">
+            <span class="no"><i class="no-mol" aria-hidden="true"><b></b></i>03</span><span class="nm">Rígido</span><span class="fl">Shore 40D a 70D</span><span class="pl">+</span>
+          </button>
+        </div>
+        <div class="mat-body"><div class="mat-inner">
+          <div>
+            <p>Estrutura e estabilidade dimensional para carcaças e peças técnicas.</p>
+            <b class="mi-lbl">Peças típicas</b>
+            <ul><li>Carcaças de eletroeletrônicos</li><li>Painéis automotivos</li><li>Componentes de linha branca</li></ul>
+            <p class="mi-how"><span class="mono">Como chegamos lá</span>Blendas como PC/ABS e cargas minerais.</p>
+            <a class="btn" href="contato.html?tipo=amostra">Pedir amostra nesta faixa <span class="arr">→</span></a>
+          </div>
+          <div class="mi-media" style="background-image:url(assets/img/dz-rigido.jpg)"><span class="mono">[foto · rígido]</span></div>
+        </div></div>
+      </li>
+      <li class="mat-row">
+        <div class="mat-top">
+          <button class="mat-head" type="button" aria-expanded="false">
+            <span class="no"><i class="no-mol" aria-hidden="true"><b></b></i>04</span><span class="nm">Muito rígido</span><span class="fl">Shore 75D a 85D</span><span class="pl">+</span>
+          </button>
+        </div>
+        <div class="mat-body"><div class="mat-inner">
+          <div>
+            <p>Máxima rigidez e resistência mecânica para peças sob esforço contínuo.</p>
+            <b class="mi-lbl">Peças típicas</b>
+            <ul><li>Engrenagens e buchas</li><li>Suportes estruturais</li><li>Peças técnicas reforçadas</li></ul>
+            <p class="mi-how"><span class="mono">Como chegamos lá</span>Fibra de vidro e cargas de reforço.</p>
+            <a class="btn" href="contato.html?tipo=amostra">Pedir amostra nesta faixa <span class="arr">→</span></a>
+          </div>
+          <div class="mi-media" style="background-image:url(assets/img/dz-muito-rigido.jpg)"><span class="mono">[foto · muito rígido]</span></div>
+        </div></div>
+      </li>
+    </ol>
     <div class="hard-levers">
       <div data-reveal><span class="mono">Modificadores de impacto</span><p>Mais tenacidade para peças que sofrem queda ou vibração.</p></div>
       <div data-reveal><span class="mono">Cargas e fibra de vidro</span><p>Mais rigidez e estabilidade dimensional, com menos peso que o metal.</p></div>
       <div data-reveal><span class="mono">Blendas</span><p>PC/ABS, ABS/PBT e outras combinações para equilibrar propriedades.</p></div>
       <div data-reveal><span class="mono">Aditivos</span><p>Fluidez, UV, anti-chama e antiestático conforme a aplicação.</p></div>
     </div>
-    <p class="note"><b>Rascunho:</b> faixas de dureza e recursos de formulação são exemplos e precisam ser validados pela equipe técnica. A régua avança conforme a rolagem.</p>
+    <p class="note"><b>Rascunho:</b> faixas de dureza e recursos de formulação são exemplos e precisam ser validados pela equipe técnica. As faixas abrem ao clicar.</p>
   </div>
 </section>
 
@@ -308,7 +445,7 @@
 <footer class="footer" data-mol="ink">
   <div class="wrap">
     <div class="f-top">
-      <a href="index.html" class="f-logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo.svg?v=5.18" alt="" class="f-mark">remo</a>
+      <a href="index.html" class="f-logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo.svg?v=5.19" alt="" class="f-mark">remo</a>
       <p class="f-tag">Polímeros de engenharia,<br>feitos sob medida.</p>
       <a href="contato.html" class="btn f-cta">Fale com um especialista <span class="arr">→</span></a>
     </div>
@@ -337,7 +474,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<script src="assets/data.js?v=5.18"></script>
-<script src="assets/wireframe.js?v=5.18"></script>
+<script src="assets/data.js?v=5.19"></script>
+<script src="assets/wireframe.js?v=5.19"></script>
 </body>
 </html>

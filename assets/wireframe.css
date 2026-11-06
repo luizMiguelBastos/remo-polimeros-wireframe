@@ -1785,3 +1785,40 @@ body:has(#product-page) { background-image: none; }
 /* ---------- v5.17: sem a barra preta do wireframe ---------- */
 /* A abertura da home descontava os 43 px da barra; agora ocupa a tela inteira */
 .hero { min-height: 100svh; }
+
+/* ---------- v5.19: Tecnologias no padrão do índice de Produtos (efeitos de cor e faixas de dureza) ---------- */
+.fx-index .mat-head, .hard-index .mat-head { grid-template-columns: 64px minmax(0, 1fr) auto 40px; }
+.fx-index { margin-top: 24px; }
+.mat-inner .mi-lbl { display: block; font: 12px var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--slate); }
+.fx-index .mat-inner .btn, .hard-index .mat-inner .btn { margin-top: 24px; }
+.fx-index .mat-inner, .hard-index .mat-inner { align-items: start; }
+/* Foto da linha aberta: aparece só ao clicar; sem foto, fica a moldura com a legenda */
+.mi-media { position: relative; aspect-ratio: 4 / 3; border-radius: 8px; overflow: hidden; background: var(--night-2) center / cover no-repeat; display: grid; place-items: center; }
+.mi-media > span { color: var(--steel); font-size: 12px; }
+.mi-media::after { content: ""; position: absolute; inset: 0; background: inherit; background-color: transparent; }
+.mi-how { font-size: 15px !important; color: var(--slate); margin: 16px 0 0; }
+.mi-how .mono { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+
+/* Dureza: a régua saiu; a lista vem logo abaixo da foto do durômetro */
+.hard-index { margin-top: 72px; border-top-color: var(--line-d); }
+.hard-index .mat-row { border-bottom-color: var(--line-d); }
+.hard-index .mat-head, .hard .mat-top:hover .hard-index .mat-head .nm, .hard-index .mat-top:hover .mat-head .nm, .hard-index .mat-top:hover .mat-head .no { color: var(--white); }
+.hard-index .mat-head .no, .hard-index .mat-head .fl, .hard-index .mat-top:hover .mat-head .fl { color: var(--steel); }
+.hard-index .mat-head .pl { border-color: var(--line-d); }
+.hard-index .mat-row.open .mat-top:hover .mat-head .nm, .hard-index .mat-row.open .mat-top:hover .mat-head .no { color: var(--white); }
+.hard-index .no-mol::after { background: #6E8CCD; }
+.hard-index .no-mol b { background: linear-gradient(90deg, var(--yellow), #6E8CCD); }
+.hard-index .mat-row::after { background: linear-gradient(90deg, var(--yellow) 0%, var(--yellow) 35%, #6E8CCD 100%); }
+.hard-index .mat-inner p { color: var(--white); }
+.hard-index .mat-inner ul, .hard-index .mi-lbl, .hard-index .mi-how { color: var(--steel); }
+.hard-index .mi-how .mono { color: var(--white); }
+.hard-index .mat-inner .btn:not(.ghost) { background: var(--white); border-color: var(--white); color: var(--ink); }
+.hard-index .mi-media { background-color: rgba(244,245,247,.06); }
+
+@media (max-width: 900px) {
+  .fx-index .mat-head, .hard-index .mat-head { grid-template-columns: 40px minmax(0, 1fr) 36px; }
+  .hard-index .mat-head .fl { display: block; grid-column: 2; grid-row: 2; text-align: left; margin-top: -6px; }
+  .fx-index .mi-media, .hard-index .mi-media { order: -1; }
+  .fx-index .mat-inner, .hard-index .mat-inner { padding-bottom: 36px; }
+  .hard-index { margin-top: 48px; }
+}

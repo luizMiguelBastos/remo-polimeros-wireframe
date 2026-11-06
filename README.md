@@ -1,4 +1,4 @@
-# Remo Polímeros · Wireframe v5.18
+# Remo Polímeros · Wireframe v5.19
 
 Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e distribuidora de resinas de engenharia desde 1989; site atual: remopolimeros.com.br). Serve para validar **usabilidade**, **navegação**, **onde fica cada informação** e a **identidade visual** antes das fotos reais. A meta é um site nível Awwwards: movimento, credibilidade e cara de feito sob medida.
 
@@ -29,8 +29,8 @@ Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e d
 - **README:** atualizar a cada versão junto com o resto (estado, histórico, pendências).
 - **Versão (furar cache):** a cada versão, trocar `?v=X.Y` em todos os HTML, o comentário `<!-- WIREFRAME vX.Y -->` no topo do `<body>` (a barra superior saiu na v5.17; o comentário mantém a conferência do deploy por `curl | grep`) e o título dinâmico da página de produto em `wireframe.js`:
   ```bash
-  for f in *.html; do sed -i '' -E 's/\?v=5\.18/?v=5.19/g; s/WIREFRAME v5\.18/WIREFRAME v5.19/g; s/Wireframe v5\.18/Wireframe v5.19/g' "$f"; done
-  sed -i '' 's/Wireframe v5\.18/Wireframe v5.19/' assets/wireframe.js
+  for f in *.html; do sed -i '' -E 's/\?v=5\.19/?v=5.20/g; s/WIREFRAME v5\.19/WIREFRAME v5.20/g; s/Wireframe v5\.19/Wireframe v5.20/g' "$f"; done
+  sed -i '' 's/Wireframe v5\.19/Wireframe v5.20/' assets/wireframe.js
   ```
 - **Testes no desktop:** servidor local `python3 -m http.server 8765` na pasta do projeto; testar no **Chrome real do Luiz** (extensão Claude in Chrome: aba própria, ações em lote, zoom para detalhes, fechar a aba no fim). Conferir 1440 px, console e rolagem lateral. Simular chegada de outra página: `sessionStorage.setItem('remo-nav','1')`; rever a abertura completa: `sessionStorage.clear()` e recarregar.
 - **Tudo que muda no desktop precisa ter o seu padrão no celular.** Nenhuma alteração é dada como pronta sem a validação mobile abaixo. Se algo não couber, adaptar (empilhar, reduzir, esconder detalhe decorativo) e dizer ao Luiz o que mudou no mobile.
@@ -122,7 +122,7 @@ Construção: triângulo amarelo arredondado ao fundo (só contorno); triângulo
 | `produto.html?linha=<id>` | Página única das 9 linhas, preenchida por `data.js` (ids: abs, abs-pc, asa, pbt, pc, pc-compostos, pmma, pom, san) |
 | `historia.html` | Abertura → manifesto → parallax → "A Remo" → linha do tempo com fotos → depoimento → números → esteira → contato |
 | `valores.html` | Abertura → princípios (missão, visão, valores) → meio ambiente (números de rascunho) → ISO → números → esteira → contato |
-| `tecnologias.html` | Abertura → laboratório de cores → dureza sob medida (régua Shore ligada à rolagem) → "Como trabalhamos" (rolagem horizontal) → números → esteira → contato |
+| `tecnologias.html` | Abertura → laboratório de cores (prazo, índice "Efeitos especiais" que abre ao clicar, equipamentos/padrões/aditivos) → dureza sob medida (foto do durômetro + índice de 4 faixas Shore que abre ao clicar + recursos de formulação) → "Como trabalhamos" (rolagem horizontal, mantida) → números → esteira → contato |
 | `onde-atuamos.html` | Abertura → "Um dia com a Remo" (horas que acendem) → 5 segmentos com resinas → números → esteira → contato |
 | `contato.html` | Abertura → formulário por tipo de pedido → contatos e FAQ → esteira |
 
@@ -130,7 +130,7 @@ Construção: triângulo amarelo arredondado ao fundo (só contorno); triângulo
 - Fim das páginas: faixa de números → esteira horizontal "Para onde agora?" (cards das outras seções, com pin no desktop) → contato → footer. **Uma única seção de contato por página**, sempre logo depois do `</main>` (comentário `<!-- CONTATO (todas as páginas) -->`).
 - **Sem barra superior do wireframe** (removida na v5.17, junto com "Rever abertura"; o botão "Mostrar notas de UX" saiu na v5.16). A versão fica só no comentário `<!-- WIREFRAME vX.Y -->`. As anotações `.note` continuam no HTML, sempre ocultas. Para rever a abertura: `sessionStorage.clear()` e recarregar.
 
-## 6. Componentes (estado atual, v5.18)
+## 6. Componentes (estado atual, v5.19)
 
 ### 6.1 Hero principal (home) — aprovado, não mexer na tipografia nem na organização
 - Tudo à esquerda e embaixo: rótulo "Polímeros especiais · Desde 1989", título "Polímeros de engenharia," (menor, branco) + "feitos sob medida." (grande, amarelo), palavra que troca a cada 3 s (sob medida, para você, personalizados, com precisão, do seu jeito), traço amarelo que se desenha e estica a cada troca, texto de apoio, botões "Sobre nós" e "Nossos produtos".
@@ -155,6 +155,13 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 - Clique abre a linha: descrição, aplicações, características, "Ver linha X", "Solicitar amostra", até 5 grades com "Ficha PDF".
 - **Comparar:** até 3 linhas; barra fixa `#cmp-bar` + gaveta `#cmp-drawer` com tabela (fecha com Esc, × ou clique fora).
 - **Reprovados aqui:** fundo escuro subindo no hover ("agressivo"), brilho seguindo o cursor ("genérico"), faixa "Remo em números", comparador com dois selects.
+
+### 6.5.1 Tecnologias · índices de efeitos e de dureza (v5.19)
+- Mesmo componente do índice de Produtos (`.mat-index` / `.mat-row`, HTML estático em `tecnologias.html`), aberto e fechado pela função `matAccordion(list)` em `wireframe.js` (também usada por `#mat-index`).
+- **Efeitos especiais** (`#fx-index`, fundo claro com moléculas nas laterais): 6 linhas (Sólido, Metálico, Fluorescente, Fosforescente, Madeira, Granito). Fechada: só nome e frase curta, **nenhuma cor à vista** (pedido do Luiz: as bolinhas 3D foram reprovadas por serem artificiais e explícitas). Aberta: descrição, aplicações, "Solicitar amostra deste efeito" e a foto do efeito (`.mi-media`, entra como cortina).
+- **Dureza** (`#hard-index`, variante escura): 4 faixas (Flexível 50A a 70A, Semiflexível 80A a 90A, Rígido 40D a 70D, Muito rígido 75D a 85D) com peças típicas, "Como chegamos lá" e foto. A régua Shore ligada à rolagem foi **reprovada** e removida.
+- Fotos: `assets/img/fx-*.jpg` (6) e `assets/img/dz-*.jpg` (4), geradas no Flow e aprovadas pelo Luiz na v5.19 (1600 × 893, JPEG 77). Sem a foto, aparece a moldura com a legenda `[foto · nome]`.
+- A esteira "Como trabalhamos" fica (o site já tem 3 esteiras; não criar outra).
 
 ### 6.6 Página da linha (`produto.html`)
 - `.p-hero` em `--night` com ondas de fluxo, **sem** o quadriculado de 96 px do body. Esquerda: nome numa linha só (`fitName()` reduz a fonte), nome completo em mono amarelo, descrição, botões "Ver grades e fichas ↓" e "Desenvolver versão sob medida", linha ISO discreta ("Produzido sob certificação ISO 9001:2015*"). Direita: imagem com revelação em cortina, alinhada à margem do conteúdo.
@@ -215,6 +222,7 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 | v5.16 | Responsividade em notebooks (1280 a 1600 px e telas baixas): margens, header, botões e respiro proporcionais; títulos das aberturas pela altura; "Sobre nós" à direita entre 901 e 1080 px; botão "Mostrar notas de UX" removido |
 | v5.17 | Barra preta do wireframe removida (versão vira comentário no HTML); abertura da home ocupa a tela inteira |
 | v5.18 | Seção de contato duplicada removida em História, Valores, Tecnologias e Onde atuamos (fica só a de depois do `</main>`, como na home) |
+| v5.19 | Tecnologias: efeitos de cor e faixas de dureza viram índices que abrem ao clicar (padrão de Produtos); bolinhas 3D e régua Shore removidas; `matAccordion` reutilizável |
 
 ## 10. Pendências e pontos em aberto (não agir sem pedido)
 
@@ -223,7 +231,7 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 - **Desktop após v5.15:** aceite da LGPD e botão do footer mudaram também no desktop e não foram conferidos lá.
 - **Escala proporcional ao Mac (em standby, não executar sem pedido):** o Luiz quer o site o mais parecido possível com o Mac (referência 1710 px de largura) em qualquer tela. Plano A: `zoom` no `html` calculado por JS (largura / 1710, entre 0,75 e 1,3, só acima de 901 px), compensando alturas em `svh`, removendo os ajustes de tamanho da v5.16. Plano B (mais robusto, ~1 a 2 h): trocar os `px` do CSS por uma unidade proporcional, regra por regra.
 - **v5.16 não conferido:** menu aberto entre 901 e 1080 px, abertura e transição em 1280 × 690, Chrome real do Luiz (só headless).
-- **CSS sem uso:** regras `.pm-*`, `.rail-free` e hovers antigos do índice anulados por blocos mais novos.
+- **CSS sem uso:** `.fx-grid`, `.fx-card`, `.hard-scale`, `.hs-*` (desde a v5.19); regras `.pm-*`, `.rail-free` e hovers antigos do índice anulados por blocos mais novos.
 - **Abertura de Produtos:** sugestões para o lado direito vazio (opções A a D) nunca escolhidas.
 - **Arquivos sem uso:** fotos antigas em `assets/hero/` e `remo-simbolo-contorno.svg` (não apagados).
 - **Conteúdo real que falta:** razão social e CNPJ; número e PDF do certificado ISO; dados ambientais reais; faixas de dureza validadas; logos de clientes e depoimento autorizado; WhatsApp comercial; marcos de 2016 em diante; arquivo oficial da marca (AI/PDF/EPS); fotos reais de "Onde é usado" (hoje placeholders).

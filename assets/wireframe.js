@@ -500,21 +500,6 @@
     });
   }
 
-  // ---------- Tecnologias: régua de dureza ligada à rolagem ----------
-  const hardScale = $("#hard-scale");
-  if (hardScale && hasGsap) {
-    const STOPS = [["50A", "Flexível"], ["60A", "Flexível"], ["70A", "Macio"], ["80A", "Macio"], ["90A", "Semirrígido"], ["40D", "Semirrígido"], ["50D", "Rígido"], ["60D", "Rígido"], ["70D", "Rígido"], ["80D", "Muito rígido"], ["85D", "Muito rígido"]];
-    const setHard = p => {
-      const k = Math.min(STOPS.length - 1, Math.round(p * (STOPS.length - 1)));
-      $("#hs-val").textContent = STOPS[k][0];
-      $("#hs-txt").textContent = STOPS[k][1];
-      gsap.set("#hs-fill", { scaleX: Math.max(0.02, p) });
-      gsap.set("#hs-knob", { left: (p * 100) + "%" });
-    };
-    setHard(motion ? 0 : 1);
-    if (motion) ScrollTrigger.create({ trigger: hardScale, start: "top 85%", end: "top 30%", scrub: true, onUpdate: st => setHard(st.progress) });
-  }
-
   // ---------- Onde atuamos: as horas do dia acendem no centro da tela ----------
   const dayRows = $$("#day li");
   if (dayRows.length) {
@@ -827,6 +812,31 @@
     return api;
   }
 
+  // ---------- Índice que abre ao clicar (Produtos e Tecnologias) ----------
+  // Uma linha aberta por vez; altura animada; a foto (.mi-media) entra como cortina.
+  function matAccordion(list) {
+    if (motion) gsap.from($$(".mat-row", list), { y: 50, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.06, scrollTrigger: { trigger: list, start: "top 85%" } });
+    const refresh = () => { if (hasGsap) ScrollTrigger.refresh(); };
+    const toggle = row => {
+      const body = $(".mat-body", row), btn = $(".mat-head", row);
+      const open = !row.classList.contains("open");
+      $$(".mat-row.open", list).forEach(r => {
+        if (r === row) return;
+        r.classList.remove("open"); $(".mat-head", r).setAttribute("aria-expanded", "false");
+        if (motion) gsap.to($(".mat-body", r), { height: 0, duration: 0.6, ease: "expo.inOut" }); else $(".mat-body", r).style.height = "0";
+      });
+      row.classList.toggle("open", open); btn.setAttribute("aria-expanded", String(open));
+      if (!motion) { body.style.height = open ? "auto" : "0"; return; }
+      if (open) {
+        gsap.fromTo(body, { height: 0 }, { height: "auto", duration: 0.8, ease: "expo.inOut", onComplete: refresh });
+        gsap.from($$(".grade, p, ul, .chip, .btn", body), { y: 24, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.03, delay: 0.2 });
+        const media = $(".mi-media", body);
+        if (media) gsap.fromTo(media, { clipPath: "inset(0 0 100% 0)" }, { clipPath: "inset(0 0 0% 0)", duration: 1.1, ease: "expo.inOut", delay: 0.15 });
+      } else gsap.to(body, { height: 0, duration: 0.6, ease: "expo.inOut", onComplete: refresh });
+    };
+    list.addEventListener("click", e => { const h = e.target.closest(".mat-head"); if (h && list.contains(h)) toggle(h.closest(".mat-row")); });
+  }
+
   // ---------- Materiais: índice interativo ----------
   const idx = $("#mat-index");
   if (idx) {
@@ -857,26 +867,10 @@
         </div></div>
       </li>`).join("");
 
-    if (motion) gsap.from($$(".mat-row", idx), { y: 50, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.06, scrollTrigger: { trigger: idx, start: "top 85%" } });
-    const refresh = () => { if (hasGsap) ScrollTrigger.refresh(); };
-    const toggle = row => {
-      const body = $(".mat-body", row), btn = $(".mat-head", row);
-      const open = !row.classList.contains("open");
-      $$(".mat-row.open", idx).forEach(r => {
-        if (r === row) return;
-        r.classList.remove("open"); $(".mat-head", r).setAttribute("aria-expanded", "false");
-        if (motion) gsap.to($(".mat-body", r), { height: 0, duration: 0.6, ease: "expo.inOut" }); else $(".mat-body", r).style.height = "0";
-      });
-      row.classList.toggle("open", open); btn.setAttribute("aria-expanded", String(open));
-      if (!motion) { body.style.height = open ? "auto" : "0"; return; }
-      if (open) {
-        gsap.fromTo(body, { height: 0 }, { height: "auto", duration: 0.8, ease: "expo.inOut", onComplete: refresh });
-        gsap.from($$(".grade, p, ul, .chip, .btn", body), { y: 24, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.03, delay: 0.2 });
-      } else gsap.to(body, { height: 0, duration: 0.6, ease: "expo.inOut", onComplete: refresh });
-    };
-    idx.addEventListener("click", e => { const h = e.target.closest(".mat-head"); if (h) toggle(h.closest(".mat-row")); });
-
+    matAccordion(idx);
   }
+  // Tecnologias: efeitos de cor e faixas de dureza usam o mesmo índice (HTML estático)
+  $$(".fx-index, .hard-index").forEach(matAccordion);
 
 
   // ---------- Guia de seleção: tabela segmento x exigência ----------
@@ -984,7 +978,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.18`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.19`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
