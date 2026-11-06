@@ -1,4 +1,4 @@
-# Remo Polímeros · Wireframe v5.17
+# Remo Polímeros · Wireframe v5.18
 
 Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e distribuidora de resinas de engenharia desde 1989; site atual: remopolimeros.com.br). Serve para validar **usabilidade**, **navegação**, **onde fica cada informação** e a **identidade visual** antes das fotos reais. A meta é um site nível Awwwards: movimento, credibilidade e cara de feito sob medida.
 
@@ -29,8 +29,8 @@ Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e d
 - **README:** atualizar a cada versão junto com o resto (estado, histórico, pendências).
 - **Versão (furar cache):** a cada versão, trocar `?v=X.Y` em todos os HTML, o comentário `<!-- WIREFRAME vX.Y -->` no topo do `<body>` (a barra superior saiu na v5.17; o comentário mantém a conferência do deploy por `curl | grep`) e o título dinâmico da página de produto em `wireframe.js`:
   ```bash
-  for f in *.html; do sed -i '' -E 's/\?v=5\.17/?v=5.18/g; s/WIREFRAME v5\.17/WIREFRAME v5.18/g; s/Wireframe v5\.17/Wireframe v5.18/g' "$f"; done
-  sed -i '' 's/Wireframe v5\.17/Wireframe v5.18/' assets/wireframe.js
+  for f in *.html; do sed -i '' -E 's/\?v=5\.18/?v=5.19/g; s/WIREFRAME v5\.18/WIREFRAME v5.19/g; s/Wireframe v5\.18/Wireframe v5.19/g' "$f"; done
+  sed -i '' 's/Wireframe v5\.18/Wireframe v5.19/' assets/wireframe.js
   ```
 - **Testes no desktop:** servidor local `python3 -m http.server 8765` na pasta do projeto; testar no **Chrome real do Luiz** (extensão Claude in Chrome: aba própria, ações em lote, zoom para detalhes, fechar a aba no fim). Conferir 1440 px, console e rolagem lateral. Simular chegada de outra página: `sessionStorage.setItem('remo-nav','1')`; rever a abertura completa: `sessionStorage.clear()` e recarregar.
 - **Tudo que muda no desktop precisa ter o seu padrão no celular.** Nenhuma alteração é dada como pronta sem a validação mobile abaixo. Se algo não couber, adaptar (empilhar, reduzir, esconder detalhe decorativo) e dizer ao Luiz o que mudou no mobile.
@@ -127,10 +127,10 @@ Construção: triângulo amarelo arredondado ao fundo (só contorno); triângulo
 | `contato.html` | Abertura → formulário por tipo de pedido → contatos e FAQ → esteira |
 
 - Endereços antigos (`materiais`, `institucional`, `como-trabalhamos`, `laboratorio`, `qualidade`, `guia`) redirecionam por meta refresh.
-- Fim das páginas: faixa de números → esteira horizontal "Para onde agora?" (cards das outras seções, com pin no desktop) → contato → footer.
+- Fim das páginas: faixa de números → esteira horizontal "Para onde agora?" (cards das outras seções, com pin no desktop) → contato → footer. **Uma única seção de contato por página**, sempre logo depois do `</main>` (comentário `<!-- CONTATO (todas as páginas) -->`).
 - **Sem barra superior do wireframe** (removida na v5.17, junto com "Rever abertura"; o botão "Mostrar notas de UX" saiu na v5.16). A versão fica só no comentário `<!-- WIREFRAME vX.Y -->`. As anotações `.note` continuam no HTML, sempre ocultas. Para rever a abertura: `sessionStorage.clear()` e recarregar.
 
-## 6. Componentes (estado atual, v5.17)
+## 6. Componentes (estado atual, v5.18)
 
 ### 6.1 Hero principal (home) — aprovado, não mexer na tipografia nem na organização
 - Tudo à esquerda e embaixo: rótulo "Polímeros especiais · Desde 1989", título "Polímeros de engenharia," (menor, branco) + "feitos sob medida." (grande, amarelo), palavra que troca a cada 3 s (sob medida, para você, personalizados, com precisão, do seu jeito), traço amarelo que se desenha e estica a cada troca, texto de apoio, botões "Sobre nós" e "Nossos produtos".
@@ -214,6 +214,7 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 | v5.15 | Ajustes de celular: "Explore" escondido na home, rótulos legíveis, moléculas fora dos botões, grades empilhadas, aceite LGPD corrigido, botão do footer visível |
 | v5.16 | Responsividade em notebooks (1280 a 1600 px e telas baixas): margens, header, botões e respiro proporcionais; títulos das aberturas pela altura; "Sobre nós" à direita entre 901 e 1080 px; botão "Mostrar notas de UX" removido |
 | v5.17 | Barra preta do wireframe removida (versão vira comentário no HTML); abertura da home ocupa a tela inteira |
+| v5.18 | Seção de contato duplicada removida em História, Valores, Tecnologias e Onde atuamos (fica só a de depois do `</main>`, como na home) |
 
 ## 10. Pendências e pontos em aberto (não agir sem pedido)
 
