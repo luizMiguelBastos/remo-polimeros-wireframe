@@ -875,142 +875,142 @@
   // Tecnologias: efeitos de cor e faixas de dureza usam o mesmo índice (HTML estático)
   $$(".fx-index, .hard-index").forEach(matAccordion);
 
-  // ---------- Valores: molécula dos 10 valores (nós ligados, ficha ao lado) ----------
-  // Clique, hover (mouse), Enter ou setas escolhem um valor; avança sozinho a cada 6 s só com a seção na tela.
-  const vm = $("#vmol");
-  if (vm) {
-    const data = $$(".vm-data li", vm).map(li => ({ no: li.dataset.no, short: li.dataset.short, proof: li.dataset.proof, name: li.textContent.trim() }));
-    const svg = $("#vm-svg"), NS = "http://www.w3.org/2000/svg";
-    // Naftaleno: dois anéis hexagonais fundidos, 10 átomos (um por valor), cada nó exatamente no vértice
-    const L = 110, HX = L * Math.sqrt(3) / 2, CY = 235, C1 = [350 - HX, CY], C2 = [350 + HX, CY];
-    const v = (c, deg) => [+(c[0] + L * Math.cos(deg * Math.PI / 180)).toFixed(1), +(c[1] + L * Math.sin(deg * Math.PI / 180)).toFixed(1)];
-    // A ordem dos valores segue o contorno da molécula: 01 no alto à esquerda, sentido horário; 03 e 08 são os átomos compartilhados
-    const P = [v(C1, 210), v(C1, 270), v(C1, 330), v(C2, 270), v(C2, 330), v(C2, 30), v(C2, 90), v(C1, 30), v(C1, 90), v(C1, 150)];
-    const E = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9], [9, 0], [2, 7]];
-    // Ligações duplas (estrutura de Kekulé): traço interno paralelo, voltado para o centro do anel
-    const D = [[0, 1, C1], [2, 7, C1], [3, 4, C2], [5, 6, C2], [8, 9, C1]];
-    const compact = matchMedia("(max-width: 600px)").matches;
-    const R = compact ? 25 : 19, RING = compact ? 33 : 27, HIT = compact ? 46 : 34;
-    svg.setAttribute("viewBox", compact ? "120 85 460 300" : "110 80 480 310");
-    const el = (tag, attrs, parent) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; };
-    const gBase = el("g", { class: "vm-edges" }, svg), gHot = el("g", { class: "vm-hot" }, svg), gNodes = el("g", { class: "vm-nodes" }, svg);
-    const len = ([a, b]) => Math.hypot(P[b][0] - P[a][0], P[b][1] - P[a][1]);
-    const base = [], hot = [];
-    E.forEach(e => {
-      const [a, b] = e, at = { x1: P[a][0], y1: P[a][1], x2: P[b][0], y2: P[b][1] };
-      base.push(el("line", at, gBase));
-      const h = el("line", at, gHot);
-      h.style.strokeDasharray = len(e); h.style.strokeDashoffset = len(e);
-      hot.push(h);
-    });
-    D.forEach(([a, b, c]) => {
-      const t = 0.2, A = P[a], B = P[b];
-      const m = [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2], dl = Math.hypot(c[0] - m[0], c[1] - m[1]);
-      const o = [(c[0] - m[0]) / dl * 11, (c[1] - m[1]) / dl * 11];
-      const x1 = A[0] + (B[0] - A[0]) * t + o[0], y1 = A[1] + (B[1] - A[1]) * t + o[1];
-      const x2 = B[0] - (B[0] - A[0]) * t + o[0], y2 = B[1] - (B[1] - A[1]) * t + o[1];
-      base.push(el("line", { class: "dbl", x1, y1, x2, y2 }, gBase));
-    });
-    const nodes = data.map((d, n) => {
-      const g = el("g", { class: "vm-node", transform: `translate(${P[n][0]} ${P[n][1]})`, tabindex: "0", role: "button", "aria-label": `Valor ${d.no}: ${d.name}`, "aria-pressed": "false" }, gNodes);
-      el("circle", { class: "hit", r: HIT }, g);
-      el("circle", { class: "ring", r: RING }, g);
-      el("circle", { class: "core", r: R }, g);
-      el("text", { class: "nn", y: 4 }, g).textContent = d.no;
-      return g;
-    });
-    const no = $("#vm-no"), title = $("#vm-title"), proof = $("#vm-proof"), cota = $("#vm-cota"), bar = $("#vm-bar");
-    const DUR = 6;
-    let i = -1, visible = false, paused = false, tw = null;
-    const run = () => {
-      if (!motion) return;
-      if (tw) tw.kill();
-      gsap.set(bar, { scaleX: 0 });
-      tw = gsap.to(bar, { scaleX: 1, duration: DUR, ease: "none", paused: !visible || paused, onComplete: () => show(i + 1) });
-    };
-    const show = (n, first) => {
-      n = (n + data.length) % data.length;
-      if (n === i) return;
-      i = n;
-      const d = data[i];
-      nodes.forEach((g, k) => { const on = k === i; g.classList.toggle("on", on); g.setAttribute("aria-pressed", String(on)); });
-      E.forEach((e, k) => {
-        const on = e[0] === i || e[1] === i, h = hot[k];
-        base[k].classList.toggle("near", on);
-        if (motion) gsap.to(h, { overwrite: true, strokeDashoffset: on ? 0 : len(e), duration: on ? 0.9 : 0.4, ease: on ? "expo.out" : "power2.in", delay: on ? 0.1 : 0 });
-        else h.style.strokeDashoffset = on ? 0 : len(e);
-      });
-      const set = () => { no.textContent = d.no; title.textContent = d.name; proof.textContent = d.proof; cota.textContent = `Valor ${d.no} / 10 · ${d.short}`; };
-      if (!motion || first) set();
-      else {
-        const txt = [no, title, proof];
-        gsap.killTweensOf(txt);
-        gsap.timeline()
-          .to(txt, { y: -18, opacity: 0, duration: 0.2, ease: "power2.in", stagger: 0.03 })
-          .add(set)
-          .fromTo(txt, { y: 28, opacity: 0, clipPath: "inset(0 0 100% 0)" }, { y: 0, opacity: 1, clipPath: "inset(0 0 -20% 0)", duration: 0.85, ease: "expo.out", stagger: 0.07 });
-        gsap.fromTo($(".core", nodes[i]), { attr: { r: R * 0.6 } }, { attr: { r: R }, duration: 0.9, ease: "elastic.out(1, 0.45)" });
+  // ---------- Valores: visão centralizada no topo da seção escura ----------
+  const vmi = $(".vm-intro");
+  if (vmi && motion) {
+    gsap.timeline({ scrollTrigger: { trigger: vmi, start: "top 80%" } })
+      .from([$(".eyebrow", vmi), $(".vm-k", vmi)], { y: 16, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.08 })
+      .from($$(".vm-h .mw > span", vmi), { yPercent: 110, duration: 1.1, ease: "expo.out", stagger: 0.14 }, 0.1)
+      .from($(".vm-vis", vmi), { y: 20, opacity: 0, duration: 0.9, ease: "expo.out" }, 0.55);
+  }
+
+  // ---------- Valores: missão como manifesto (travado na tela até a última palavra acender) ----------
+  const mf2 = $("#mf2-text");
+  if (mf2) {
+    // Quebra em palavras, mantendo as palavras-chave (.kw) que ganham o sublinhado amarelo
+    [...mf2.childNodes].forEach(n => {
+      if (n.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach(t => {
+          if (!t) return;
+          if (/^\s+$/.test(t)) { frag.append(t); return; }
+          const sp = document.createElement("span"); sp.className = "w"; sp.textContent = t; frag.append(sp);
+        });
+        n.replaceWith(frag);
+      } else if (n.classList && n.classList.contains("kw")) {
+        const ws = n.textContent.trim().split(/\s+/);
+        n.textContent = "";
+        ws.forEach((t, k) => { if (k) n.append(" "); const sp = document.createElement("span"); sp.className = "w"; sp.textContent = t; n.append(sp); });
       }
-      run();
-    };
-    const sync = () => { if (tw) (visible && !paused) ? tw.resume() : tw.pause(); };
-    nodes.forEach((g, n) => {
-      g.addEventListener("click", () => show(n));
-      if (finePointer) g.addEventListener("mouseenter", () => show(n));
-      g.addEventListener("keydown", e => {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); show(n); return; }
-        const d = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 0;
-        if (!d) return;
-        e.preventDefault(); const t = (n + d + data.length) % data.length; nodes[t].focus(); show(t);
-      });
     });
-    $("#vm-prev").addEventListener("click", () => show(i - 1));
-    $("#vm-next").addEventListener("click", () => show(i + 1));
-    vm.addEventListener("mouseenter", () => { paused = true; sync(); });
-    vm.addEventListener("mouseleave", () => { paused = vm.contains(document.activeElement); sync(); });
-    vm.addEventListener("focusin", () => { paused = true; sync(); });
-    vm.addEventListener("focusout", e => { if (!vm.contains(e.relatedTarget)) { paused = false; sync(); } });
-    show(0, true);
-    // Ficha com altura fixa (a do maior valor): a seção não muda de tamanho ao trocar de valor
+    const words = $$(".w", mf2);
+    if (!motion) { mf2.classList.add("lit"); }
+    else {
+      const tl = gsap.timeline({ scrollTrigger: { trigger: "#mf2", start: "top top", end: () => "+=" + innerHeight * 1.4, pin: true, scrub: 0.6, invalidateOnRefresh: true, refreshPriority: 2 } });
+      words.forEach((w, n) => {
+        tl.to(w, { opacity: 1, duration: 0.1, ease: "none" }, n * 0.1);
+      });
+      tl.to("#mf2-bar", { scaleX: 1, ease: "none", duration: words.length * 0.1 }, 0);
+    }
+  }
+
+  // ---------- Valores: a lista avança com a rolagem e o card claro troca (desktop); no celular, lista aberta ----------
+  const vr = $("#vr");
+  if (vr) {
+    const items = $$(".vr-item", vr), ticks = $$(".vr-card .vr-ticks i", vr);
+    // Celular: esteira que se arrasta com o dedo (sem rolagem automática); o próximo card aparece na borda direita
+    const sw = $(".vr-sw", vr);
+    if (sw) {
+      const track = $(".vr-sw-track", sw), swCur = $("#vr-sw-cur"), swTicks = $$(".vr-sw-ticks i", sw);
+      items.forEach(b => {
+        const d = b.dataset, c = document.createElement("article");
+        c.className = "vr-sc";
+        c.innerHTML = `<div class="vr-media"><span class="mono">[foto · ${d.short}]</span></div>
+          <div class="vr-cota" aria-hidden="true"><i></i><span>Valor ${d.no} / 10 · ${d.short}</span></div>
+          <h3 class="vr-title">${$(".vr-nm", b).textContent}</h3>
+          <span class="vr-lbl">Na prática</span>
+          <p class="vr-proof">${d.proof}</p>`;
+        track.appendChild(c);
+      });
+      const cards = $$(".vr-sc", track);
+      let si = -1;
+      const upd = () => {
+        const step = cards[1] ? cards[1].offsetLeft - cards[0].offsetLeft : 1;
+        const n = Math.max(0, Math.min(cards.length - 1, Math.round(track.scrollLeft / step)));
+        if (n === si) return;
+        si = n;
+        swCur.textContent = String(n + 1).padStart(2, "0");
+        swTicks.forEach((t, k) => t.classList.toggle("on", k <= n));
+      };
+      upd();
+      track.addEventListener("scroll", () => { upd(); sw.classList.add("used"); }, { passive: true });
+    }
+    const title = $("#vr-title"), proof = $("#vr-proof"), cota = $("#vr-cota"), cur = $("#vr-cur");
+    const mlbl = $("#vr-mlbl"), card = $(".vr-card", vr), inner = $(".vr-in", vr), wipe = $(".vr-wipe", vr), ind = $(".vr-ind", vr), list = $(".vr-list", vr);
+    let i = 0, st = null, tl = null;
+    // Indicador que desliza até o valor ativo na lista
+    const moveInd = (anim = true) => {
+      const li = items[i].parentElement;
+      const v = { y: li.offsetTop, height: li.offsetHeight };
+      if (anim && motion) gsap.to(ind, { ...v, duration: 0.7, ease: "expo.out", overwrite: true }); else gsap.set(ind, v);
+    };
+    const show = n => {
+      if (n === i) return;
+      const dir = n > i ? 1 : -1;
+      i = n;
+      const b = items[i], d = b.dataset;
+      items.forEach((x, k) => { x.classList.toggle("on", k === i); x.setAttribute("aria-pressed", String(k === i)); });
+      ticks.forEach((t, k) => t.classList.toggle("on", k <= i));
+      moveInd();
+      const set = () => { title.textContent = $(".vr-nm", b).textContent; proof.textContent = d.proof; cota.textContent = `Valor ${d.no} / 10 · ${d.short}`; cur.textContent = d.no; if (mlbl) mlbl.textContent = `[foto · ${d.short}]`; };
+      if (!motion) { set(); return; }
+      // Troca do card: conteúdo sai na direção da rolagem, uma cortina Navy cruza o card, o novo conteúdo entra e o card balança de leve
+      if (tl) tl.progress(1).kill();
+      tl = gsap.timeline()
+        .to(inner, { yPercent: -10 * dir, opacity: 0, duration: 0.28, ease: "power2.in" }, 0)
+        .fromTo(wipe, { scaleX: 0, transformOrigin: dir > 0 ? "0% 50%" : "100% 50%" }, { scaleX: 1, duration: 0.32, ease: "expo.in" }, 0)
+        .add(set)
+        .set(wipe, { transformOrigin: dir > 0 ? "100% 50%" : "0% 50%" })
+        .to(wipe, { scaleX: 0, duration: 0.6, ease: "expo.out" })
+        .fromTo(inner, { yPercent: 12 * dir, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.85, ease: "expo.out" }, "<0.05")
+        .fromTo($$(".vr-cota, .vr-title, .vr-lbl, .vr-proof", inner), { y: 22 * dir }, { y: 0, duration: 0.9, ease: "expo.out", stagger: 0.05 }, "<")
+        .fromTo(card, { rotation: 0.8 * dir, y: 14 * dir }, { rotation: 0, y: 0, duration: 1.1, ease: "elastic.out(1, 0.55)" }, 0);
+    };
+    ticks[0].classList.add("on");
+    moveInd(false);
+    addEventListener("resize", () => moveInd(false));
+    // Clique na lista: com a rolagem presa, leva até o trecho daquele valor; sem ela, troca direto
+    items.forEach((b, n) => b.addEventListener("click", () => {
+      if (!st) { show(n); return; }
+      const y = st.start + (st.end - st.start) * (n + 0.5) / items.length;
+      if (lenis) lenis.scrollTo(y, { duration: 1.2 }); else scrollTo({ top: y, behavior: "smooth" });
+    }));
+    // Card com altura fixa (a do maior valor): nada muda de tamanho ao trocar
     const fit = () => {
-      const cur = data[i];
-      [[title, "name"], [proof, "proof"]].forEach(([node, key]) => {
+      const b = items[i];
+      [[title, x => $(".vr-nm", x).textContent, $(".vr-nm", b).textContent], [proof, x => x.dataset.proof, b.dataset.proof]].forEach(([node, get, now]) => {
         node.style.minHeight = "0";
         let max = 0;
-        data.forEach(d => { node.textContent = d[key]; max = Math.max(max, node.offsetHeight); });
-        node.textContent = cur[key]; node.style.minHeight = max + "px";
+        items.forEach(x => { node.textContent = get(x); max = Math.max(max, node.offsetHeight); });
+        node.textContent = now; node.style.minHeight = max + "px";
       });
     };
     fit();
     if (document.fonts) document.fonts.ready.then(fit);
     let fitT; addEventListener("resize", () => { clearTimeout(fitT); fitT = setTimeout(fit, 150); });
     if (motion) {
-      ScrollTrigger.create({ trigger: vm, start: "top 75%", end: "bottom 25%", onToggle: s => { visible = s.isActive; sync(); } });
-      // Entrada: ligações se desenham, nós aparecem em cascata, ficha sobe
-      const ll = l => Math.hypot(l.x2.baseVal.value - l.x1.baseVal.value, l.y2.baseVal.value - l.y1.baseVal.value);
-      base.forEach(l => { l.style.strokeDasharray = ll(l); });
-      gsap.timeline({ scrollTrigger: { trigger: vm, start: "top 80%" } })
-        .from(".vm-head > *", { y: 20, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.08 })
-        .fromTo(base, { strokeDashoffset: (k, l) => ll(l) }, { strokeDashoffset: 0, duration: 1.2, ease: "expo.inOut", stagger: 0.04 }, 0.1)
-        .from($$(".vm-node .core", vm), { attr: { r: 0 }, duration: 0.9, ease: "back.out(2)", stagger: 0.06 }, 0.3)
-        .from($$(".vm-node text", vm), { opacity: 0, duration: 0.6, stagger: 0.03 }, 0.6)
-        .from(".vm-panel > *", { y: 30, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.08 }, 0.5)
-        .from(".vm-cota i", { scaleX: 0, duration: 1.2, ease: "expo.inOut" }, 0.6);
-    }
-  }
-
-  // ---------- Valores: palavras-chave da missão ganham sublinhado amarelo ----------
-  const vmi = $(".vm-intro");
-  if (vmi) {
-    if (!motion) vmi.classList.add("in");
-    else {
-      // Visão sobe palavra por palavra, centralizada; frase e missão entram em seguida
-      gsap.timeline({ scrollTrigger: { trigger: vmi, start: "top 80%" } })
-        .from([$(".eyebrow", vmi), $(".vm-k", vmi)], { y: 16, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.08 })
-        .from($$(".vm-h .mw > span", vmi), { yPercent: 110, duration: 1.1, ease: "expo.out", stagger: 0.14 }, 0.1)
-        .from($(".vm-vis", vmi), { y: 20, opacity: 0, duration: 0.9, ease: "expo.out" }, 0.55)
-        .from($$(".vm-mis > *", vmi), { y: 30, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.1 }, 0.75);
-      ScrollTrigger.create({ trigger: $(".vm-mis", vmi), start: "top 80%", once: true, onEnter: () => setTimeout(() => vmi.classList.add("in"), 500) });
+      gsap.matchMedia().add("(min-width: 901px)", () => {
+        st = ScrollTrigger.create({
+          trigger: vr, start: "top top", end: () => "+=" + innerHeight * 2.4, pin: true, invalidateOnRefresh: true, refreshPriority: 1,
+          onUpdate: s => show(Math.min(items.length - 1, Math.floor(s.progress * items.length)))
+        });
+        return () => { st = null; };
+      });
+      gsap.timeline({ scrollTrigger: { trigger: vr, start: "top 80%" } })
+        .from($$(".vr-head > *", vr), { y: 20, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.08 })
+        .from($$(".vr-list li:not(.vr-ind)", vr), { x: -24, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.04 }, 0.1)
+        .fromTo(card, { clipPath: "inset(100% 0 0 0 round 10px)", y: 60 }, { clipPath: "inset(0% 0 0 0 round 10px)", y: 0, duration: 1.3, ease: "expo.inOut" }, 0.2)
+        .from($$(".vr-cota, .vr-title, .vr-lbl, .vr-proof, .vr-foot", card), { y: 30, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.07 }, 0.8);
     }
   }
 
@@ -1119,7 +1119,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.24`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.26`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
