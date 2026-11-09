@@ -1,4 +1,4 @@
-# Remo Polímeros · Wireframe v5.21
+# Remo Polímeros · Wireframe v5.22
 
 Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e distribuidora de resinas de engenharia desde 1989; site atual: remopolimeros.com.br). Serve para validar **usabilidade**, **navegação**, **onde fica cada informação** e a **identidade visual** antes das fotos reais. A meta é um site nível Awwwards: movimento, credibilidade e cara de feito sob medida.
 
@@ -29,8 +29,8 @@ Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e d
 - **README:** atualizar a cada versão junto com o resto (estado, histórico, pendências).
 - **Versão (furar cache):** a cada versão, trocar `?v=X.Y` em todos os HTML, o comentário `<!-- WIREFRAME vX.Y -->` no topo do `<body>` (a barra superior saiu na v5.17; o comentário mantém a conferência do deploy por `curl | grep`) e o título dinâmico da página de produto em `wireframe.js`:
   ```bash
-  for f in *.html; do sed -i '' -E 's/\?v=5\.21/?v=5.22/g; s/WIREFRAME v5\.21/WIREFRAME v5.22/g; s/Wireframe v5\.21/Wireframe v5.22/g' "$f"; done
-  sed -i '' 's/Wireframe v5\.21/Wireframe v5.22/' assets/wireframe.js
+  for f in *.html; do sed -i '' -E 's/\?v=5\.22/?v=5.23/g; s/WIREFRAME v5\.22/WIREFRAME v5.23/g; s/Wireframe v5\.22/Wireframe v5.23/g' "$f"; done
+  sed -i '' 's/Wireframe v5\.22/Wireframe v5.23/' assets/wireframe.js
   ```
 - **Testes no desktop:** servidor local `python3 -m http.server 8765` na pasta do projeto; testar no **Chrome real do Luiz** (extensão Claude in Chrome: aba própria, ações em lote, zoom para detalhes, fechar a aba no fim). Conferir 1440 px, console e rolagem lateral. Simular chegada de outra página: `sessionStorage.setItem('remo-nav','1')`; rever a abertura completa: `sessionStorage.clear()` e recarregar.
 - **Tudo que muda no desktop precisa ter o seu padrão no celular.** Nenhuma alteração é dada como pronta sem a validação mobile abaixo. Se algo não couber, adaptar (empilhar, reduzir, esconder detalhe decorativo) e dizer ao Luiz o que mudou no mobile.
@@ -130,7 +130,7 @@ Construção: triângulo amarelo arredondado ao fundo (só contorno); triângulo
 - Fim das páginas: faixa de números → esteira horizontal "Para onde agora?" (cards das outras seções, com pin no desktop) → contato → footer. **Uma única seção de contato por página**, sempre logo depois do `</main>` (comentário `<!-- CONTATO (todas as páginas) -->`).
 - **Sem barra superior do wireframe** (removida na v5.17, junto com "Rever abertura"; o botão "Mostrar notas de UX" saiu na v5.16). A versão fica só no comentário `<!-- WIREFRAME vX.Y -->`. As anotações `.note` continuam no HTML, sempre ocultas. Para rever a abertura: `sessionStorage.clear()` e recarregar.
 
-## 6. Componentes (estado atual, v5.21)
+## 6. Componentes (estado atual, v5.22)
 
 ### 6.1 Hero principal (home) — aprovado, não mexer na tipografia nem na organização
 - Tudo à esquerda e embaixo: rótulo "Polímeros especiais · Desde 1989", título "Polímeros de engenharia," (menor, branco) + "feitos sob medida." (grande, amarelo), palavra que troca a cada 3 s (sob medida, para você, personalizados, com precisão, do seu jeito), traço amarelo que se desenha e estica a cada troca, texto de apoio, botões "Sobre nós" e "Nossos produtos".
@@ -163,11 +163,11 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 - Fotos: `assets/img/fx-*.jpg` (6) e `assets/img/dz-*.jpg` (4), geradas no Flow e aprovadas pelo Luiz na v5.19 (1600 × 893, JPEG 77). Sem a foto, aparece a moldura com a legenda `[foto · nome]`.
 - A esteira "Como trabalhamos" fica (o site já tem 3 esteiras; não criar outra).
 
-### 6.5.2 Valores · missão, visão e palco dos valores (v5.20, movimento na v5.21)
-- **Missão e visão** (`.mv2`): faixa de 2 colunas com rótulo mono Navy e traço amarelo. Textos da **Carta Resposta a Clientes** (documento oficial), não mais os antigos do site.
-- **Palco dos valores** (`#vstage`): lista de 10 botões (`.vs-item`, texto em `.vs-nm`, nome curto do celular em `.vs-sh`, frase em `data-proof`) à esquerda e palco escuro à direita (número vazado, valor, "Na prática", barra de progresso). Clique, hover (só mouse) e setas trocam; avança sozinho a cada 6 s só com a seção na tela e pausa no hover ou foco. Sem pin e sem esteira. Celular: palco em cima e lista em 2 colunas com o nome curto.
-- **Movimento (v5.21):** seção com moléculas nas laterais (`data-mol="ink" data-mol-edge`); palco com as linhas onduladas das seções escuras (`data-mol` no `.vs-stage`); título em linhas; traço amarelo da missão e da visão se desenha (classe `.in`); "Criar. Transformar. Evoluir." sobe palavra por palavra (`.mw`); palco entra como cortina; **número do palco preenchido, nasce branco e vira amarelo** (o contorno foi reprovado); título e frase entram por máscara; item ativo da lista desloca 20 px.
-- **Manifesto em Valores: descartado** (História já tem um; seria mais uma área que prende a rolagem).
+### 6.5.2 Valores · visão, missão e molécula dos valores (v5.22)
+- **Cabeçalho da seção** (`.vm-intro`): a **visão** é o título ("Criar. Transformar. Evoluir.", com a frase "A tecnologia dos polímeros..." em mono embaixo) e a **missão** é o subtexto, com as palavras-chave (qualidade, pontualidade, seriedade, preservando o meio ambiente) ganhando sublinhado amarelo que se desenha. Textos da **Carta Resposta a Clientes**. O antigo "Princípios que viram prática." saiu (pedido do Luiz: reduzir redundância; missão e visão não ficam lado a lado em blocos separados).
+- **Molécula dos valores** (`#vmol`): 10 nós ligados por 16 linhas (SVG gerado em `wireframe.js` a partir da `<ol class="vm-data">`, que fica oculta só para leitores de tela). Nó ativo amarelo com anel pulsando e as ligações dele acendem em amarelo; ao lado, a ficha: cota "Valor 07 / 10 · Confiança", número Navy, valor, "Na prática" e botões anterior/próximo com barra de progresso. Clique, hover (mouse), Enter e setas; avança sozinho a cada 6 s com a seção na tela. Entrada: ligações se desenham, nós aparecem em cascata. Rótulos "Ficha de valores · Rev. 2026 · Fonte: Carta Resposta a Clientes". Celular: molécula sem rótulos, ficha embaixo, botões de 44 px.
+- **Reprovados:** card azul com número grande amarelo atrás do texto (v5.20/v5.21), lista + palco "sem identidade", espaço vazio entre missão/visão e valores.
+- **Manifesto em Valores:** descartado nesta versão; o Luiz acha aceitável repetir um tipo de interação em páginas diferentes, só não na mesma página.
 - Frases "Na prática" tiradas da Carta Resposta; **rascunho a validar com a Remo**.
 - Card 02 da seção ISO: "Controle por lote / COA por lote" (a LG Chem saiu dali e foi para a home e Produtos).
 - Foto da abertura `assets/img/val-parceria.jpg` (Flow, 1600 × 893, JPEG 77, comprimida pelo Chrome headless porque o Pillow não está instalado).
@@ -231,6 +231,7 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 | v5.16 | Responsividade em notebooks (1280 a 1600 px e telas baixas): margens, header, botões e respiro proporcionais; títulos das aberturas pela altura; "Sobre nós" à direita entre 901 e 1080 px; botão "Mostrar notas de UX" removido |
 | v5.17 | Barra preta do wireframe removida (versão vira comentário no HTML); abertura da home ocupa a tela inteira |
 | v5.18 | Seção de contato duplicada removida em História, Valores, Tecnologias e Onde atuamos (fica só a de depois do `</main>`, como na home) |
+| v5.22 | Valores: visão vira o título da seção e missão o subtexto (palavras-chave sublinhadas); 10 valores viram uma molécula interativa com ficha ao lado; sai o card azul |
 | v5.21 | Valores: mais movimento na seção de princípios, moléculas no fundo, linhas no palco, número do palco de branco para amarelo |
 | v5.20 | Valores: foto de reunião técnica na abertura; missão e visão da carta oficial; 10 valores em palco interativo; LG Chem na home (faixa) e em Produtos, saindo do card da ISO |
 | v5.19 | Tecnologias: efeitos de cor e faixas de dureza viram índices que abrem ao clicar (padrão de Produtos); bolinhas 3D e régua Shore removidas; `matAccordion` reutilizável |
@@ -242,7 +243,7 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 - **Desktop após v5.15:** aceite da LGPD e botão do footer mudaram também no desktop e não foram conferidos lá.
 - **Escala proporcional ao Mac (em standby, não executar sem pedido):** o Luiz quer o site o mais parecido possível com o Mac (referência 1710 px de largura) em qualquer tela. Plano A: `zoom` no `html` calculado por JS (largura / 1710, entre 0,75 e 1,3, só acima de 901 px), compensando alturas em `svh`, removendo os ajustes de tamanho da v5.16. Plano B (mais robusto, ~1 a 2 h): trocar os `px` do CSS por uma unidade proporcional, regra por regra.
 - **v5.16 não conferido:** menu aberto entre 901 e 1080 px, abertura e transição em 1280 × 690, Chrome real do Luiz (só headless).
-- **CSS sem uso:** `.fx-grid`, `.fx-card`, `.hard-scale`, `.hs-*` (desde a v5.19); `.about-values`, `.mv`, `.mv-item`, `.values` (desde a v5.20); regras `.pm-*`, `.rail-free` e hovers antigos do índice anulados por blocos mais novos.
+- **CSS sem uso:** `.fx-grid`, `.fx-card`, `.hard-scale`, `.hs-*` (desde a v5.19); `.about-values`, `.mv`, `.mv-item`, `.values` (desde a v5.20; as regras do palco `.vs-*` e `.mv2-*` já foram removidas na v5.22); regras `.pm-*`, `.rail-free` e hovers antigos do índice anulados por blocos mais novos.
 - **Abertura de Produtos:** sugestões para o lado direito vazio (opções A a D) nunca escolhidas.
 - **Foto antiga de Valores:** `sec-valores.jpg` saiu da abertura, mas continua nos cards "Valores" das esteiras e da home.
 - **Valores (v5.20):** frases "Na prática" a validar; LG Chem "desde 2001" não aparece em nenhum documento oficial (vem do site e de História).

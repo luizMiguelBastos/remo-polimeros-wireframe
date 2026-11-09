@@ -872,82 +872,106 @@
   // Tecnologias: efeitos de cor e faixas de dureza usam o mesmo índice (HTML estático)
   $$(".fx-index, .hard-index").forEach(matAccordion);
 
-  // ---------- Valores: palco com destaque (lista à esquerda, valor grande à direita) ----------
-  // Clique, hover ou setas trocam o valor; avança sozinho a cada 6 s só com a seção na tela.
-  const vs = $("#vstage");
-  if (vs) {
-    const items = $$(".vs-item", vs);
-    const big = $("#vs-big"), title = $("#vs-title"), proof = $("#vs-proof"), cur = $("#vs-cur"), bar = $("#vs-bar");
+  // ---------- Valores: molécula dos 10 valores (nós ligados, ficha ao lado) ----------
+  // Clique, hover (mouse), Enter ou setas escolhem um valor; avança sozinho a cada 6 s só com a seção na tela.
+  const vm = $("#vmol");
+  if (vm) {
+    const data = $$(".vm-data li", vm).map(li => ({ no: li.dataset.no, short: li.dataset.short, proof: li.dataset.proof, name: li.textContent.trim() }));
+    const svg = $("#vm-svg"), NS = "http://www.w3.org/2000/svg";
+    const P = [[90, 80], [270, 55], [450, 95], [540, 235], [170, 215], [350, 230], [490, 375], [70, 350], [240, 395], [370, 355]];
+    const E = [[0, 1], [0, 4], [1, 4], [1, 2], [1, 5], [2, 5], [2, 3], [3, 5], [3, 6], [4, 5], [4, 7], [7, 8], [4, 8], [8, 9], [5, 9], [9, 6]];
+    const el = (tag, attrs, parent) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; };
+    const gBase = el("g", { class: "vm-edges" }, svg), gHot = el("g", { class: "vm-hot" }, svg), gNodes = el("g", { class: "vm-nodes" }, svg);
+    const len = ([a, b]) => Math.hypot(P[b][0] - P[a][0], P[b][1] - P[a][1]);
+    const base = [], hot = [];
+    E.forEach(e => {
+      const [a, b] = e, at = { x1: P[a][0], y1: P[a][1], x2: P[b][0], y2: P[b][1] };
+      base.push(el("line", at, gBase));
+      const h = el("line", at, gHot);
+      h.style.strokeDasharray = len(e); h.style.strokeDashoffset = len(e);
+      hot.push(h);
+    });
+    const nodes = data.map((d, n) => {
+      const g = el("g", { class: "vm-node", transform: `translate(${P[n][0]} ${P[n][1]})`, tabindex: "0", role: "button", "aria-label": `Valor ${d.no}: ${d.name}`, "aria-pressed": "false" }, gNodes);
+      const inner = el("g", { class: "vm-in" }, g);
+      el("circle", { class: "hit", r: 34 }, inner);
+      el("circle", { class: "ring", r: 27 }, inner);
+      el("circle", { class: "core", r: 19 }, inner);
+      el("text", { class: "nn", y: 4 }, inner).textContent = d.no;
+      el("text", { class: "lb", y: 48 }, inner).textContent = d.short;
+      return g;
+    });
+    const no = $("#vm-no"), title = $("#vm-title"), proof = $("#vm-proof"), cota = $("#vm-cota"), bar = $("#vm-bar");
     const DUR = 6;
-    let i = 0, visible = false, paused = false, tw = null;
+    let i = -1, visible = false, paused = false, tw = null;
     const run = () => {
       if (!motion) return;
       if (tw) tw.kill();
       gsap.set(bar, { scaleX: 0 });
       tw = gsap.to(bar, { scaleX: 1, duration: DUR, ease: "none", paused: !visible || paused, onComplete: () => show(i + 1) });
     };
-    const show = n => {
-      i = (n + items.length) % items.length;
-      const b = items[i], no = $(".vs-no", b).textContent;
-      items.forEach(x => { const on = x === b; x.setAttribute("aria-pressed", String(on)); x.classList.toggle("on", on); });
-      const set = () => { big.textContent = no; title.textContent = $(".vs-nm", b).textContent; proof.textContent = b.dataset.proof; cur.textContent = no; };
-      if (!motion) set();
+    const show = (n, first) => {
+      n = (n + data.length) % data.length;
+      if (n === i) return;
+      i = n;
+      const d = data[i];
+      nodes.forEach((g, k) => { const on = k === i; g.classList.toggle("on", on); g.setAttribute("aria-pressed", String(on)); });
+      E.forEach((e, k) => {
+        const on = e[0] === i || e[1] === i, h = hot[k];
+        base[k].classList.toggle("near", on);
+        if (motion) gsap.to(h, { strokeDashoffset: on ? 0 : len(e), duration: on ? 0.9 : 0.4, ease: on ? "expo.out" : "power2.in", delay: on ? 0.1 : 0 });
+        else h.style.strokeDashoffset = on ? 0 : len(e);
+      });
+      const set = () => { no.textContent = d.no; title.textContent = d.name; proof.textContent = d.proof; cota.textContent = `Valor ${d.no} / 10 · ${d.short}`; };
+      if (!motion || first) set();
       else {
-        gsap.killTweensOf([big, title, proof]);
-        // Número nasce branco e vira amarelo; título e frase entram por máscara
+        const txt = [no, title, proof];
+        gsap.killTweensOf(txt);
         gsap.timeline()
-          .to([big, title, proof], { y: -24, opacity: 0, duration: 0.22, ease: "power2.in", stagger: 0.03 })
+          .to(txt, { y: -18, opacity: 0, duration: 0.2, ease: "power2.in", stagger: 0.03 })
           .add(set)
-          .fromTo(big, { y: 60, opacity: 0, color: "#F4F5F7" }, { y: 0, opacity: 1, duration: 0.9, ease: "expo.out" })
-          .to(big, { color: "#FFD100", duration: 0.9, ease: "power2.inOut" }, "-=0.35")
-          .fromTo([title, proof], { y: 30, opacity: 0, clipPath: "inset(0 0 100% 0)" }, { y: 0, opacity: 1, clipPath: "inset(0 0 -20% 0)", duration: 0.85, ease: "expo.out", stagger: 0.08 }, 0.3);
+          .fromTo(txt, { y: 28, opacity: 0, clipPath: "inset(0 0 100% 0)" }, { y: 0, opacity: 1, clipPath: "inset(0 0 -20% 0)", duration: 0.85, ease: "expo.out", stagger: 0.07 });
+        gsap.fromTo($(".vm-in", nodes[i]), { scale: 0.7 }, { scale: 1, duration: 0.9, ease: "elastic.out(1, 0.45)", svgOrigin: P[i].join(" ") });
       }
       run();
     };
     const sync = () => { if (tw) (visible && !paused) ? tw.resume() : tw.pause(); };
-    items[0].classList.add("on");
-    items.forEach((b, n) => {
-      b.addEventListener("click", () => { if (n !== i) show(n); });
-      if (finePointer) b.addEventListener("mouseenter", () => { if (n !== i) show(n); });
-      b.addEventListener("keydown", e => {
-        const d = e.key === "ArrowDown" || e.key === "ArrowRight" ? 1 : e.key === "ArrowUp" || e.key === "ArrowLeft" ? -1 : 0;
+    nodes.forEach((g, n) => {
+      g.addEventListener("click", () => show(n));
+      if (finePointer) g.addEventListener("mouseenter", () => show(n));
+      g.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); show(n); return; }
+        const d = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 0;
         if (!d) return;
-        e.preventDefault();
-        const t = (n + d + items.length) % items.length;
-        items[t].focus(); show(t);
+        e.preventDefault(); const t = (n + d + data.length) % data.length; nodes[t].focus(); show(t);
       });
     });
-    vs.addEventListener("mouseenter", () => { paused = true; sync(); });
-    vs.addEventListener("mouseleave", () => { paused = vs.contains(document.activeElement); sync(); });
-    vs.addEventListener("focusin", () => { paused = true; sync(); });
-    vs.addEventListener("focusout", e => { if (!vs.contains(e.relatedTarget)) { paused = false; sync(); } });
+    $("#vm-prev").addEventListener("click", () => show(i - 1));
+    $("#vm-next").addEventListener("click", () => show(i + 1));
+    vm.addEventListener("mouseenter", () => { paused = true; sync(); });
+    vm.addEventListener("mouseleave", () => { paused = vm.contains(document.activeElement); sync(); });
+    vm.addEventListener("focusin", () => { paused = true; sync(); });
+    vm.addEventListener("focusout", e => { if (!vm.contains(e.relatedTarget)) { paused = false; sync(); } });
+    show(0, true);
     if (motion) {
-      run();
-      ScrollTrigger.create({ trigger: vs, start: "top 75%", end: "bottom 25%", onToggle: s => { visible = s.isActive; sync(); } });
-      const st = { trigger: vs, start: "top 80%" };
-      gsap.from(".vs-head > *", { y: 20, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.08, scrollTrigger: st });
-      gsap.from($$(".vs-list li", vs), { x: -24, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.04, scrollTrigger: st });
-      // Palco entra como cortina; o número acende de branco para amarelo
-      gsap.timeline({ scrollTrigger: st })
-        .fromTo(".vs-stage", { clipPath: "inset(100% 0 0 0 round 8px)" }, { clipPath: "inset(0% 0 0 0 round 8px)", duration: 1.2, ease: "expo.inOut" })
-        .fromTo(big, { y: 60, opacity: 0, color: "#F4F5F7" }, { y: 0, opacity: 1, duration: 1, ease: "expo.out" }, 0.55)
-        .to(big, { color: "#FFD100", duration: 1, ease: "power2.inOut" }, 1.1)
-        .from(".vs-txt > *", { y: 30, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.08 }, 0.75);
+      ScrollTrigger.create({ trigger: vm, start: "top 75%", end: "bottom 25%", onToggle: s => { visible = s.isActive; sync(); } });
+      // Entrada: ligações se desenham, nós aparecem em cascata, ficha sobe
+      base.forEach((l, k) => { l.style.strokeDasharray = len(E[k]); });
+      gsap.timeline({ scrollTrigger: { trigger: vm, start: "top 80%" } })
+        .from(".vm-head > *", { y: 20, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.08 })
+        .fromTo(base, { strokeDashoffset: k => len(E[k]) }, { strokeDashoffset: 0, duration: 1.2, ease: "expo.inOut", stagger: 0.04 }, 0.1)
+        .from($$(".vm-in", vm), { scale: 0, opacity: 0, duration: 0.9, ease: "back.out(2)", stagger: 0.06, svgOrigin: k => P[k].join(" ") }, 0.3)
+        .from(".vm-panel > *", { y: 30, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.08 }, 0.5)
+        .from(".vm-cota i", { scaleX: 0, duration: 1.2, ease: "expo.inOut" }, 0.6);
     }
   }
 
-  // ---------- Valores: missão e visão entram em cascata, traço amarelo se desenha ----------
-  const mv2 = $(".mv2");
-  if (mv2) {
-    const items = $$(".mv2-item", mv2);
-    if (!motion) items.forEach(it => it.classList.add("in"));
-    else {
-      ScrollTrigger.create({ trigger: mv2, start: "top 85%", once: true, onEnter: () => items.forEach((it, n) => setTimeout(() => it.classList.add("in"), n * 180)) });
-      gsap.from(items.map(it => [...it.children].filter(c => !c.classList.contains("mv2-big"))).flat(), { y: 30, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.1, scrollTrigger: { trigger: mv2, start: "top 85%" } });
-      gsap.from(".mv2-big .mw > span", { yPercent: 110, duration: 1.1, ease: "expo.out", stagger: 0.12, delay: 0.25, scrollTrigger: { trigger: mv2, start: "top 85%" } });
-    }
+  // ---------- Valores: palavras-chave da missão ganham sublinhado amarelo ----------
+  const vmi = $(".vm-intro");
+  if (vmi) {
+    if (!motion) vmi.classList.add("in");
+    else ScrollTrigger.create({ trigger: vmi, start: "top 75%", once: true, onEnter: () => setTimeout(() => vmi.classList.add("in"), 600) });
   }
-
 
   // ---------- Guia de seleção: tabela segmento x exigência ----------
   const mx = $("#matrix");
@@ -1054,7 +1078,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.21`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.22`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
