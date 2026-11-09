@@ -1837,13 +1837,12 @@ body:has(#product-page) { background-image: none; }
 .vm-vis { font: 13px/1.6 var(--f-mono); color: var(--slate); margin: 22px auto 0; max-width: 46ch; }
 
 /* Missão como manifesto (mesma ideia de História, no escuro) */
+/* Manifesto da missão: mesmo padrão do manifesto de História (tamanho, alinhamento à esquerda, largura) */
 .mf2 { min-height: 100svh; display: flex; align-items: center; }
-.mf2 .wrap { width: 100%; text-align: center; }
-.mf2 .eyebrow { justify-content: center; }
-.mf2-text { font: 600 clamp(26px, 3.2vw, 50px)/1.2 var(--f-sans); font-stretch: 115%; letter-spacing: -.015em; max-width: 26ch; margin: 18px auto 0; color: var(--white); }
-.mf2-text .w { opacity: .16; }
+.mf2-text { font: 600 clamp(24px, 3vw, 46px)/1.14 var(--f-sans); font-stretch: 115%; letter-spacing: -.015em; max-width: 24ch; margin: 0; color: var(--white); }
+.mf2-text .w { opacity: .14; }
 .mf2-text.lit .w { opacity: 1; }
-.mf2-progress { margin-top: 40px; display: flex; justify-content: center; align-items: center; gap: 14px; font: 12px var(--f-mono); color: var(--steel); }
+.mf2-progress { margin-top: 40px; display: flex; align-items: center; gap: 14px; font: 12px var(--f-mono); color: var(--steel); }
 .mf2-progress i { position: relative; width: 160px; height: 1px; background: var(--line-d); }
 .mf2-progress i b { position: absolute; inset: 0; background: var(--yellow); transform-origin: 0 50%; transform: scaleX(0); }
 
