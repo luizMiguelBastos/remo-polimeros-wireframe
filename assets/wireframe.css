@@ -1826,7 +1826,10 @@ body:has(#product-page) { background-image: none; }
 /* ---------- v5.20: Valores (missão e visão da carta oficial, palco dos 10 valores) e faixa LG Chem ---------- */
 .mv2 { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 56px; margin-top: 72px; }
 .mv2-item { position: relative; border-top: 1px solid var(--line-l); padding-top: 28px; }
-.mv2-item::before { content: ""; position: absolute; left: 0; top: -1px; width: 56px; height: 2px; background: var(--yellow); }
+.mv2-item::before { content: ""; position: absolute; left: 0; top: -1px; width: 56px; height: 2px; background: var(--yellow); transform: scaleX(0); transform-origin: left; transition: transform 1.2s var(--ease); }
+.mv2-item.in::before { transform: scaleX(1); }
+.mv2-big .mw { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .08em; margin-bottom: -.08em; }
+.mv2-big .mw > span { display: inline-block; }
 .mv2-lbl { display: block; font: 12px var(--f-mono); text-transform: uppercase; letter-spacing: .1em; color: var(--navy); }
 .mv2-item p { font-size: clamp(19px, 1.45vw, 23px); line-height: 1.45; max-width: 46ch; margin: 16px 0 0; }
 .mv2-item .mv2-big { font: 600 clamp(36px, 4vw, 64px)/1 var(--f-sans); font-stretch: 125%; letter-spacing: -.03em; margin-top: 14px; }
@@ -1841,14 +1844,17 @@ body:has(#product-page) { background-image: none; }
 .vs-list li { border-bottom: 1px solid var(--line-l); }
 .vs-item { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 12px; align-items: baseline; width: 100%; padding: 15px 0; background: none; border: 0; text-align: left; font: 17px/1.35 var(--f-sans); color: var(--slate); cursor: pointer; transition: color .3s, padding .45s var(--ease); }
 .vs-item::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--yellow); transform: scaleX(0); transform-origin: left; transition: transform .6s var(--ease); }
-.vs-item:hover, .vs-item.on { color: var(--ink); padding-left: 10px; }
+.vs-item:hover { color: var(--ink); padding-left: 10px; }
+.vs-item.on { color: var(--ink); padding-left: 20px; }
 .vs-item.on::after { transform: scaleX(1); }
 .vs-item:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
 .vs-no { font: 12px var(--f-mono); color: var(--slate); }
 .vs-item.on .vs-no { color: var(--navy); font-weight: 600; }
 .vs-sh { display: none; }
 .vs-stage { position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; gap: 32px; background: var(--night); color: var(--white); border-radius: 8px; padding: clamp(28px, 3vw, 48px); min-height: 100%; }
-.vs-big { display: block; font: 600 clamp(120px, 14vw, 220px)/.8 var(--f-sans); font-stretch: 125%; letter-spacing: -.05em; color: transparent; -webkit-text-stroke: 1.5px rgba(244, 245, 247, .45); }
+.vs-stage > *:not(.mol-bg) { position: relative; z-index: 1; }
+.vs-stage > .vs-bar { position: absolute; }
+.vs-big { display: block; font: 600 clamp(120px, 14vw, 220px)/.8 var(--f-sans); font-stretch: 125%; letter-spacing: -.05em; color: var(--yellow); }
 .vs-title { font: 600 clamp(26px, 2.4vw, 38px)/1.1 var(--f-sans); font-stretch: 110%; letter-spacing: -.015em; max-width: 22ch; margin: 0 0 22px; }
 .vs-lbl { display: block; font: 12px var(--f-mono); text-transform: uppercase; letter-spacing: .1em; color: var(--yellow); }
 .vs-proof { font-size: 18px; line-height: 1.5; color: var(--steel); max-width: 40ch; margin: 8px 0 0; }

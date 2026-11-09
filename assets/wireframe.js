@@ -894,11 +894,13 @@
       if (!motion) set();
       else {
         gsap.killTweensOf([big, title, proof]);
+        // Número nasce branco e vira amarelo; título e frase entram por máscara
         gsap.timeline()
           .to([big, title, proof], { y: -24, opacity: 0, duration: 0.22, ease: "power2.in", stagger: 0.03 })
           .add(set)
-          .fromTo(big, { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: "expo.out" })
-          .fromTo([title, proof], { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "expo.out", stagger: 0.07 }, "<0.05");
+          .fromTo(big, { y: 60, opacity: 0, color: "#F4F5F7" }, { y: 0, opacity: 1, duration: 0.9, ease: "expo.out" })
+          .to(big, { color: "#FFD100", duration: 0.9, ease: "power2.inOut" }, "-=0.35")
+          .fromTo([title, proof], { y: 30, opacity: 0, clipPath: "inset(0 0 100% 0)" }, { y: 0, opacity: 1, clipPath: "inset(0 0 -20% 0)", duration: 0.85, ease: "expo.out", stagger: 0.08 }, 0.3);
       }
       run();
     };
@@ -922,7 +924,27 @@
     if (motion) {
       run();
       ScrollTrigger.create({ trigger: vs, start: "top 75%", end: "bottom 25%", onToggle: s => { visible = s.isActive; sync(); } });
-      gsap.from($$(".vs-list li", vs), { x: -24, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.04, scrollTrigger: { trigger: vs, start: "top 80%" } });
+      const st = { trigger: vs, start: "top 80%" };
+      gsap.from(".vs-head > *", { y: 20, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.08, scrollTrigger: st });
+      gsap.from($$(".vs-list li", vs), { x: -24, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.04, scrollTrigger: st });
+      // Palco entra como cortina; o número acende de branco para amarelo
+      gsap.timeline({ scrollTrigger: st })
+        .fromTo(".vs-stage", { clipPath: "inset(100% 0 0 0 round 8px)" }, { clipPath: "inset(0% 0 0 0 round 8px)", duration: 1.2, ease: "expo.inOut" })
+        .fromTo(big, { y: 60, opacity: 0, color: "#F4F5F7" }, { y: 0, opacity: 1, duration: 1, ease: "expo.out" }, 0.55)
+        .to(big, { color: "#FFD100", duration: 1, ease: "power2.inOut" }, 1.1)
+        .from(".vs-txt > *", { y: 30, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.08 }, 0.75);
+    }
+  }
+
+  // ---------- Valores: missão e visão entram em cascata, traço amarelo se desenha ----------
+  const mv2 = $(".mv2");
+  if (mv2) {
+    const items = $$(".mv2-item", mv2);
+    if (!motion) items.forEach(it => it.classList.add("in"));
+    else {
+      ScrollTrigger.create({ trigger: mv2, start: "top 85%", once: true, onEnter: () => items.forEach((it, n) => setTimeout(() => it.classList.add("in"), n * 180)) });
+      gsap.from(items.map(it => [...it.children].filter(c => !c.classList.contains("mv2-big"))).flat(), { y: 30, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.1, scrollTrigger: { trigger: mv2, start: "top 85%" } });
+      gsap.from(".mv2-big .mw > span", { yPercent: 110, duration: 1.1, ease: "expo.out", stagger: 0.12, delay: 0.25, scrollTrigger: { trigger: mv2, start: "top 85%" } });
     }
   }
 
@@ -1032,7 +1054,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.20`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.21`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
