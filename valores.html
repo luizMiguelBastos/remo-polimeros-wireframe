@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Valores · Remo Polímeros · Wireframe v5.19</title>
+  <title>Valores · Remo Polímeros · Wireframe v5.20</title>
   <meta name="description" content="Missão, valores, compromisso ambiental e certificação ISO 9001:2015 da Remo Polímeros.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
   <script>try{if(sessionStorage.getItem("remo-nav")==="1")document.documentElement.classList.add("tx-in")}catch(e){}</script>
-  <link rel="preload" as="image" href="assets/img/sec-valores.jpg">
-  <link rel="icon" type="image/svg+xml" href="assets/logo/remo-simbolo.svg?v=5.19">
-  <link rel="stylesheet" href="assets/wireframe.css?v=5.19">
+  <link rel="preload" as="image" href="assets/img/val-parceria.jpg">
+  <link rel="icon" type="image/svg+xml" href="assets/logo/remo-simbolo.svg?v=5.20">
+  <link rel="stylesheet" href="assets/wireframe.css?v=5.20">
 </head>
 <body>
 
@@ -20,18 +20,18 @@
 <div class="sheet" id="sheet" aria-hidden="true">
   <canvas class="sheet-mol" id="sheet-mol"></canvas>
   <div class="sheet-inner sheet-lockup">
-    <img src="assets/logo/remo-simbolo.svg?v=5.19" alt="" class="sheet-mark">
+    <img src="assets/logo/remo-simbolo.svg?v=5.20" alt="" class="sheet-mark">
     <div class="word sheet-big"><span>r</span><span>e</span><span>m</span><span>o</span></div>
     <div class="sheet-meta"><span class="sheet-dest mono" id="sheet-dest"></span></div>
   </div>
 </div>
 <div class="cursor" id="cursor" aria-hidden="true"><span id="cursor-label"></span></div>
 
-<!-- WIREFRAME v5.19 -->
+<!-- WIREFRAME v5.20 -->
 
 <header class="site-header" id="header">
   <div class="wrap">
-    <a href="index.html" class="logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo-branco.svg?v=5.19" alt="" class="logo-mark" width="40" height="36">remo
+    <a href="index.html" class="logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo-branco.svg?v=5.20" alt="" class="logo-mark" width="40" height="36">remo
     </a>
     <span class="hdr-sec" id="hdr-sec" aria-hidden="true"></span>
     <nav class="nav" id="nav" aria-label="Principal">
@@ -49,7 +49,7 @@
 
 <main>
 <section class="page-hero photo">
-  <div class="ph-media" style="background-image:url(assets/img/sec-valores.jpg)" aria-hidden="true"></div><div class="ph-veil" aria-hidden="true"></div>
+  <div class="ph-media" style="background-image:url(assets/img/val-parceria.jpg)" aria-hidden="true"></div><div class="ph-veil" aria-hidden="true"></div>
   <div class="wrap ph-wrap">
     <div class="eyebrow">Valores</div>
     <div class="ph-id ph-home">
@@ -73,23 +73,43 @@
       <h2 data-reveal>Princípios que viram prática.</h2>
       <p class="lead" data-reveal>Dez valores que orientam como desenvolvemos, produzimos e atendemos.</p>
     </div>
-    <div class="about-values">
-      <div class="mv" data-reveal>
-        <div class="mv-item"><span class="mono">Missão</span><p>Oferecer soluções inteligentes em resinas plásticas, agregando valor ao produto final dos nossos clientes e otimizando recursos e processos da cadeia.</p></div>
-        <div class="mv-item"><span class="mono">Visão</span><p class="mv-big">Criar. Transformar. Evoluir.</p></div>
+    <div class="mv2">
+      <div class="mv2-item" data-reveal>
+        <span class="mv2-lbl">Missão</span>
+        <p>Industrializar e comercializar materiais plásticos com qualidade, pontualidade, seriedade e preços esperados pelos nossos clientes, gerando lucro, empregos e preservando o meio ambiente.</p>
       </div>
-      <ol class="values" data-reveal>
-        <li><span>01</span>Somos íntegros com todos e em todos os momentos</li>
-        <li><span>02</span>Acreditamos na indústria brasileira</li>
-        <li><span>03</span>Ética e transparência fazem parte do nosso dia a dia</li>
-        <li><span>04</span>Somos comprometidos e responsáveis</li>
-        <li><span>05</span>Respondemos os clientes com a máxima agilidade e atenção</li>
-        <li><span>06</span>Eficiência da equipe técnica e dos projetos executados</li>
-        <li><span>07</span>Transmitimos confiança nas relações profissionais</li>
-        <li><span>08</span>Somos flexíveis no relacionamento com os clientes</li>
-        <li><span>09</span>Qualidade, preços e prazos competitivos</li>
-        <li><span>10</span>Persistimos no que nos propomos a fazer</li>
-      </ol>
+      <div class="mv2-item" data-reveal>
+        <span class="mv2-lbl">Visão</span>
+        <p class="mv2-big">Criar. Transformar. Evoluir.</p>
+        <p class="mv2-sub">A tecnologia dos polímeros presente em todos os momentos da vida.</p>
+      </div>
+    </div>
+
+    <div class="vstage" id="vstage" data-reveal>
+      <div class="vs-head"><span class="mv2-lbl">Nossos valores</span><span class="mono vs-count"><b id="vs-cur">01</b> / 10</span></div>
+      <div class="vs-grid">
+        <ol class="vs-list" aria-label="Valores da Remo">
+          <li><button class="vs-item" type="button" aria-pressed="true" data-proof="Código de Conformidade Social, com treinamento de todos os colaboradores."><span class="vs-no">01</span><span class="vs-nm">Somos íntegros com todos e em todos os momentos</span><span class="vs-sh">Integridade</span></button></li>
+          <li><button class="vs-item" type="button" aria-pressed="false" data-proof="Capital 100% nacional, produzindo em Guarulhos desde 1989."><span class="vs-no">02</span><span class="vs-nm">Acreditamos na indústria brasileira</span><span class="vs-sh">Indústria brasileira</span></button></li>
+          <li><button class="vs-item" type="button" aria-pressed="false" data-proof="Auditorias de clientes abertas, com agendamento."><span class="vs-no">03</span><span class="vs-nm">Ética e transparência fazem parte do nosso dia a dia</span><span class="vs-sh">Ética</span></button></li>
+          <li><button class="vs-item" type="button" aria-pressed="false" data-proof="Política Ambiental assinada, Licença de Operação e Cadastro Técnico Federal no IBAMA em dia."><span class="vs-no">04</span><span class="vs-nm">Somos comprometidos e responsáveis</span><span class="vs-sh">Compromisso</span></button></li>
+          <li><button class="vs-item" type="button" aria-pressed="false" data-proof="Atendimento direto com a equipe técnica, da amostra ao suporte."><span class="vs-no">05</span><span class="vs-nm">Respondemos os clientes com a máxima agilidade e atenção</span><span class="vs-sh">Agilidade</span></button></li>
+          <li><button class="vs-item" type="button" aria-pressed="false" data-proof="Responsável técnico com registro no CRQ e processos analisados por PFMEA."><span class="vs-no">06</span><span class="vs-nm">Eficiência da equipe técnica e dos projetos executados</span><span class="vs-sh">Eficiência</span></button></li>
+          <li><button class="vs-item" type="button" aria-pressed="false" data-proof="Rastreabilidade lote a lote e amostra retida de cada produção."><span class="vs-no">07</span><span class="vs-nm">Transmitimos confiança nas relações profissionais</span><span class="vs-sh">Confiança</span></button></li>
+          <li><button class="vs-item" type="button" aria-pressed="false" data-proof="Cor, dureza e formulação ajustadas ao projeto de cada cliente."><span class="vs-no">08</span><span class="vs-nm">Somos flexíveis no relacionamento com os clientes</span><span class="vs-sh">Flexibilidade</span></button></li>
+          <li><button class="vs-item" type="button" aria-pressed="false" data-proof="ISO 9001:2015 certificada pela RINA, válida até 2028."><span class="vs-no">09</span><span class="vs-nm">Qualidade, preços e prazos competitivos</span><span class="vs-sh">Qualidade</span></button></li>
+          <li><button class="vs-item" type="button" aria-pressed="false" data-proof="Mais de 37 anos de mercado."><span class="vs-no">10</span><span class="vs-nm">Persistimos no que nos propomos a fazer</span><span class="vs-sh">Persistência</span></button></li>
+        </ol>
+        <div class="vs-stage" aria-live="polite">
+          <span class="vs-big" id="vs-big" aria-hidden="true">01</span>
+          <div class="vs-txt">
+            <h3 class="vs-title" id="vs-title">Somos íntegros com todos e em todos os momentos</h3>
+            <span class="vs-lbl">Na prática</span>
+            <p class="vs-proof" id="vs-proof">Código de Conformidade Social, com treinamento de todos os colaboradores.</p>
+          </div>
+          <span class="vs-bar" aria-hidden="true"><i id="vs-bar"></i></span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -171,9 +191,9 @@
           </ol>
         </article>
         <article class="q-card" data-cursor="Ver">
-          <span class="gi">02 · Parceria LG Chem</span>
-          <b class="q-big">Desde 2001</b>
-          <p class="q-more">Tecnologia da líder da indústria química da Coreia aplicada ao mercado brasileiro, com portfólio e suporte de padrão global.</p>
+          <span class="gi">02 · Controle por lote</span>
+          <b class="q-big">COA por lote</b>
+          <p class="q-more">Certificado de análise e amostra retida de cada produção.</p>
         </article>
         <article class="q-card" data-cursor="Ver">
           <span class="gi">03 · Rastreabilidade</span>
@@ -305,7 +325,7 @@
 <footer class="footer" data-mol="ink">
   <div class="wrap">
     <div class="f-top">
-      <a href="index.html" class="f-logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo.svg?v=5.19" alt="" class="f-mark">remo</a>
+      <a href="index.html" class="f-logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo.svg?v=5.20" alt="" class="f-mark">remo</a>
       <p class="f-tag">Polímeros de engenharia,<br>feitos sob medida.</p>
       <a href="contato.html" class="btn f-cta">Fale com um especialista <span class="arr">→</span></a>
     </div>
@@ -334,7 +354,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<script src="assets/data.js?v=5.19"></script>
-<script src="assets/wireframe.js?v=5.19"></script>
+<script src="assets/data.js?v=5.20"></script>
+<script src="assets/wireframe.js?v=5.20"></script>
 </body>
 </html>

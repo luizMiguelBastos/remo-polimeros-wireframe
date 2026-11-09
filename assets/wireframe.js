@@ -872,6 +872,60 @@
   // Tecnologias: efeitos de cor e faixas de dureza usam o mesmo índice (HTML estático)
   $$(".fx-index, .hard-index").forEach(matAccordion);
 
+  // ---------- Valores: palco com destaque (lista à esquerda, valor grande à direita) ----------
+  // Clique, hover ou setas trocam o valor; avança sozinho a cada 6 s só com a seção na tela.
+  const vs = $("#vstage");
+  if (vs) {
+    const items = $$(".vs-item", vs);
+    const big = $("#vs-big"), title = $("#vs-title"), proof = $("#vs-proof"), cur = $("#vs-cur"), bar = $("#vs-bar");
+    const DUR = 6;
+    let i = 0, visible = false, paused = false, tw = null;
+    const run = () => {
+      if (!motion) return;
+      if (tw) tw.kill();
+      gsap.set(bar, { scaleX: 0 });
+      tw = gsap.to(bar, { scaleX: 1, duration: DUR, ease: "none", paused: !visible || paused, onComplete: () => show(i + 1) });
+    };
+    const show = n => {
+      i = (n + items.length) % items.length;
+      const b = items[i], no = $(".vs-no", b).textContent;
+      items.forEach(x => { const on = x === b; x.setAttribute("aria-pressed", String(on)); x.classList.toggle("on", on); });
+      const set = () => { big.textContent = no; title.textContent = $(".vs-nm", b).textContent; proof.textContent = b.dataset.proof; cur.textContent = no; };
+      if (!motion) set();
+      else {
+        gsap.killTweensOf([big, title, proof]);
+        gsap.timeline()
+          .to([big, title, proof], { y: -24, opacity: 0, duration: 0.22, ease: "power2.in", stagger: 0.03 })
+          .add(set)
+          .fromTo(big, { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: "expo.out" })
+          .fromTo([title, proof], { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "expo.out", stagger: 0.07 }, "<0.05");
+      }
+      run();
+    };
+    const sync = () => { if (tw) (visible && !paused) ? tw.resume() : tw.pause(); };
+    items[0].classList.add("on");
+    items.forEach((b, n) => {
+      b.addEventListener("click", () => { if (n !== i) show(n); });
+      if (finePointer) b.addEventListener("mouseenter", () => { if (n !== i) show(n); });
+      b.addEventListener("keydown", e => {
+        const d = e.key === "ArrowDown" || e.key === "ArrowRight" ? 1 : e.key === "ArrowUp" || e.key === "ArrowLeft" ? -1 : 0;
+        if (!d) return;
+        e.preventDefault();
+        const t = (n + d + items.length) % items.length;
+        items[t].focus(); show(t);
+      });
+    });
+    vs.addEventListener("mouseenter", () => { paused = true; sync(); });
+    vs.addEventListener("mouseleave", () => { paused = vs.contains(document.activeElement); sync(); });
+    vs.addEventListener("focusin", () => { paused = true; sync(); });
+    vs.addEventListener("focusout", e => { if (!vs.contains(e.relatedTarget)) { paused = false; sync(); } });
+    if (motion) {
+      run();
+      ScrollTrigger.create({ trigger: vs, start: "top 75%", end: "bottom 25%", onToggle: s => { visible = s.isActive; sync(); } });
+      gsap.from($$(".vs-list li", vs), { x: -24, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.04, scrollTrigger: { trigger: vs, start: "top 80%" } });
+    }
+  }
+
 
   // ---------- Guia de seleção: tabela segmento x exigência ----------
   const mx = $("#matrix");
@@ -978,7 +1032,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.19`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.20`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
