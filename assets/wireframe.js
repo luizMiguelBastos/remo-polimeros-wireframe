@@ -307,8 +307,11 @@
     let W = 0, H = 0, nodes = [], mx = -999, my = -999, on = false;
     const size = () => {
       const dpr = Math.min(devicePixelRatio || 1, 2);
+      const pW = W, pH = H;
       W = host.clientWidth; H = host.clientHeight;
       cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      // Já desenhadas e mesma largura (só a altura mudou, ex.: conteúdo trocando): reposiciona na proporção, sem sortear de novo
+      if (nodes.length && pW === W && pH) { const k = H / pH; nodes.forEach(a => { a.y *= k; }); return; }
       // data-mol-edge: moléculas só nas faixas laterais, deixando o miolo livre para o conteúdo
       // No celular a faixa fica só na margem de 24 px, sem passar por cima dos botões das linhas
       band = !edge ? 0 : W < 700 ? 22 : Math.min(W / 2, Math.max(120, (W - Math.min(W, 1320)) / 2 + 40));
@@ -886,11 +889,9 @@
     const E = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9], [9, 0], [2, 7]];
     // Ligações duplas (estrutura de Kekulé): traço interno paralelo, voltado para o centro do anel
     const D = [[0, 1, C1], [2, 7, C1], [3, 4, C2], [5, 6, C2], [8, 9, C1]];
-    // Rótulos para fora da molécula: [dx, dy, alinhamento]
-    const LB = [[-36, 4, "end"], [0, -34, "middle"], [0, -30, "middle"], [0, -34, "middle"], [36, 4, "start"], [36, 4, "start"], [0, 46, "middle"], [0, 72, "middle"], [0, 46, "middle"], [-36, 4, "end"]];
     const compact = matchMedia("(max-width: 600px)").matches;
     const R = compact ? 25 : 19, RING = compact ? 33 : 27, HIT = compact ? 46 : 34;
-    svg.setAttribute("viewBox", compact ? "120 85 460 300" : "20 70 660 340");
+    svg.setAttribute("viewBox", compact ? "120 85 460 300" : "110 80 480 310");
     const el = (tag, attrs, parent) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; };
     const gBase = el("g", { class: "vm-edges" }, svg), gHot = el("g", { class: "vm-hot" }, svg), gNodes = el("g", { class: "vm-nodes" }, svg);
     const len = ([a, b]) => Math.hypot(P[b][0] - P[a][0], P[b][1] - P[a][1]);
@@ -916,7 +917,6 @@
       el("circle", { class: "ring", r: RING }, g);
       el("circle", { class: "core", r: R }, g);
       el("text", { class: "nn", y: 4 }, g).textContent = d.no;
-      el("text", { class: "lb", x: LB[n][0], y: LB[n][1], "text-anchor": LB[n][2] }, g).textContent = d.short;
       return g;
     });
     const no = $("#vm-no"), title = $("#vm-title"), proof = $("#vm-proof"), cota = $("#vm-cota"), bar = $("#vm-bar");
@@ -971,6 +971,19 @@
     vm.addEventListener("focusin", () => { paused = true; sync(); });
     vm.addEventListener("focusout", e => { if (!vm.contains(e.relatedTarget)) { paused = false; sync(); } });
     show(0, true);
+    // Ficha com altura fixa (a do maior valor): a seção não muda de tamanho ao trocar de valor
+    const fit = () => {
+      const cur = data[i];
+      [[title, "name"], [proof, "proof"]].forEach(([node, key]) => {
+        node.style.minHeight = "0";
+        let max = 0;
+        data.forEach(d => { node.textContent = d[key]; max = Math.max(max, node.offsetHeight); });
+        node.textContent = cur[key]; node.style.minHeight = max + "px";
+      });
+    };
+    fit();
+    if (document.fonts) document.fonts.ready.then(fit);
+    let fitT; addEventListener("resize", () => { clearTimeout(fitT); fitT = setTimeout(fit, 150); });
     if (motion) {
       ScrollTrigger.create({ trigger: vm, start: "top 75%", end: "bottom 25%", onToggle: s => { visible = s.isActive; sync(); } });
       // Entrada: ligações se desenham, nós aparecem em cascata, ficha sobe
@@ -990,7 +1003,15 @@
   const vmi = $(".vm-intro");
   if (vmi) {
     if (!motion) vmi.classList.add("in");
-    else ScrollTrigger.create({ trigger: vmi, start: "top 75%", once: true, onEnter: () => setTimeout(() => vmi.classList.add("in"), 600) });
+    else {
+      // Visão sobe palavra por palavra, centralizada; frase e missão entram em seguida
+      gsap.timeline({ scrollTrigger: { trigger: vmi, start: "top 80%" } })
+        .from([$(".eyebrow", vmi), $(".vm-k", vmi)], { y: 16, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.08 })
+        .from($$(".vm-h .mw > span", vmi), { yPercent: 110, duration: 1.1, ease: "expo.out", stagger: 0.14 }, 0.1)
+        .from($(".vm-vis", vmi), { y: 20, opacity: 0, duration: 0.9, ease: "expo.out" }, 0.55)
+        .from($$(".vm-mis > *", vmi), { y: 30, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.1 }, 0.75);
+      ScrollTrigger.create({ trigger: $(".vm-mis", vmi), start: "top 80%", once: true, onEnter: () => setTimeout(() => vmi.classList.add("in"), 500) });
+    }
   }
 
   // ---------- Guia de seleção: tabela segmento x exigência ----------
@@ -1098,7 +1119,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.23`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.24`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {

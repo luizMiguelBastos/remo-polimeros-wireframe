@@ -1,4 +1,4 @@
-# Remo Polímeros · Wireframe v5.23
+# Remo Polímeros · Wireframe v5.24
 
 Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e distribuidora de resinas de engenharia desde 1989; site atual: remopolimeros.com.br). Serve para validar **usabilidade**, **navegação**, **onde fica cada informação** e a **identidade visual** antes das fotos reais. A meta é um site nível Awwwards: movimento, credibilidade e cara de feito sob medida.
 
@@ -29,8 +29,8 @@ Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e d
 - **README:** atualizar a cada versão junto com o resto (estado, histórico, pendências).
 - **Versão (furar cache):** a cada versão, trocar `?v=X.Y` em todos os HTML, o comentário `<!-- WIREFRAME vX.Y -->` no topo do `<body>` (a barra superior saiu na v5.17; o comentário mantém a conferência do deploy por `curl | grep`) e o título dinâmico da página de produto em `wireframe.js`:
   ```bash
-  for f in *.html; do sed -i '' -E 's/\?v=5\.23/?v=5.24/g; s/WIREFRAME v5\.23/WIREFRAME v5.24/g; s/Wireframe v5\.23/Wireframe v5.24/g' "$f"; done
-  sed -i '' 's/Wireframe v5\.23/Wireframe v5.24/' assets/wireframe.js
+  for f in *.html; do sed -i '' -E 's/\?v=5\.24/?v=5.25/g; s/WIREFRAME v5\.24/WIREFRAME v5.25/g; s/Wireframe v5\.24/Wireframe v5.25/g' "$f"; done
+  sed -i '' 's/Wireframe v5\.24/Wireframe v5.25/' assets/wireframe.js
   ```
 - **Testes no desktop:** servidor local `python3 -m http.server 8765` na pasta do projeto; testar no **Chrome real do Luiz** (extensão Claude in Chrome: aba própria, ações em lote, zoom para detalhes, fechar a aba no fim). Conferir 1440 px, console e rolagem lateral. Simular chegada de outra página: `sessionStorage.setItem('remo-nav','1')`; rever a abertura completa: `sessionStorage.clear()` e recarregar.
 - **Tudo que muda no desktop precisa ter o seu padrão no celular.** Nenhuma alteração é dada como pronta sem a validação mobile abaixo. Se algo não couber, adaptar (empilhar, reduzir, esconder detalhe decorativo) e dizer ao Luiz o que mudou no mobile.
@@ -130,7 +130,7 @@ Construção: triângulo amarelo arredondado ao fundo (só contorno); triângulo
 - Fim das páginas: faixa de números → esteira horizontal "Para onde agora?" (cards das outras seções, com pin no desktop) → contato → footer. **Uma única seção de contato por página**, sempre logo depois do `</main>` (comentário `<!-- CONTATO (todas as páginas) -->`).
 - **Sem barra superior do wireframe** (removida na v5.17, junto com "Rever abertura"; o botão "Mostrar notas de UX" saiu na v5.16). A versão fica só no comentário `<!-- WIREFRAME vX.Y -->`. As anotações `.note` continuam no HTML, sempre ocultas. Para rever a abertura: `sessionStorage.clear()` e recarregar.
 
-## 6. Componentes (estado atual, v5.23)
+## 6. Componentes (estado atual, v5.24)
 
 ### 6.1 Hero principal (home) — aprovado, não mexer na tipografia nem na organização
 - Tudo à esquerda e embaixo: rótulo "Polímeros especiais · Desde 1989", título "Polímeros de engenharia," (menor, branco) + "feitos sob medida." (grande, amarelo), palavra que troca a cada 3 s (sob medida, para você, personalizados, com precisão, do seu jeito), traço amarelo que se desenha e estica a cada troca, texto de apoio, botões "Sobre nós" e "Nossos produtos".
@@ -165,6 +165,8 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 
 ### 6.5.2 Valores · visão, missão e molécula dos valores (v5.22)
 - **Cabeçalho da seção** (`.vm-intro`): a **visão** é o título ("Criar. Transformar. Evoluir.", com a frase "A tecnologia dos polímeros..." em mono embaixo) e a **missão** é o subtexto, com as palavras-chave (qualidade, pontualidade, seriedade, preservando o meio ambiente) ganhando sublinhado amarelo que se desenha. Textos da **Carta Resposta a Clientes**. O antigo "Princípios que viram prática." saiu (pedido do Luiz: reduzir redundância; missão e visão não ficam lado a lado em blocos separados).
+- **v5.24:** cabeçalho **centralizado** (`.vm-intro`): eyebrow, "Visão", título "Criar. Transformar. Evoluir." numa linha no desktop (palavras sobem uma a uma, `.vm-h .mw`), frase em mono, traço amarelo e a missão centralizada embaixo; a molécula continua alinhada à esquerda com a ficha à direita (quebra de eixo pedida pelo Luiz). **Sem nomes nos nós** (só números; o nome fica na ficha). Ficha com altura fixa, a do maior valor (`fit()` em `wireframe.js`), para a seção não mudar de tamanho. Cota vertical escondida no celular nesta seção.
+- **Moléculas do fundo (todas as páginas, v5.24):** `molField` não sorteia de novo quando só a altura da seção muda; reposiciona na proporção. Antes, passar o mouse nos valores mudava a altura e as moléculas pulavam de lugar.
 - **Formato da molécula (v5.23):** **naftaleno**, dois anéis hexagonais fundidos (ligação 110, 10 átomos, 11 ligações), com 5 ligações duplas (traço interno paralelo, `line.dbl`). Valores no contorno em sentido horário (01 no alto à esquerda; 03 e 08 são os átomos compartilhados). Nós desenhados direto nos vértices, sem `transform` de escala (a animação mexe no raio `r`). Rótulos para fora da molécula. Celular: nós maiores (raio 25) e `viewBox` recortado na molécula. A rede livre da v5.22 foi reprovada ("não lembra uma molécula", nós fora das arestas).
 - **Título:** "Transformar." era cortado pela máscara da linha; fonte do título reduzida (`clamp(40px, 4.6vw, 76px)`) e folga à direita. Sublinhados da missão mais baixos (`padding-bottom: .16em`, posição `bottom`).
 - **Molécula dos valores** (`#vmol`): 10 nós ligados por linhas (SVG gerado em `wireframe.js` a partir da `<ol class="vm-data">`, que fica oculta só para leitores de tela). Nó ativo amarelo com anel pulsando e as ligações dele acendem em amarelo; ao lado, a ficha: cota "Valor 07 / 10 · Confiança", número Navy, valor, "Na prática" e botões anterior/próximo com barra de progresso. Clique, hover (mouse), Enter e setas; avança sozinho a cada 6 s com a seção na tela. Entrada: ligações se desenham, nós aparecem em cascata. Rótulos "Ficha de valores · Rev. 2026 · Fonte: Carta Resposta a Clientes". Celular: molécula sem rótulos, ficha embaixo, botões de 44 px.
@@ -233,6 +235,7 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 | v5.16 | Responsividade em notebooks (1280 a 1600 px e telas baixas): margens, header, botões e respiro proporcionais; títulos das aberturas pela altura; "Sobre nós" à direita entre 901 e 1080 px; botão "Mostrar notas de UX" removido |
 | v5.17 | Barra preta do wireframe removida (versão vira comentário no HTML); abertura da home ocupa a tela inteira |
 | v5.18 | Seção de contato duplicada removida em História, Valores, Tecnologias e Onde atuamos (fica só a de depois do `</main>`, como na home) |
+| v5.24 | Valores: visão e missão centralizadas; nós sem nomes; ficha com altura fixa; moléculas do fundo não pulam mais quando a seção muda de altura |
 | v5.23 | Valores: "Transformar." sem corte; sublinhados da missão mais baixos; molécula dos valores redesenhada como naftaleno (anéis hexagonais, ligações duplas, nós nos vértices) |
 | v5.22 | Valores: visão vira o título da seção e missão o subtexto (palavras-chave sublinhadas); 10 valores viram uma molécula interativa com ficha ao lado; sai o card azul |
 | v5.21 | Valores: mais movimento na seção de princípios, moléculas no fundo, linhas no palco, número do palco de branco para amarelo |
