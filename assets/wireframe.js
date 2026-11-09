@@ -878,8 +878,19 @@
   if (vm) {
     const data = $$(".vm-data li", vm).map(li => ({ no: li.dataset.no, short: li.dataset.short, proof: li.dataset.proof, name: li.textContent.trim() }));
     const svg = $("#vm-svg"), NS = "http://www.w3.org/2000/svg";
-    const P = [[90, 80], [270, 55], [450, 95], [540, 235], [170, 215], [350, 230], [490, 375], [70, 350], [240, 395], [370, 355]];
-    const E = [[0, 1], [0, 4], [1, 4], [1, 2], [1, 5], [2, 5], [2, 3], [3, 5], [3, 6], [4, 5], [4, 7], [7, 8], [4, 8], [8, 9], [5, 9], [9, 6]];
+    // Naftaleno: dois anéis hexagonais fundidos, 10 átomos (um por valor), cada nó exatamente no vértice
+    const L = 110, HX = L * Math.sqrt(3) / 2, CY = 235, C1 = [350 - HX, CY], C2 = [350 + HX, CY];
+    const v = (c, deg) => [+(c[0] + L * Math.cos(deg * Math.PI / 180)).toFixed(1), +(c[1] + L * Math.sin(deg * Math.PI / 180)).toFixed(1)];
+    // A ordem dos valores segue o contorno da molécula: 01 no alto à esquerda, sentido horário; 03 e 08 são os átomos compartilhados
+    const P = [v(C1, 210), v(C1, 270), v(C1, 330), v(C2, 270), v(C2, 330), v(C2, 30), v(C2, 90), v(C1, 30), v(C1, 90), v(C1, 150)];
+    const E = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9], [9, 0], [2, 7]];
+    // Ligações duplas (estrutura de Kekulé): traço interno paralelo, voltado para o centro do anel
+    const D = [[0, 1, C1], [2, 7, C1], [3, 4, C2], [5, 6, C2], [8, 9, C1]];
+    // Rótulos para fora da molécula: [dx, dy, alinhamento]
+    const LB = [[-36, 4, "end"], [0, -34, "middle"], [0, -30, "middle"], [0, -34, "middle"], [36, 4, "start"], [36, 4, "start"], [0, 46, "middle"], [0, 72, "middle"], [0, 46, "middle"], [-36, 4, "end"]];
+    const compact = matchMedia("(max-width: 600px)").matches;
+    const R = compact ? 25 : 19, RING = compact ? 33 : 27, HIT = compact ? 46 : 34;
+    svg.setAttribute("viewBox", compact ? "120 85 460 300" : "20 70 660 340");
     const el = (tag, attrs, parent) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; };
     const gBase = el("g", { class: "vm-edges" }, svg), gHot = el("g", { class: "vm-hot" }, svg), gNodes = el("g", { class: "vm-nodes" }, svg);
     const len = ([a, b]) => Math.hypot(P[b][0] - P[a][0], P[b][1] - P[a][1]);
@@ -891,14 +902,21 @@
       h.style.strokeDasharray = len(e); h.style.strokeDashoffset = len(e);
       hot.push(h);
     });
+    D.forEach(([a, b, c]) => {
+      const t = 0.2, A = P[a], B = P[b];
+      const m = [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2], dl = Math.hypot(c[0] - m[0], c[1] - m[1]);
+      const o = [(c[0] - m[0]) / dl * 11, (c[1] - m[1]) / dl * 11];
+      const x1 = A[0] + (B[0] - A[0]) * t + o[0], y1 = A[1] + (B[1] - A[1]) * t + o[1];
+      const x2 = B[0] - (B[0] - A[0]) * t + o[0], y2 = B[1] - (B[1] - A[1]) * t + o[1];
+      base.push(el("line", { class: "dbl", x1, y1, x2, y2 }, gBase));
+    });
     const nodes = data.map((d, n) => {
       const g = el("g", { class: "vm-node", transform: `translate(${P[n][0]} ${P[n][1]})`, tabindex: "0", role: "button", "aria-label": `Valor ${d.no}: ${d.name}`, "aria-pressed": "false" }, gNodes);
-      const inner = el("g", { class: "vm-in" }, g);
-      el("circle", { class: "hit", r: 34 }, inner);
-      el("circle", { class: "ring", r: 27 }, inner);
-      el("circle", { class: "core", r: 19 }, inner);
-      el("text", { class: "nn", y: 4 }, inner).textContent = d.no;
-      el("text", { class: "lb", y: 48 }, inner).textContent = d.short;
+      el("circle", { class: "hit", r: HIT }, g);
+      el("circle", { class: "ring", r: RING }, g);
+      el("circle", { class: "core", r: R }, g);
+      el("text", { class: "nn", y: 4 }, g).textContent = d.no;
+      el("text", { class: "lb", x: LB[n][0], y: LB[n][1], "text-anchor": LB[n][2] }, g).textContent = d.short;
       return g;
     });
     const no = $("#vm-no"), title = $("#vm-title"), proof = $("#vm-proof"), cota = $("#vm-cota"), bar = $("#vm-bar");
@@ -919,7 +937,7 @@
       E.forEach((e, k) => {
         const on = e[0] === i || e[1] === i, h = hot[k];
         base[k].classList.toggle("near", on);
-        if (motion) gsap.to(h, { strokeDashoffset: on ? 0 : len(e), duration: on ? 0.9 : 0.4, ease: on ? "expo.out" : "power2.in", delay: on ? 0.1 : 0 });
+        if (motion) gsap.to(h, { overwrite: true, strokeDashoffset: on ? 0 : len(e), duration: on ? 0.9 : 0.4, ease: on ? "expo.out" : "power2.in", delay: on ? 0.1 : 0 });
         else h.style.strokeDashoffset = on ? 0 : len(e);
       });
       const set = () => { no.textContent = d.no; title.textContent = d.name; proof.textContent = d.proof; cota.textContent = `Valor ${d.no} / 10 · ${d.short}`; };
@@ -931,7 +949,7 @@
           .to(txt, { y: -18, opacity: 0, duration: 0.2, ease: "power2.in", stagger: 0.03 })
           .add(set)
           .fromTo(txt, { y: 28, opacity: 0, clipPath: "inset(0 0 100% 0)" }, { y: 0, opacity: 1, clipPath: "inset(0 0 -20% 0)", duration: 0.85, ease: "expo.out", stagger: 0.07 });
-        gsap.fromTo($(".vm-in", nodes[i]), { scale: 0.7 }, { scale: 1, duration: 0.9, ease: "elastic.out(1, 0.45)", svgOrigin: P[i].join(" ") });
+        gsap.fromTo($(".core", nodes[i]), { attr: { r: R * 0.6 } }, { attr: { r: R }, duration: 0.9, ease: "elastic.out(1, 0.45)" });
       }
       run();
     };
@@ -956,11 +974,13 @@
     if (motion) {
       ScrollTrigger.create({ trigger: vm, start: "top 75%", end: "bottom 25%", onToggle: s => { visible = s.isActive; sync(); } });
       // Entrada: ligações se desenham, nós aparecem em cascata, ficha sobe
-      base.forEach((l, k) => { l.style.strokeDasharray = len(E[k]); });
+      const ll = l => Math.hypot(l.x2.baseVal.value - l.x1.baseVal.value, l.y2.baseVal.value - l.y1.baseVal.value);
+      base.forEach(l => { l.style.strokeDasharray = ll(l); });
       gsap.timeline({ scrollTrigger: { trigger: vm, start: "top 80%" } })
         .from(".vm-head > *", { y: 20, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.08 })
-        .fromTo(base, { strokeDashoffset: k => len(E[k]) }, { strokeDashoffset: 0, duration: 1.2, ease: "expo.inOut", stagger: 0.04 }, 0.1)
-        .from($$(".vm-in", vm), { scale: 0, opacity: 0, duration: 0.9, ease: "back.out(2)", stagger: 0.06, svgOrigin: k => P[k].join(" ") }, 0.3)
+        .fromTo(base, { strokeDashoffset: (k, l) => ll(l) }, { strokeDashoffset: 0, duration: 1.2, ease: "expo.inOut", stagger: 0.04 }, 0.1)
+        .from($$(".vm-node .core", vm), { attr: { r: 0 }, duration: 0.9, ease: "back.out(2)", stagger: 0.06 }, 0.3)
+        .from($$(".vm-node text", vm), { opacity: 0, duration: 0.6, stagger: 0.03 }, 0.6)
         .from(".vm-panel > *", { y: 30, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.08 }, 0.5)
         .from(".vm-cota i", { scaleX: 0, duration: 1.2, ease: "expo.inOut" }, 0.6);
     }
@@ -1078,7 +1098,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.22`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.23`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
