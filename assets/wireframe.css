@@ -2275,3 +2275,7 @@ body { background-image: none; }
 
 /* ---------- v5.43: header um tom mais escuro que o fundo quando passa por seção escura (o cinza-claro da v5.32 foi reprovado) ---------- */
 .site-header.on-dark, .site-header.on-dark.scrolled { background: rgba(7, 11, 20, .78); border-bottom-color: rgba(244, 245, 247, .1); }
+
+/* ---------- v5.45: molécula fixa (sólido geométrico em 3D, feito da textura) no canto superior direito do manifesto de Valores ---------- */
+.mol-fix { position: absolute; top: calc(var(--hdr, 72px) + clamp(20px, 4vh, 56px)); right: clamp(24px, 5vw, 96px); width: clamp(200px, 21vw, 320px); aspect-ratio: 1; pointer-events: none; }
+@media (max-width: 900px) { .mol-fix { top: calc(var(--hdr, 72px) + 8px); right: 4px; width: 132px; opacity: .8; } }
