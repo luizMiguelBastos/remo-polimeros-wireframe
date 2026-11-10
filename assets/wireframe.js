@@ -426,6 +426,8 @@
   // É feita dos mesmos elementos da textura dos fundos azuis: hexágonos pequenos e ligações em branco e amarelo.
   $$("canvas[data-molfix]").forEach(cv => {
     const ctx = cv.getContext("2d"), TAU = Math.PI * 2, PH = (1 + Math.sqrt(5)) / 2;
+    // Em fundo claro (data-molfix="ink") as ligações e os pontos são azul-escuros; a face da frente continua amarela
+    const ink = cv.dataset.molfix === "ink", BASE = ink ? "0,31,95" : "244,245,247", GA = ink ? 2.2 : 1, BA = ink ? 1.5 : 1;
     const V = [[0, 1, PH], [0, -1, PH], [0, 1, -PH], [0, -1, -PH], [1, PH, 0], [-1, PH, 0], [1, -PH, 0], [-1, -PH, 0], [PH, 0, 1], [-PH, 0, 1], [PH, 0, -1], [-PH, 0, -1]];
     const E = [];
     for (let i = 0; i < 12; i++) for (let k = i + 1; k < 12; k++) if (Math.abs(Math.hypot(V[i][0] - V[k][0], V[i][1] - V[k][1], V[i][2] - V[k][2]) - 2) < .01) E.push([i, k]);
@@ -441,12 +443,12 @@
       ctx.lineWidth = 1; ctx.lineCap = "round";
       E.forEach(e => {
         const a = pr[e[0]], b = pr[e[1]], z = (a[2] + b[2]) / 2;
-        ctx.strokeStyle = z > .6 ? `rgba(255,209,0,${.1 + (z + 2) * .05})` : `rgba(244,245,247,${.07 + (z + 2) * .045})`;
+        ctx.strokeStyle = z > .6 ? `rgba(255,209,0,${(.1 + (z + 2) * .05) * GA})` : `rgba(${BASE},${(.07 + (z + 2) * .045) * BA})`;
         ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
       });
       pr.forEach(p => {
-        const R = 1.8 + (p[2] + 2) * .5;
-        ctx.fillStyle = p[2] > 1 ? `rgba(255,209,0,${.28 + (p[2] + 2) * .09})` : `rgba(244,245,247,${.18 + (p[2] + 2) * .08})`;
+        const R = (1.8 + (p[2] + 2) * .5) * Math.max(1, S / 300);
+        ctx.fillStyle = p[2] > 1 ? `rgba(255,209,0,${Math.min(1, (.28 + (p[2] + 2) * .09) * GA)})` : `rgba(${BASE},${(.18 + (p[2] + 2) * .08) * BA})`;
         ctx.beginPath();
         for (let q = 0; q < 6; q++) { const an = q * TAU / 6; q ? ctx.lineTo(p[0] + Math.cos(an) * R, p[1] + Math.sin(an) * R) : ctx.moveTo(p[0] + Math.cos(an) * R, p[1] + Math.sin(an) * R); }
         ctx.closePath(); ctx.fill();
@@ -1256,7 +1258,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.45`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.46`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
