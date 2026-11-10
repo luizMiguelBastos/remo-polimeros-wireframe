@@ -75,7 +75,7 @@
   // ---------- Header que some ao descer ----------
   const header = $("#header");
   let lastY = 0;
-  // Sobre seção escura lisa o vidro do header clareia (cinza), em vez de escurecer; sobre foto e sobre seção clara fica como está
+  // Sobre seção escura lisa o vidro do header fica um tom mais escuro que o fundo; sobre foto e sobre seção clara fica como está
   let toneQ = false;
   const hdrTone = () => {
     toneQ = false;
@@ -1220,7 +1220,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.42`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.43`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {

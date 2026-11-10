@@ -2272,3 +2272,6 @@ body { background-image: none; }
 
 /* ---------- v5.41: fundos azuis com o pontilhado da marca (o mesmo dos fundos claros, em tom claro) atrás da rede de moléculas ---------- */
 .mol-bg.flow-bg { background-image: radial-gradient(rgba(244, 245, 247, .085) 1px, transparent 1.3px); background-size: 22px 22px; }
+
+/* ---------- v5.43: header um tom mais escuro que o fundo quando passa por seção escura (o cinza-claro da v5.32 foi reprovado) ---------- */
+.site-header.on-dark, .site-header.on-dark.scrolled { background: rgba(7, 11, 20, .78); border-bottom-color: rgba(244, 245, 247, .1); }
