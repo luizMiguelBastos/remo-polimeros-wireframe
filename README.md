@@ -1,4 +1,4 @@
-# Remo Polímeros · Wireframe v5.30
+# Remo Polímeros · Wireframe v5.31
 
 Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e distribuidora de resinas de engenharia desde 1989; site atual: remopolimeros.com.br). Serve para validar **usabilidade**, **navegação**, **onde fica cada informação** e a **identidade visual** antes das fotos reais. A meta é um site nível Awwwards: movimento, credibilidade e cara de feito sob medida.
 
@@ -29,8 +29,8 @@ Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e d
 - **README:** atualizar a cada versão junto com o resto (estado, histórico, pendências).
 - **Versão (furar cache):** a cada versão, trocar `?v=X.Y` em todos os HTML, o comentário `<!-- WIREFRAME vX.Y -->` no topo do `<body>` (a barra superior saiu na v5.17; o comentário mantém a conferência do deploy por `curl | grep`) e o título dinâmico da página de produto em `wireframe.js`:
   ```bash
-  for f in *.html; do sed -i '' -E 's/\?v=5\.30/?v=5.31/g; s/WIREFRAME v5\.30/WIREFRAME v5.31/g; s/Wireframe v5\.30/Wireframe v5.31/g' "$f"; done
-  sed -i '' 's/Wireframe v5\.30/Wireframe v5.31/' assets/wireframe.js
+  for f in *.html; do sed -i '' -E 's/\?v=5\.31/?v=5.32/g; s/WIREFRAME v5\.31/WIREFRAME v5.32/g; s/Wireframe v5\.31/Wireframe v5.32/g' "$f"; done
+  sed -i '' 's/Wireframe v5\.31/Wireframe v5.32/' assets/wireframe.js
   ```
 - **Testes no desktop:** servidor local `python3 -m http.server 8765` na pasta do projeto; testar no **Chrome real do Luiz** (extensão Claude in Chrome: aba própria, ações em lote, zoom para detalhes, fechar a aba no fim). Conferir 1440 px, console e rolagem lateral. Simular chegada de outra página: `sessionStorage.setItem('remo-nav','1')`; rever a abertura completa: `sessionStorage.clear()` e recarregar.
 - **Tudo que muda no desktop precisa ter o seu padrão no celular.** Nenhuma alteração é dada como pronta sem a validação mobile abaixo. Se algo não couber, adaptar (empilhar, reduzir, esconder detalhe decorativo) e dizer ao Luiz o que mudou no mobile.
@@ -129,16 +129,17 @@ Construção: triângulo amarelo arredondado ao fundo (só contorno); triângulo
 | `produtos.html` | Abertura com foto → índice "Escolha a linha." (`#materiais`) + destaque "Parceria LG Chem" (`.lg-note`) → esteira → contato |
 | `produto.html?linha=<id>` | Página única das 9 linhas, preenchida por `data.js` (ids: abs, abs-pc, asa, pbt, pc, pc-compostos, pmma, pom, san) |
 | `historia.html` | Abertura → manifesto → parallax → "A Remo" → linha do tempo com fotos → seção LG Chem (no lugar de "Clientes") → números → esteira → contato |
-| `valores.html` | Abertura (foto `val-parceria.jpg`, reunião técnica) → "Missão" (seção escura, manifesto travado) → "Visão e valores" (seção clara: título da visão + 10 valores em rolagem com card) → meio ambiente (números de rascunho) → ISO → números → esteira → contato |
+| `valores.html` | Abertura (foto `val-parceria.jpg`, reunião técnica) → "Missão" (seção escura, manifesto travado) → "Visão e valores" (seção clara: título da visão + 10 valores em rolagem com card) → compromisso ambiental (esteira de 5 painéis com fotos) → ISO → esteira → contato |
 | `tecnologias.html` | Abertura → laboratório de cores (prazo, índice "Efeitos especiais" que abre ao clicar, equipamentos/padrões/aditivos) → dureza sob medida (foto do durômetro + índice de 4 faixas Shore que abre ao clicar + recursos de formulação) → "Como trabalhamos" (rolagem horizontal, mantida) → números → esteira → contato |
 | `onde-atuamos.html` | Abertura → "Um dia com a Remo" (horas que acendem) → 5 segmentos com resinas → números → esteira → contato |
 | `contato.html` | Abertura → formulário por tipo de pedido → contatos e FAQ → esteira |
 
 - Endereços antigos (`materiais`, `institucional`, `como-trabalhamos`, `laboratorio`, `qualidade`, `guia`) redirecionam por meta refresh.
+- **Valores não tem mais a faixa "A Remo em números"** (removida a pedido do Luiz em 10/11/2026: "não faz sentido"); ela continua em História, Tecnologias e Onde atuamos.
 - Fim das páginas: faixa de números → esteira horizontal "Para onde agora?" (cards das outras seções, com pin no desktop) → contato → footer. **Uma única seção de contato por página**, sempre logo depois do `</main>` (comentário `<!-- CONTATO (todas as páginas) -->`).
 - **Sem barra superior do wireframe** (removida na v5.17, junto com "Rever abertura"; o botão "Mostrar notas de UX" saiu na v5.16). A versão fica só no comentário `<!-- WIREFRAME vX.Y -->`. As anotações `.note` continuam no HTML, sempre ocultas. Para rever a abertura: `sessionStorage.clear()` e recarregar.
 
-## 6. Componentes (estado atual, v5.30)
+## 6. Componentes (estado atual, v5.31)
 
 ### 6.1 Hero principal (home) — aprovado, não mexer na tipografia nem na organização
 - Tudo à esquerda e embaixo: rótulo "Polímeros especiais · Desde 1989", título "Polímeros de engenharia," (menor, branco) + "feitos sob medida." (grande, amarelo), palavra que troca a cada 3 s (sob medida, para você, personalizados, com precisão, do seu jeito), traço amarelo que se desenha e estica a cada troca, texto de apoio, botões "Sobre nós" e "Nossos produtos".
@@ -189,6 +190,15 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 - **Estrutura:** faixa com a logo da LG Chem + "Parceria tecnológica · desde 2001" → título "Tecnologia LG Chem, aplicada no Brasil pela Remo." + texto + link externo "Conheça a LG Chem" → **mosaico de 6 fotos** (`.lgc-ph.t1` a `.t6`, grade de 12 colunas; entram em cortina, leve paralaxe, zoom no hover) → 4 fatos (1947, 2001, 25 anos, Global). Sem trava de rolagem e sem esteira. Celular: mosaico e fatos em 2 colunas.
 - **Imagens:** `assets/img/lg-logo.png` (180 × 39) e `assets/img/lg-capa.jpg` (565 × 191, baixa resolução) vêm da página "Tecnologia LG" do site atual da Remo. As outras 5 fotos foram geradas no Flow em 10/11/2026, **sem marca** (Nano Banana Pro, 16:9, baixadas em 2K e comprimidas para 1600 × 893, JPEG 77, pelo Chrome headless): `lg-granulos.jpg`, `lg-laboratorio.jpg`, `lg-pecas.jpg`, `lg-planta.jpg`, `lg-eletronicos.jpg`. Estilo: claro, branco e cinza frio, com um detalhe em vermelho. A primeira versão de eletrônicos saiu com uma maçã vermelha e foi refeita sem objetos extras.
 - Textos em rascunho, reescritos a partir da página "Tecnologia LG".
+
+### 6.5.4 Valores · compromisso ambiental em esteira com fotos e vidro (v5.31)
+- `section.env2#meio-ambiente`. **Identidade por fotos, sem verde** (decisão do Luiz: imagens fazem mais sentido que cores). O Luiz achou a página "muito azul" e pediu mais do **efeito de vidro do header**; por isso a foto ocupa a seção e o texto fica em vidro.
+- **Conteúdo real** (reunião com o marketing + Política Ambiental + Carta Resposta a Clientes), em 5 painéis: 01 Conformidade legal, 02 Resíduos, 03 Energia (contador "50%" de energia renovável), 04 Produção, 05 Pessoas e embalagens. Cada painel: práticas em tópicos e o rótulo "Como comprovamos". Saíram os contadores de rascunho e tudo o que não está em documento (painéis solares, área verde, PCR, % de aparas e de água).
+- **Desktop:** `#env-pin` trava na tela (100svh). **A foto do painel ativo ocupa a seção inteira ao fundo** (`#env-bg`, 5 imagens empilhadas que trocam por opacidade, com zoom lento) sob um véu (`.env2-veil`) que escurece o topo e a base. Os painéis são **cartões de vidro** como o header (`rgba(15,22,38,.42)` + `backdrop-filter: blur(18px) saturate(1.4)`, borda clara), alinhados embaixo à esquerda: o ativo abre com o conteúdo e os outros viram abas pequenas (número e tema). A esteira desliza com a rolagem (`end = max(distância, 2 alturas de tela)`, `scrub`, `refreshPriority: 1`); contador "02 / 05" e barra amarela; clicar numa aba leva até ela. O desfoque só é aplicado no cartão ativo (medido: ~60 quadros por segundo no Chrome headless).
+- **Celular:** sem trava; esteira arrastada com o dedo (`scroll-snap`, 85% da largura, o próximo aparece na borda, aviso "Arraste para o lado"). Cada painel mostra a foto nítida no topo (300 px) e a mesma foto ampliada atrás do cartão de vidro com o texto (`background-image` em linha no `.env2-media`; uma variável CSS com `url()` não serve, porque o Chrome resolve o caminho a partir da pasta do CSS). Movimento reduzido no desktop: sem trava, a esteira rola para o lado (classe `.free`).
+- **Rodapé da seção:** "Comprovado por" (CTF IBAMA, Licença de Operação, CADRI, laudos, contrato de energia, Política Ambiental) e o botão "Solicitar documentação ambiental" → `contato.html`.
+- **Fotos:** `val-conformidade.jpg`, `val-energia.jpg` e `val-pessoas.jpg` (Flow, 10/11/2026, 1376 × 768, JPEG 77, sem marca, luz natural); `val-reciclagem.jpg` e `val-agua.jpg` já existiam.
+- O Luiz aceitou esteira aqui porque a seção ISO fica entre ela e a esteira "Para onde agora?" do fim. Reprovado: cartões azuis sobre fundo azul (primeira versão da v5.31).
 
 ### 6.6 Página da linha (`produto.html`)
 - `.p-hero` em `--night` com ondas de fluxo, **sem** o quadriculado de 96 px do body. Esquerda: nome numa linha só (`fitName()` reduz a fonte), nome completo em mono amarelo, descrição, botões "Ver grades e fichas ↓" e "Desenvolver versão sob medida", linha ISO discreta ("Produzido sob certificação ISO 9001:2015*"). Direita: imagem com revelação em cortina, alinhada à margem do conteúdo.
@@ -249,6 +259,7 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 | v5.16 | Responsividade em notebooks (1280 a 1600 px e telas baixas): margens, header, botões e respiro proporcionais; títulos das aberturas pela altura; "Sobre nós" à direita entre 901 e 1080 px; botão "Mostrar notas de UX" removido |
 | v5.17 | Barra preta do wireframe removida (versão vira comentário no HTML); abertura da home ocupa a tela inteira |
 | v5.18 | Seção de contato duplicada removida em História, Valores, Tecnologias e Onde atuamos (fica só a de depois do `</main>`, como na home) |
+| v5.31 | Valores: compromisso ambiental vira esteira de 5 painéis com conteúdo real, foto do painel ativo ao fundo e cartões de vidro; sai a faixa "A Remo em números" de Valores |
 | v5.30 | História: seção LG Chem com a identidade da LG (fonte Catamaran, vermelho) no lugar de "Clientes"; mosaico com molduras para as fotos |
 | v5.29 | Palavra "remo" na tipografia oficial em vetor (header, footer, abertura e transição); faixa da LG Chem removida da home (vai virar seção em História) |
 | v5.28 | Manifestos de História e Valores com peso 400; valores sem trava de rolagem, escolha livre e troca automática a cada 3 s com barra de progresso; título da visão à esquerda, maior e colado aos valores; lista com a altura exata do card |
@@ -274,6 +285,7 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 - **Foto antiga de Valores:** `sec-valores.jpg` saiu da abertura, mas continua nos cards "Valores" das esteiras e da home.
 - **Valores (v5.26):** 10 fotos dos valores (Flow, 16:9) ainda não geradas, só o espaço; esteira do celular não testada com o dedo num aparelho real.
 - **Valores (v5.20):** frases "Na prática" a validar; LG Chem "desde 2001" não aparece em nenhum documento oficial (vem do site e de História).
+- **Ambiental (v5.31):** as 3 fotos novas ainda não foram aprovadas pelo Luiz dentro da página; confirmar com a Remo se o "50% renovável" pode ser citado e qual é a fonte; textos em rascunho; CSS antigo `.env`, `.env-*` sem uso. **Seção ISO ainda não atualizada** com os dados reais do certificado (nº 46074/25/I, RINA, validade 20/03/2028, escopo, PDF): planejada, aguardando pedido.
 - **LG Chem (v5.30):** fotos do Flow ainda não aprovadas pelo Luiz dentro da página; a foto de capa tem baixa resolução; textos da seção em rascunho; confirmar com a Remo o uso da marca LG Chem; "desde 2001" sem documento oficial. O destaque em Produtos (`.lg-note`) continua.
 - **Arquivos sem uso:** fotos antigas em `assets/hero/` e `remo-simbolo-contorno.svg` (não apagados).
 - **Conteúdo real que falta:** CNPJ (razão social e certificado ISO nº 46074/25/I recebidos, ainda não aplicados no site); dados ambientais reais; faixas de dureza validadas; logos de clientes e depoimento autorizado; WhatsApp comercial; marcos de 2016 em diante; arquivo oficial da marca (AI/PDF/EPS); fotos reais de "Onde é usado" (hoje placeholders).

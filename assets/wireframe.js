@@ -922,6 +922,70 @@
     }
   }
 
+  // ---------- Valores: compromisso ambiental em esteira (desktop: trava e desliza; celular: arrasta) ----------
+  const envT = $("#env-track");
+  if (envT) {
+    const panels = $$(".env2-p", envT), cnt = $("#env-count"), bar = $("#env-bar"), pin = $("#env-pin");
+    const n = panels.length, pad = k => String(k).padStart(2, "0"), desk = matchMedia("(min-width: 901px)");
+    let cur = -1;
+    const bgs = $$("#env-bg i");
+    // O 50% conta na primeira vez que o painel de Energia fica ativo
+    const count = p => {
+      const c = $("[data-env-count]", p);
+      if (!c || c.dataset.done) return;
+      c.dataset.done = "1";
+      if (!motion) { c.textContent = c.dataset.envCount; return; }
+      const o = { v: 0 };
+      gsap.to(o, { v: +c.dataset.envCount, duration: 1.6, ease: "power3.out", onUpdate: () => { c.textContent = Math.round(o.v); } });
+    };
+    // Painel ativo: cartão de vidro aberto e a foto dele ao fundo da seção
+    const setOn = i => {
+      if (i === cur) return;
+      cur = i;
+      panels.forEach((p, k) => p.classList.toggle("on", k === i));
+      bgs.forEach((b, k) => b.classList.toggle("on", k === i));
+      cnt.textContent = `${pad(i + 1)} / ${pad(n)}`;
+      if (cur > 0 || desk.matches) count(panels[i]);
+    };
+    // Celular: a foto de cada painel entra em cortina na primeira vez que ele aparece
+    const seen = p => { p.classList.add("seen"); if (!desk.matches) count(p); };
+    if (window.IntersectionObserver) {
+      const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) seen(e.target); }), { threshold: 0.3 });
+      panels.forEach(p => io.observe(p));
+    } else panels.forEach(seen);
+    setOn(0);
+    // Sem trava (celular, ou movimento reduzido): contador e barra seguem o arraste lateral
+    if (!motion) pin.closest(".env2").classList.add("free");
+    envT.addEventListener("scroll", () => {
+      if (desk.matches && motion) return;
+      const max = envT.scrollWidth - envT.clientWidth, pr = max > 0 ? envT.scrollLeft / max : 0;
+      setOn(Math.round(pr * (n - 1)));
+      bar.style.transform = `scaleX(${pr})`;
+      pin.classList.add("used");
+    }, { passive: true });
+    if (motion) {
+      gsap.matchMedia().add("(min-width: 901px)", () => {
+        const dist = () => panels[n - 1].offsetLeft - panels[0].offsetLeft;
+        const tw = gsap.to(envT, {
+          x: () => -dist(), ease: "none",
+          scrollTrigger: {
+            trigger: pin, start: "top top", end: () => "+=" + Math.max(dist(), innerHeight * 2), pin: true, scrub: 0.8, invalidateOnRefresh: true, refreshPriority: 1,
+            onUpdate: st => { setOn(Math.round(st.progress * (n - 1))); gsap.set(bar, { scaleX: st.progress }); }
+          }
+        });
+        // Clicar num painel leva a esteira até ele
+        const onClick = e => {
+          const p = e.target.closest(".env2-p");
+          if (!p) return;
+          const st = tw.scrollTrigger, y = st.start + (st.end - st.start) * panels.indexOf(p) / (n - 1);
+          if (lenis) lenis.scrollTo(y, { duration: 1.2 }); else scrollTo(0, y);
+        };
+        envT.addEventListener("click", onClick);
+        return () => { envT.removeEventListener("click", onClick); gsap.set(envT, { clearProps: "transform" }); gsap.set(bar, { clearProps: "transform" }); };
+      });
+    }
+  }
+
   // ---------- Valores: a lista avança com a rolagem e o card claro troca (desktop); no celular, lista aberta ----------
   const vr = $("#vr");
   if (vr) {
@@ -1139,7 +1203,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.30`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.31`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
