@@ -422,33 +422,56 @@
   $$("main section:not(.light):not(.hero):not(.page-hero):not(.px-band):not(.lgc):not([data-mol])").forEach(sec => sec.setAttribute("data-mol", ""));
   $$("[data-mol]").forEach(host => molField(host));
 
-  // ---------- Molécula fixa: um sólido geométrico de 12 pontos e 30 ligações (icosaedro), girando devagar em 3D ----------
-  // É feita dos mesmos elementos da textura dos fundos azuis: hexágonos pequenos e ligações em branco e amarelo.
+  // ---------- Molécula fixa dos manifestos: anel de carbono com cadeia (estireno, a base do ABS) em 3D ----------
+  // É feita dos mesmos elementos da textura: hexágonos pequenos e ligações. Os carbonos são os pontos maiores, os
+  // hidrogênios os menores; a ligação dupla da cadeia é amarela. O anel é levemente dobrado e a cadeia sobe e desce
+  // em profundidade, para a peça ter volume enquanto gira.
   $$("canvas[data-molfix]").forEach(cv => {
-    const ctx = cv.getContext("2d"), TAU = Math.PI * 2, PH = (1 + Math.sqrt(5)) / 2;
-    // Em fundo claro (data-molfix="ink") as ligações e os pontos são azul-escuros; a face da frente continua amarela
-    const ink = cv.dataset.molfix === "ink", BASE = ink ? "0,31,95" : "244,245,247", GA = ink ? 2.2 : 1, BA = ink ? 1.5 : 1;
-    const V = [[0, 1, PH], [0, -1, PH], [0, 1, -PH], [0, -1, -PH], [1, PH, 0], [-1, PH, 0], [1, -PH, 0], [-1, -PH, 0], [PH, 0, 1], [-PH, 0, 1], [PH, 0, -1], [-PH, 0, -1]];
-    const E = [];
-    for (let i = 0; i < 12; i++) for (let k = i + 1; k < 12; k++) if (Math.abs(Math.hypot(V[i][0] - V[k][0], V[i][1] - V[k][1], V[i][2] - V[k][2]) - 2) < .01) E.push([i, k]);
+    const ctx = cv.getContext("2d"), TAU = Math.PI * 2;
+    // Em fundo claro (data-molfix="ink") as ligações e os pontos são azul-escuros; o amarelo continua
+    const ink = cv.dataset.molfix === "ink", BASE = ink ? "0,31,95" : "244,245,247", BA = ink ? 1.5 : 1, GA = ink ? 1.7 : 1;
+    const P = [], E = [];
+    const add = (p, c) => { P.push({ p, c }); return P.length - 1; };
+    const ring = [];
+    for (let k = 0; k < 6; k++) { const a = k * TAU / 6; ring.push(add([-.6 + Math.cos(a) * .62, Math.sin(a) * .62, (k % 2 ? .16 : -.16)], 1)); }
+    for (let k = 0; k < 6; k++) {
+      E.push([ring[k], ring[(k + 1) % 6], 1]);
+      if (k) { const a = k * TAU / 6; E.push([ring[k], add([-.6 + Math.cos(a) * 1.02, Math.sin(a) * 1.02, (k % 2 ? .42 : -.42)], 0), 0]); }
+    }
+    let prev = ring[0];
+    [[.5, .32, .38], [1.02, -.04, -.34], [1.5, .3, .36]].forEach((q, i) => {
+      const c = add(q, 1);
+      E.push([prev, c, i === 1 ? 2 : 1]); prev = c;
+      const up = i % 2 ? -1 : 1;
+      E.push([c, add([q[0] + .06, q[1] + up * .36, q[2] + up * .3], 0), 0]);
+      if (i === 2) E.push([c, add([q[0] + .34, q[1] - .12, q[2] - .34], 0), 0]);
+    });
     let S = 0, on = false, t = 0;
     const size = () => { const d = Math.min(devicePixelRatio || 1, 2); S = cv.clientWidth; cv.width = S * d; cv.height = S * d; ctx.setTransform(d, 0, 0, d, 0, 0); draw(); };
     const draw = () => {
       if (!S) return;
-      if (!reduced) t += .0045;
+      if (!reduced) t += .0055;
       ctx.clearRect(0, 0, S, S);
-      const ca = Math.cos(t), sa = Math.sin(t), cb = Math.cos(t * .7), sb = Math.sin(t * .7), k = S * .2;
-      // z vai de -1,9 (fundo) a 1,9 (frente): a profundidade muda o tamanho e a opacidade
-      const pr = V.map(v => { const x1 = v[0] * ca + v[2] * sa, z1 = -v[0] * sa + v[2] * ca, y1 = v[1] * cb - z1 * sb, z2 = v[1] * sb + z1 * cb; return [S / 2 + x1 * k, S / 2 + y1 * k, z2]; });
-      ctx.lineWidth = 1; ctx.lineCap = "round";
-      E.forEach(e => {
-        const a = pr[e[0]], b = pr[e[1]], z = (a[2] + b[2]) / 2;
-        ctx.strokeStyle = z > .6 ? `rgba(255,209,0,${(.1 + (z + 2) * .05) * GA})` : `rgba(${BASE},${(.07 + (z + 2) * .045) * BA})`;
-        ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+      // Balança nos três eixos sem nunca ficar de perfil (o anel continua legível); a perspectiva aproxima o que está na frente
+      const roll = Math.sin(t * .9) * .42, yaw = Math.sin(t * .55 + 1) * .48, pit = .22 + Math.sin(t * .4) * .18, k = S * .24, u = Math.max(1, S / 320);
+      const pr = P.map(o => {
+        const [x, y, z] = o.p;
+        const y1 = y * Math.cos(roll) - z * Math.sin(roll), z1 = y * Math.sin(roll) + z * Math.cos(roll);
+        const x2 = (x - .11) * Math.cos(yaw) + z1 * Math.sin(yaw), z2 = -(x - .11) * Math.sin(yaw) + z1 * Math.cos(yaw);
+        const y3 = y1 * Math.cos(pit) - z2 * Math.sin(pit), z3 = y1 * Math.sin(pit) + z2 * Math.cos(pit), f = 1 + z3 * .3;
+        return [S / 2 + x2 * k * f, S / 2 + y3 * k * f, Math.max(0, Math.min(1, (z3 + 1.3) / 2.6))];
       });
-      pr.forEach(p => {
-        const R = (1.8 + (p[2] + 2) * .5) * Math.max(1, S / 300);
-        ctx.fillStyle = p[2] > 1 ? `rgba(255,209,0,${Math.min(1, (.28 + (p[2] + 2) * .09) * GA)})` : `rgba(${BASE},${(.18 + (p[2] + 2) * .08) * BA})`;
+      ctx.lineCap = "round";
+      E.forEach(e => {
+        const a = pr[e[0]], b = pr[e[1]], d = (a[2] + b[2]) / 2;
+        ctx.lineWidth = (e[2] ? .8 + d * .9 : .7) * (u > 1 ? 1.15 : 1);
+        ctx.strokeStyle = e[2] === 2 ? `rgba(255,209,0,${Math.min(1, (.2 + d * .5) * GA)})` : e[2] ? `rgba(${BASE},${(.1 + d * .4) * BA})` : `rgba(${BASE},${(.05 + d * .18) * BA})`;
+        ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+        if (e[2] === 2) { const dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy) || 1, o = 4.5 * u; ctx.beginPath(); ctx.moveTo(a[0] - dy / L * o, a[1] + dx / L * o); ctx.lineTo(b[0] - dy / L * o, b[1] + dx / L * o); ctx.stroke(); }
+      });
+      P.map((o, i) => i).sort((a, b) => pr[a][2] - pr[b][2]).forEach(i => {
+        const p = pr[i], c = P[i].c, gold = c && (i === ring[0] || i === ring[3] || i >= P.length - 3 && c), R = (c ? 2.4 + p[2] * 3.4 : 1.4 + p[2] * 1.5) * u;
+        ctx.fillStyle = gold ? `rgba(255,209,0,${Math.min(1, (.3 + p[2] * .55) * GA)})` : `rgba(${BASE},${(c ? .2 + p[2] * .5 : .12 + p[2] * .22) * BA})`;
         ctx.beginPath();
         for (let q = 0; q < 6; q++) { const an = q * TAU / 6; q ? ctx.lineTo(p[0] + Math.cos(an) * R, p[1] + Math.sin(an) * R) : ctx.moveTo(p[0] + Math.cos(an) * R, p[1] + Math.sin(an) * R); }
         ctx.closePath(); ctx.fill();
@@ -1258,7 +1281,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.46`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.48`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {

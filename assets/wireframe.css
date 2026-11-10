@@ -2286,3 +2286,6 @@ body { background-image: none; }
 .mol-fix { top: 50%; translate: 0 -50%; right: max(clamp(24px, 5vw, 96px), calc((100vw - 1320px) / 2 + 24px)); width: clamp(280px, 31vw, 470px); }
 @media (max-width: 900px) { .mol-fix { top: calc(var(--hdr, 72px) + 8px); translate: none; right: 4px; width: 132px; opacity: .8; } }
 @media (max-width: 900px) { .manifesto.light .mol-fix { right: 52px; } }
+
+/* ---------- v5.47: ficha do compromisso ambiental sem borda ---------- */
+.env3-card { border: 0; }
