@@ -2289,3 +2289,11 @@ body { background-image: none; }
 
 /* ---------- v5.47: ficha do compromisso ambiental sem borda ---------- */
 .env3-card { border: 0; }
+
+/* ---------- v5.49: molécula dos manifestos maior (anel com cadeia em Valores); fita de DNA, mais alta que larga, em História ---------- */
+.mol-fix { width: clamp(340px, 38vw, 580px); }
+.mol-fix.mol-dna { width: clamp(190px, 19vw, 290px); aspect-ratio: 1 / 2; right: max(clamp(60px, 11vw, 210px), calc((100vw - 1320px) / 2 + 150px)); }
+@media (max-width: 900px) {
+  .mol-fix { width: 150px; }
+  .mol-fix.mol-dna { width: 78px; right: 58px; }
+}
