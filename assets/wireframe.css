@@ -2258,3 +2258,14 @@ body { background-image: none; }
 .page-hero.photo:is(:has(+ .light), :has(+ .pin-spacer > .light)) { --fd: clamp(106px, 10.5vw, 165px); padding-bottom: clamp(94px, 9.5vw, 144px); }
 @media (max-width: 900px) { .page-hero.photo:is(:has(+ .light), :has(+ .pin-spacer > .light)) { --fd: 100px; padding-bottom: 90px; } }
 .env3-card { background: rgba(244, 245, 247, .63); }
+
+/* ---------- v5.37: sem degradê quando a seção depois do hero é clara (corte seco; o degradê fica só antes de seção escura); "comprovado" só dentro das fichas ---------- */
+.page-hero.photo:is(:has(+ .light), :has(+ .pin-spacer > .light)) { padding-bottom: clamp(56px, 7vw, 96px); background-image: none; background-color: transparent; }
+.page-hero.photo:is(:has(+ .light), :has(+ .pin-spacer > .light)) .ph-clip { -webkit-mask-image: none; mask-image: none; }
+@media (max-width: 900px) { .page-hero.photo:is(:has(+ .light), :has(+ .pin-spacer > .light)) { padding-bottom: clamp(56px, 7vw, 96px); } }
+.env3 { padding-bottom: 0; }
+.env3 .env2-proof { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; column-gap: 24px; }
+.env3 .env2-proof .mono { grid-column: 1 / -1; }
+.env2-req { font: 12px var(--f-mono); color: rgba(244, 245, 247, .62); text-decoration: underline; text-decoration-color: rgba(244, 245, 247, .3); text-underline-offset: 4px; white-space: nowrap; transition: color .3s; }
+.env2-req:hover { color: var(--white); }
+@media (max-width: 900px) { .env3 .env2-proof { grid-template-columns: minmax(0, 1fr); row-gap: 10px; } }

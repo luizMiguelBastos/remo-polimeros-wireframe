@@ -384,75 +384,77 @@
     new IntersectionObserver(([en]) => { on = en.isIntersecting; }).observe(host);
     if (reduced) { on = true; draw(); } else loop();
   };
-  // Fundos escuros: linhas no estilo suminagashi (tinta marmorizada na água). São as curvas de nível de um campo de
-  // distâncias deformado: anéis irregulares em volta de alguns centros, que se encontram sem se cruzar. Bem sutis e lentas.
-  const sumiField = (host, idx) => {
+  // Fundos escuros: cadeias de polímero. Poucas cadeias longas e sinuosas, feitas de pequenos círculos ligados em sequência,
+  // com grupos laterais, que ondulam bem devagar. Remete a moléculas, como a rede dos fundos claros, mas com outro desenho.
+  const chainField = (host, idx) => {
     const cv = document.createElement("canvas");
     cv.className = "mol-bg flow-bg"; cv.setAttribute("aria-hidden", "true");
     host.prepend(cv);
     const ctx = cv.getContext("2d");
-    const CELL = 12, GAP = 30, TILE = 540;
-    let W = 0, H = 0, cols = 0, rows = 0, grid = null, drops = [], mx = -999, my = -999, on = false, t = idx * 7.3, tick = 0;
-    // Sorteio com semente: os centros não mudam de lugar quando a seção muda de altura
+    const BOND = 15, TAU = Math.PI * 2;
+    let W = 0, H = 0, chains = [], mx = -999, my = -999, on = false, t = idx * 3.1;
+    // Sorteio com semente: as cadeias não mudam de lugar quando a seção muda de altura
     const rnd = (a, b) => { const v = Math.sin(a * 127.1 + b * 311.7 + idx * 74.7) * 43758.5453; return v - Math.floor(v); };
     const size = () => {
-      const dpr = Math.min(devicePixelRatio || 1, 1.5);
+      const dpr = Math.min(devicePixelRatio || 1, 2);
       W = host.clientWidth; H = host.clientHeight;
       cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      cols = Math.ceil(W / CELL) + 1; rows = Math.ceil(H / CELL) + 1;
-      grid = new Float32Array(cols * rows);
-      const tc = Math.max(1, Math.round(W / TILE)), tr = Math.max(1, Math.round(H / TILE)), tw = W / tc, th = H / tr;
-      drops = [];
-      for (let r = 0; r < tr; r++) for (let c = 0; c < tc; c++)
-        drops.push({ x: (c + .15 + rnd(c, r) * .7) * tw, y: (r + .15 + rnd(r + 9, c) * .7) * th, s: .8 + rnd(c + 3, r + 5) * .5, o: rnd(c + 7, r + 2) * GAP * 3 });
+      const bands = Math.max(1, Math.round(H / 520)), bh = H / bands, per = W < 700 ? 1 : W < 1100 ? 2 : 3;
+      chains = [];
+      for (let b = 0; b < bands; b++) for (let k = 0; k < per; k++) chains.push({
+        x: (k + .15 + rnd(b, k) * .7) * W / per, y: (b + .2 + rnd(k + 5, b) * .6) * bh, a: rnd(b + 2, k + 9) * TAU,
+        n: 22 + Math.floor(rnd(k + 1, b + 3) * 26), f1: .05 + rnd(b + 4, k) * .04, f2: .14 + rnd(k, b + 6) * .08, p1: rnd(b, k + 7) * TAU, p2: rnd(k + 8, b) * TAU,
+        A: .9 + rnd(b + 1, k + 1) * .5, B: .3 + rnd(k + 2, b + 2) * .25, s: .5 + rnd(b + 3, k + 3) * .7, side: 3 + Math.floor(rnd(k + 4, b + 4) * 3)
+      });
       draw(true);
     };
     const draw = full => {
-      if (!grid) return;
-      // Só a faixa da seção que está na tela é calculada
       const top = host.getBoundingClientRect().top;
-      const r0 = full ? 0 : Math.max(0, Math.floor((-top - 40) / CELL)), r1 = full ? rows - 1 : Math.min(rows - 1, Math.ceil((innerHeight - top + 40) / CELL));
-      if (r1 <= r0) return;
-      if (!reduced) t += .004;
-      for (let r = r0; r <= r1; r++) {
-        const y = r * CELL;
-        for (let c = 0; c < cols; c++) {
-          const x = c * CELL;
-          const wx = x + 40 * Math.sin(y * .0061 + t) + 22 * Math.sin((x + y) * .0113 - t * 1.3);
-          const wy = y + 40 * Math.sin(x * .0057 - t * .8) + 22 * Math.sin((x - y) * .0097 + t * 1.1);
-          let best = 1e9, bi = 0;
-          for (let k = 0; k < drops.length; k++) { const d = drops[k], v = Math.hypot(wx - d.x, wy - d.y) * d.s + d.o; if (v < best) { best = v; bi = k; } }
-          const dm = Math.hypot(x - mx, y - my);
-          if (dm < 170) best += (1 - dm / 170) * (1 - dm / 170) * 26;
-          grid[r * cols + c] = best / GAP + .4 * Math.sin(best * .017 + bi);
-        }
-      }
-      ctx.clearRect(0, r0 * CELL, W, (r1 - r0) * CELL);
-      const gold = [];
+      const y0 = full ? 0 : Math.max(0, -top - 60), y1 = full ? H : Math.min(H, innerHeight - top + 60);
+      if (y1 <= y0) return;
+      if (!reduced) t += .005;
+      ctx.clearRect(0, y0, W, y1 - y0);
+      ctx.save(); ctx.beginPath(); ctx.rect(0, y0, W, y1 - y0); ctx.clip();
+      const dots = [], gold = [];
       ctx.beginPath();
-      for (let r = r0; r < r1; r++) for (let c = 0; c < cols - 1; c++) {
-        const i = r * cols + c, a = grid[i], b = grid[i + 1], d = grid[i + cols], e = grid[i + cols + 1];
-        const lo = Math.min(a, b, d, e), hi = Math.max(a, b, d, e);
-        for (let L = Math.ceil(lo); L < hi; L++) {
-          const x = c * CELL, y = r * CELL, q = [];
-          if ((a < L) !== (b < L)) q.push(x + CELL * (L - a) / (b - a), y);
-          if ((b < L) !== (e < L)) q.push(x + CELL, y + CELL * (L - b) / (e - b));
-          if ((d < L) !== (e < L)) q.push(x + CELL * (L - d) / (e - d), y + CELL);
-          if ((a < L) !== (d < L)) q.push(x, y + CELL * (L - a) / (d - a));
-          for (let k = 0; k + 3 < q.length; k += 4) {
-            if (L % 7 === 3) gold.push(q[k], q[k + 1], q[k + 2], q[k + 3]);
-            else { ctx.moveTo(q[k], q[k + 1]); ctx.lineTo(q[k + 2], q[k + 3]); }
+      for (const c of chains) {
+        if (c.y < y0 - 760 || c.y > y1 + 760) continue;
+        // A cadeia cresce do meio para as duas pontas; a direção de cada ligação ondula com o tempo
+        const pts = [[c.x, c.y]];
+        for (const dir of [1, -1]) {
+          let x = c.x, y = c.y;
+          for (let i = 1; i <= c.n; i++) {
+            const s = i * dir, th = c.a + c.A * Math.sin(s * c.f1 + c.p1 + t * c.s) + c.B * Math.sin(s * c.f2 + c.p2 - t * c.s * 1.4);
+            x += Math.cos(th) * BOND * dir; y += Math.sin(th) * BOND * dir;
+            dir > 0 ? pts.push([x, y]) : pts.unshift([x, y]);
           }
         }
+        // O mouse afasta de leve os átomos próximos
+        for (const p of pts) { const dx = p[0] - mx, dy = p[1] - my, d = Math.hypot(dx, dy); if (d < 130 && d > .01) { const k = (1 - d / 130) * 12 / d; p[0] += dx * k; p[1] += dy * k; } }
+        ctx.moveTo(pts[0][0], pts[0][1]);
+        for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+        for (let i = 1; i < pts.length - 1; i++) {
+          const p = pts[i];
+          (i % 9 === 4 ? gold : dots).push(p[0], p[1]);
+          if (i % c.side) continue;
+          // Grupo lateral: uma ligação curta para fora da cadeia, com um anel na ponta, alternando o lado
+          const tx = pts[i + 1][0] - pts[i - 1][0], ty = pts[i + 1][1] - pts[i - 1][1], L = Math.hypot(tx, ty) || 1, sg = (i / c.side) % 2 ? 1 : -1;
+          const nx = -ty / L * sg, ny = tx / L * sg;
+          ctx.moveTo(p[0], p[1]); ctx.lineTo(p[0] + nx * 10, p[1] + ny * 10);
+          ctx.moveTo(p[0] + nx * 16.5, p[1] + ny * 13.5); ctx.arc(p[0] + nx * 13.5, p[1] + ny * 13.5, 3, 0, TAU);
+        }
       }
-      ctx.lineWidth = 1; ctx.lineCap = "round";
-      ctx.strokeStyle = "rgba(110,140,205,.11)"; ctx.stroke();
-      ctx.beginPath();
-      for (let k = 0; k < gold.length; k += 4) { ctx.moveTo(gold[k], gold[k + 1]); ctx.lineTo(gold[k + 2], gold[k + 3]); }
-      ctx.strokeStyle = "rgba(255,209,0,.11)"; ctx.stroke();
+      ctx.lineWidth = 1; ctx.lineCap = "round"; ctx.lineJoin = "round";
+      ctx.strokeStyle = "rgba(120,150,215,.2)"; ctx.stroke();
+      ctx.fillStyle = "rgba(120,150,215,.36)"; ctx.beginPath();
+      for (let k = 0; k < dots.length; k += 2) { ctx.moveTo(dots[k] + 1.7, dots[k + 1]); ctx.arc(dots[k], dots[k + 1], 1.7, 0, TAU); }
+      ctx.fill();
+      ctx.fillStyle = "rgba(255,209,0,.5)"; ctx.beginPath();
+      for (let k = 0; k < gold.length; k += 2) { ctx.moveTo(gold[k] + 2.2, gold[k + 1]); ctx.arc(gold[k], gold[k + 1], 2.2, 0, TAU); }
+      ctx.fill();
+      ctx.restore();
     };
-    // Um quadro sim, um não: o movimento é lento e o custo cai pela metade
-    const loop = () => { if (on && (tick++ & 1)) draw(false); requestAnimationFrame(loop); };
+    const loop = () => { if (on) draw(false); requestAnimationFrame(loop); };
     size(); addEventListener("resize", size);
     if (window.ResizeObserver) { let lw = W, lh = H; new ResizeObserver(() => { if (host.clientWidth !== lw || host.clientHeight !== lh) { size(); lw = W; lh = H; } }).observe(host); }
     host.addEventListener("pointermove", e => { const r = host.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; });
@@ -460,9 +462,9 @@
     new IntersectionObserver(([en]) => { on = en.isIntersecting; }).observe(host);
     if (!reduced) loop();
   };
-  // Toda seção azul-escura sem foto de fundo ganha as linhas suminagashi
+  // Toda seção azul-escura sem foto de fundo ganha as cadeias de polímero
   $$("main section:not(.light):not(.hero):not(.page-hero):not(.px-band):not(.lgc):not([data-mol])").forEach(sec => sec.setAttribute("data-mol", ""));
-  $$("[data-mol]").forEach((host, k) => (host.dataset.mol === "ink" ? molField : sumiField)(host, k));
+  $$("[data-mol]").forEach((host, k) => (host.dataset.mol === "ink" ? molField : chainField)(host, k));
 
   // ---------- Cursor: rastro de moléculas atrás do ponto amarelo ----------
   if (finePointer && !reduced && $("#cursor")) {
@@ -983,7 +985,7 @@
     }
   }
 
-  // ---------- Valores: compromisso ambiental (temas à esquerda, ficha à direita; troca por clique ou sozinha a cada 7 s) ----------
+  // ---------- Valores: compromisso ambiental (temas à esquerda, ficha à direita; troca ao passar o mouse, por toque ou sozinha a cada 7 s) ----------
   const env3 = $("#env3");
   if (env3) {
     const tabs = $$(".env3-tab", env3), panes = $$(".env3-p", env3), bgs = $$("#env-bg i"), wipe = $(".env3-wipe", env3), tabBox = $(".env3-tabs", env3), card = $(".env3-card", env3);
@@ -1031,7 +1033,11 @@
         .fromTo(kids, { x: 48, opacity: 0 }, { x: 0, opacity: 1, duration: .75, ease: "expo.out", stagger: .07 }, "<");
       run();
     };
-    tabs.forEach((b, k) => b.addEventListener("click", () => show(k)));
+    // Passar o mouse num tema já troca (como na lista dos valores, logo acima); o toque e o teclado trocam pelo clique
+    tabs.forEach((b, k) => {
+      b.addEventListener("click", () => show(k));
+      b.addEventListener("pointerenter", e => { if (e.pointerType === "mouse") show(k); });
+    });
     if (finePointer) [tabBox, $(".env3-card", env3)].forEach(el => {
       el.addEventListener("pointerenter", () => { hold = true; run(); });
       el.addEventListener("pointerleave", () => { hold = false; run(); });
@@ -1052,7 +1058,7 @@
       items.forEach(b => {
         const d = b.dataset, c = document.createElement("article");
         c.className = "vr-sc";
-        c.innerHTML = `<div class="vr-media"><span class="mono">[foto · ${d.short}]</span></div>
+        c.innerHTML = `<div class="vr-media" role="img" aria-label="${d.short}" style="background-image:url(assets/img/vr-${d.no}.webp)"></div>
           <div class="vr-cota" aria-hidden="true"><i></i><span>Valor ${d.no} / 10 · ${d.short}</span></div>
           <h3 class="vr-title">${$(".vr-nm", b).textContent}</h3>
           <span class="vr-lbl">Na prática</span>
@@ -1073,7 +1079,7 @@
       track.addEventListener("scroll", () => { upd(); sw.classList.add("used"); }, { passive: true });
     }
     const title = $("#vr-title"), proof = $("#vr-proof"), cota = $("#vr-cota"), cur = $("#vr-cur");
-    const mlbl = $("#vr-mlbl"), card = $(".vr-card", vr), inner = $(".vr-in", vr), wipe = $(".vr-wipe", vr), ind = $(".vr-ind", vr), list = $(".vr-list", vr);
+    const media = $("#vr-media"), card = $(".vr-card", vr), inner = $(".vr-in", vr), wipe = $(".vr-wipe", vr), ind = $(".vr-ind", vr), list = $(".vr-list", vr);
     let i = 0, tl = null;
     // Troca automática a cada 3 s (barra de progresso no card); pausa no hover/foco e fora da tela
     const bar = $("#vr-bar"), desk = matchMedia("(min-width: 901px)");
@@ -1100,7 +1106,7 @@
       ticks.forEach((t, k) => t.classList.toggle("on", k <= i));
       moveInd();
       run();
-      const set = () => { title.textContent = $(".vr-nm", b).textContent; proof.textContent = d.proof; cota.textContent = `Valor ${d.no} / 10 · ${d.short}`; if (cur) cur.textContent = d.no; if (mlbl) mlbl.textContent = `[foto · ${d.short}]`; };
+      const set = () => { title.textContent = $(".vr-nm", b).textContent; proof.textContent = d.proof; cota.textContent = `Valor ${d.no} / 10 · ${d.short}`; if (cur) cur.textContent = d.no; if (media) { media.style.backgroundImage = `url(assets/img/vr-${d.no}.webp)`; media.setAttribute("aria-label", d.short); } };
       if (!motion) { set(); return; }
       // Troca do card: conteúdo sai na direção da rolagem, uma cortina Navy cruza o card, o novo conteúdo entra e o card balança de leve
       if (tl) tl.progress(1).kill();
@@ -1258,7 +1264,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.36`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.37`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
