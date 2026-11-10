@@ -1,4 +1,4 @@
-# Remo Polímeros · Wireframe v5.28
+# Remo Polímeros · Wireframe v5.29
 
 Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e distribuidora de resinas de engenharia desde 1989; site atual: remopolimeros.com.br). Serve para validar **usabilidade**, **navegação**, **onde fica cada informação** e a **identidade visual** antes das fotos reais. A meta é um site nível Awwwards: movimento, credibilidade e cara de feito sob medida.
 
@@ -29,8 +29,8 @@ Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e d
 - **README:** atualizar a cada versão junto com o resto (estado, histórico, pendências).
 - **Versão (furar cache):** a cada versão, trocar `?v=X.Y` em todos os HTML, o comentário `<!-- WIREFRAME vX.Y -->` no topo do `<body>` (a barra superior saiu na v5.17; o comentário mantém a conferência do deploy por `curl | grep`) e o título dinâmico da página de produto em `wireframe.js`:
   ```bash
-  for f in *.html; do sed -i '' -E 's/\?v=5\.28/?v=5.29/g; s/WIREFRAME v5\.28/WIREFRAME v5.29/g; s/Wireframe v5\.28/Wireframe v5.29/g' "$f"; done
-  sed -i '' 's/Wireframe v5\.28/Wireframe v5.29/' assets/wireframe.js
+  for f in *.html; do sed -i '' -E 's/\?v=5\.29/?v=5.30/g; s/WIREFRAME v5\.29/WIREFRAME v5.30/g; s/Wireframe v5\.29/Wireframe v5.30/g' "$f"; done
+  sed -i '' 's/Wireframe v5\.29/Wireframe v5.30/' assets/wireframe.js
   ```
 - **Testes no desktop:** servidor local `python3 -m http.server 8765` na pasta do projeto; testar no **Chrome real do Luiz** (extensão Claude in Chrome: aba própria, ações em lote, zoom para detalhes, fechar a aba no fim). Conferir 1440 px, console e rolagem lateral. Simular chegada de outra página: `sessionStorage.setItem('remo-nav','1')`; rever a abertura completa: `sessionStorage.clear()` e recarregar.
 - **Tudo que muda no desktop precisa ter o seu padrão no celular.** Nenhuma alteração é dada como pronta sem a validação mobile abaixo. Se algo não couber, adaptar (empilhar, reduzir, esconder detalhe decorativo) e dizer ao Luiz o que mudou no mobile.
@@ -104,7 +104,7 @@ Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e d
 
 ## 4. Logo (`assets/logo/`)
 
-Construção: triângulo amarelo arredondado ao fundo (só contorno); triângulo azul arredondado na frente (miolo transparente); um círculo centrado em cada vértice do azul, tamanhos diferentes. Wordmark "remo" em minúsculas, Archivo 600 expandida.
+Construção: triângulo amarelo arredondado ao fundo (só contorno); triângulo azul arredondado na frente (miolo transparente); um círculo centrado em cada vértice do azul, tamanhos diferentes. A palavra "remo" é a **tipografia oficial em vetor** (`remo-wordmark.svg`, v5.29), não mais texto em Archivo.
 
 | Arquivo | Uso |
 |---|---|
@@ -112,12 +112,20 @@ Construção: triângulo amarelo arredondado ao fundo (só contorno); triângulo
 | `remo-simbolo-branco.svg` | branco com amarelo: header |
 | `remo-simbolo-mono.svg` | uma cor: máscara dos rótulos das seções |
 | `remo-simbolo-contorno.svg` | **sem uso** (opção reprovada; não apagar sem perguntar) |
+| `remo-wordmark.svg` | palavra "remo" oficial em uma cor: header, footer, abertura e transição (via máscara CSS `.wm`) |
+
+**Palavra "remo" (v5.29):**
+- Vetorizada a partir do PNG da logo no site atual (`remopolimeros.com.br/wp-content/uploads/2018/04/logo.png`, 222 × 64 px; não existe arquivo vetorial oficial). Traçado do contorno pixel a pixel + ajuste de curvas; diferença de 0,76% da área em relação ao PNG. **Aprovada pelo Luiz** na comparação lado a lado.
+- Desenho oficial: "r" separado; "e", "m" e "o" unidos; base do "e" cortada reta; quadradinho entre o "e" e o "m"; cantos das hastes levemente arredondados. Só "remo", sem "polímeros" (decisão do Luiz).
+- No HTML é `<span class="wm" aria-hidden="true"></span>` dentro de `a.logo`, `a.f-logo` e `.word.sheet-big` (8 páginas). `.wm` (fim de `wireframe.css`): máscara com `background: currentColor`, altura `0.5535em` (a mesma altura que o texto em Archivo tinha, para a proporção com o símbolo não mudar) e proporção 145,57 / 36,65. Ajustes de posição por contexto em `em` (header, footer, folhas), medidos para a palavra ficar onde o texto ficava.
+- Na abertura e na transição a palavra sobe inteira (antes as 4 letras subiam uma a uma); o JS não mudou, só há um `<span>` em vez de quatro.
+- Se a Remo enviar o vetor oficial (AI/PDF/EPS/SVG), basta trocar `remo-wordmark.svg` e conferir a proporção em `.wm`.
 
 ## 5. Páginas e estrutura
 
 | Página | Seções |
 |---|---|
-| `index.html` | Hero principal → "Escolha por onde começar" (6 cards) → faixa "Parceiro tecnológico da LG Chem desde 2001" (`#parceria`) → contato |
+| `index.html` | Hero principal → "Escolha por onde começar" (6 cards) → contato |
 | `produtos.html` | Abertura com foto → índice "Escolha a linha." (`#materiais`) + destaque "Parceria LG Chem" (`.lg-note`) → esteira → contato |
 | `produto.html?linha=<id>` | Página única das 9 linhas, preenchida por `data.js` (ids: abs, abs-pc, asa, pbt, pc, pc-compostos, pmma, pom, san) |
 | `historia.html` | Abertura → manifesto → parallax → "A Remo" → linha do tempo com fotos → depoimento → números → esteira → contato |
@@ -130,7 +138,7 @@ Construção: triângulo amarelo arredondado ao fundo (só contorno); triângulo
 - Fim das páginas: faixa de números → esteira horizontal "Para onde agora?" (cards das outras seções, com pin no desktop) → contato → footer. **Uma única seção de contato por página**, sempre logo depois do `</main>` (comentário `<!-- CONTATO (todas as páginas) -->`).
 - **Sem barra superior do wireframe** (removida na v5.17, junto com "Rever abertura"; o botão "Mostrar notas de UX" saiu na v5.16). A versão fica só no comentário `<!-- WIREFRAME vX.Y -->`. As anotações `.note` continuam no HTML, sempre ocultas. Para rever a abertura: `sessionStorage.clear()` e recarregar.
 
-## 6. Componentes (estado atual, v5.28)
+## 6. Componentes (estado atual, v5.29)
 
 ### 6.1 Hero principal (home) — aprovado, não mexer na tipografia nem na organização
 - Tudo à esquerda e embaixo: rótulo "Polímeros especiais · Desde 1989", título "Polímeros de engenharia," (menor, branco) + "feitos sob medida." (grande, amarelo), palavra que troca a cada 3 s (sob medida, para você, personalizados, com precisão, do seu jeito), traço amarelo que se desenha e estica a cada troca, texto de apoio, botões "Sobre nós" e "Nossos produtos".
@@ -234,6 +242,7 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 | v5.16 | Responsividade em notebooks (1280 a 1600 px e telas baixas): margens, header, botões e respiro proporcionais; títulos das aberturas pela altura; "Sobre nós" à direita entre 901 e 1080 px; botão "Mostrar notas de UX" removido |
 | v5.17 | Barra preta do wireframe removida (versão vira comentário no HTML); abertura da home ocupa a tela inteira |
 | v5.18 | Seção de contato duplicada removida em História, Valores, Tecnologias e Onde atuamos (fica só a de depois do `</main>`, como na home) |
+| v5.29 | Palavra "remo" na tipografia oficial em vetor (header, footer, abertura e transição); faixa da LG Chem removida da home (vai virar seção em História) |
 | v5.28 | Manifestos de História e Valores com peso 400; valores sem trava de rolagem, escolha livre e troca automática a cada 3 s com barra de progresso; título da visão à esquerda, maior e colado aos valores; lista com a altura exata do card |
 | v5.27 | Valores: manifesto da missão no mesmo padrão tipográfico do manifesto de História |
 | v5.26 | Valores: manifesto sem sublinhados em seção escura própria; visão e valores em seção clara; indicador deslizante na lista; troca do card com cortina e balanço; espaço da foto no card; esteira de arrastar no celular |
@@ -257,6 +266,7 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 - **Foto antiga de Valores:** `sec-valores.jpg` saiu da abertura, mas continua nos cards "Valores" das esteiras e da home.
 - **Valores (v5.26):** 10 fotos dos valores (Flow, 16:9) ainda não geradas, só o espaço; esteira do celular não testada com o dedo num aparelho real.
 - **Valores (v5.20):** frases "Na prática" a validar; LG Chem "desde 2001" não aparece em nenhum documento oficial (vem do site e de História).
+- **LG Chem (decidido em 10/11/2026):** sai da home (feito na v5.29) e vira seção em História no lugar de "Clientes", com fonte livre parecida com a LG Smart, vermelho `#A50034`, logo e foto de capa do site atual da Remo e fotos sem marca do Flow. Plano aprovado; **ainda não feita**. O destaque em Produtos (`.lg-note`) continua.
 - **Arquivos sem uso:** fotos antigas em `assets/hero/` e `remo-simbolo-contorno.svg` (não apagados).
 - **Conteúdo real que falta:** CNPJ (razão social e certificado ISO nº 46074/25/I recebidos, ainda não aplicados no site); dados ambientais reais; faixas de dureza validadas; logos de clientes e depoimento autorizado; WhatsApp comercial; marcos de 2016 em diante; arquivo oficial da marca (AI/PDF/EPS); fotos reais de "Onde é usado" (hoje placeholders).
 

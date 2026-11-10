@@ -1903,15 +1903,7 @@ body:has(#product-page) { background-image: none; }
 .vr-ticks i { width: 14px; height: 3px; border-radius: 99px; background: var(--line-l); transition: background .4s; }
 .vr-ticks i.on { background: var(--yellow); }
 
-/* LG Chem: faixa escura na home e destaque abaixo do índice de Produtos */
-.lg-band { background: var(--night); color: var(--white); border-top: 1px solid var(--line-d); padding-top: clamp(64px, 8vw, 112px) !important; padding-bottom: clamp(64px, 8vw, 112px) !important; }
-.lg-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 56px; align-items: end; }
-.lg-grid h2 { margin: 0; }
-.lg-grid .lead { color: var(--steel); max-width: 52ch; margin: 20px 0 28px; }
-.lg-stat { border-top: 1px solid var(--line-d); padding-top: 20px; }
-.lg-stat b { display: block; font: 600 clamp(56px, 7vw, 112px)/.9 var(--f-sans); font-stretch: 125%; letter-spacing: -.04em; }
-.lg-stat b small { font-size: .3em; letter-spacing: 0; margin-left: 6px; color: var(--yellow); }
-.lg-stat .mono { display: block; margin-top: 14px; color: var(--steel); }
+/* LG Chem: destaque abaixo do índice de Produtos (a faixa da home saiu na v5.29) */
 .lg-note { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 40px; padding: 22px 24px; border: 1px solid var(--line-l); border-left: 3px solid var(--yellow); border-radius: 6px; background: var(--white); }
 .lg-note .mono { color: var(--navy); text-transform: uppercase; letter-spacing: .08em; font-size: 12px; }
 .lg-note p { margin: 0; font-size: 17px; color: var(--ink); }
@@ -1941,5 +1933,16 @@ body:has(#product-page) { background-image: none; }
   .vr-sw-foot .mono b { color: var(--navy); font-weight: 600; }
   @keyframes vrNudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
   .vr-count { display: none; }
-  .lg-grid { grid-template-columns: 1fr; gap: 32px; }
 }
+
+/* ---------- v5.29: tipografia oficial "remo" em vetor (assets/logo/remo-wordmark.svg) ---------- */
+/* A palavra é desenhada por máscara e pega a cor do contexto (branca no header, azul-escura no footer e nas folhas).
+   Altura = altura que o texto em Archivo tinha (0,5535 em), para a proporção com o símbolo não mudar. */
+.wm { display: inline-block; flex: none; height: .5535em; aspect-ratio: 145.57 / 36.65; background: currentColor;
+  -webkit-mask: url("logo/remo-wordmark.svg") center / 100% 100% no-repeat; mask: url("logo/remo-wordmark.svg") center / 100% 100% no-repeat; }
+.site-header .logo { min-height: 1em; }
+.site-header .logo .wm { margin-left: .0617em; transform: translateY(.0473em); }
+.f-logo { min-height: .8em; }
+.f-logo .wm { margin: 0 0 .0515em .0617em; }
+.sheet .sheet-lockup .word, .preloader .sheet-lockup .word { display: block; line-height: 0; padding: .2443em 0 .1627em; }
+.sheet .sheet-lockup .word .wm, .preloader .sheet-lockup .word .wm { display: block; }
