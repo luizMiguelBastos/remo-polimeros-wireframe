@@ -1,4 +1,4 @@
-# Remo Polímeros · Wireframe v5.31
+# Remo Polímeros · Wireframe v5.32
 
 Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e distribuidora de resinas de engenharia desde 1989; site atual: remopolimeros.com.br). Serve para validar **usabilidade**, **navegação**, **onde fica cada informação** e a **identidade visual** antes das fotos reais. A meta é um site nível Awwwards: movimento, credibilidade e cara de feito sob medida.
 
@@ -29,8 +29,8 @@ Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e d
 - **README:** atualizar a cada versão junto com o resto (estado, histórico, pendências).
 - **Versão (furar cache):** a cada versão, trocar `?v=X.Y` em todos os HTML, o comentário `<!-- WIREFRAME vX.Y -->` no topo do `<body>` (a barra superior saiu na v5.17; o comentário mantém a conferência do deploy por `curl | grep`) e o título dinâmico da página de produto em `wireframe.js`:
   ```bash
-  for f in *.html; do sed -i '' -E 's/\?v=5\.31/?v=5.32/g; s/WIREFRAME v5\.31/WIREFRAME v5.32/g; s/Wireframe v5\.31/Wireframe v5.32/g' "$f"; done
-  sed -i '' 's/Wireframe v5\.31/Wireframe v5.32/' assets/wireframe.js
+  for f in *.html; do sed -i '' -E 's/\?v=5\.32/?v=5.33/g; s/WIREFRAME v5\.32/WIREFRAME v5.33/g; s/Wireframe v5\.32/Wireframe v5.33/g' "$f"; done
+  sed -i '' 's/Wireframe v5\.32/Wireframe v5.33/' assets/wireframe.js
   ```
 - **Testes no desktop:** servidor local `python3 -m http.server 8765` na pasta do projeto; testar no **Chrome real do Luiz** (extensão Claude in Chrome: aba própria, ações em lote, zoom para detalhes, fechar a aba no fim). Conferir 1440 px, console e rolagem lateral. Simular chegada de outra página: `sessionStorage.setItem('remo-nav','1')`; rever a abertura completa: `sessionStorage.clear()` e recarregar.
 - **Tudo que muda no desktop precisa ter o seu padrão no celular.** Nenhuma alteração é dada como pronta sem a validação mobile abaixo. Se algo não couber, adaptar (empilhar, reduzir, esconder detalhe decorativo) e dizer ao Luiz o que mudou no mobile.
@@ -92,7 +92,10 @@ Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e d
 
 **Texturas:**
 - Seções claras (`.light`): papel pontilhado (1 px a cada 18 px) + moléculas em baixo contraste (`molField`).
-- Seções escuras sem foto: linhas de fluxo onduladas bem sutis (`flowField`).
+- Seções escuras sem foto (v5.32): o **mesmo pontilhado dos fundos claros, em tom claro** (grade de 22 px), e o **símbolo da marca gigante em contorno**, recortado num canto (`assets/logo/remo-simbolo-linha.svg`, opacidade 0,2, leve paralaxe). As linhas de fluxo saíram: o Luiz achou genéricas, sem identidade.
+- **Header (v5.32):** sobre seção escura lisa o vidro fica **cinza-claro** (`.site-header.on-dark`, `rgba(190,194,204,.46)`), o mesmo tom que ele tem sobre seção clara; não escurece mais. Sobre foto (hero, faixa de fábrica, esteira ambiental no desktop) e sobre seção clara continua como era.
+- **Hero das páginas internas (v5.32):** a base da foto se dissolve na seção seguinte (`.page-hero.photo::after` com a cor e o pontilhado dela, máscara em degradê suave). Quando a seção seguinte é clara, o hero ganha folga embaixo do texto para o degradê. A home não muda (foto em tela cheia). A foto de fundo da faixa de contato também nasce do azul-noite, sem linha de corte.
+- **Manifestos (História e Valores):** peso 500 (400 ficou leve demais, 600 pesado demais).
 - Grão de filme animado na página toda.
 - Cotas técnicas finas (ex.: "Ø 3,0 mm") nas seções brancas.
 
@@ -139,7 +142,7 @@ Construção: triângulo amarelo arredondado ao fundo (só contorno); triângulo
 - Fim das páginas: faixa de números → esteira horizontal "Para onde agora?" (cards das outras seções, com pin no desktop) → contato → footer. **Uma única seção de contato por página**, sempre logo depois do `</main>` (comentário `<!-- CONTATO (todas as páginas) -->`).
 - **Sem barra superior do wireframe** (removida na v5.17, junto com "Rever abertura"; o botão "Mostrar notas de UX" saiu na v5.16). A versão fica só no comentário `<!-- WIREFRAME vX.Y -->`. As anotações `.note` continuam no HTML, sempre ocultas. Para rever a abertura: `sessionStorage.clear()` e recarregar.
 
-## 6. Componentes (estado atual, v5.31)
+## 6. Componentes (estado atual, v5.32)
 
 ### 6.1 Hero principal (home) — aprovado, não mexer na tipografia nem na organização
 - Tudo à esquerda e embaixo: rótulo "Polímeros especiais · Desde 1989", título "Polímeros de engenharia," (menor, branco) + "feitos sob medida." (grande, amarelo), palavra que troca a cada 3 s (sob medida, para você, personalizados, com precisão, do seu jeito), traço amarelo que se desenha e estica a cada troca, texto de apoio, botões "Sobre nós" e "Nossos produtos".
@@ -173,7 +176,7 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 - A esteira "Como trabalhamos" fica (o site já tem 3 esteiras; não criar outra).
 
 ### 6.5.2 Valores · manifesto da missão, visão e valores em rolagem (v5.26)
-- **Missão** (`section.vm-dark#missao`, azul-noite com as linhas de fluxo, sem padding próprio): a missão é um **manifesto** (`#mf2`) travado na tela por 1,4 altura de tela; as palavras acendem com a rolagem; barra "Role para ler". **Sem sublinhados** (reprovados na v5.25). **Tipografia igual à do manifesto de História** (v5.27; peso 400 nos dois manifestos desde a v5.28, o 600 foi reprovado por "muito peso"): `clamp(24px, 3vw, 46px)/1.18`, 24ch, alinhado à esquerda, bloco centralizado na página (o centralizado e maior da v5.26 foi reprovado: "muito grande e nada elegante").
+- **Missão** (`section.vm-dark#missao`, azul-noite com o pontilhado e o símbolo, sem padding próprio): a missão é um **manifesto** (`#mf2`) travado na tela por 1,4 altura de tela; as palavras acendem com a rolagem; barra "Role para ler". **Sem sublinhados** (reprovados na v5.25). **Tipografia igual à do manifesto de História** (v5.27; peso 400 nos dois manifestos desde a v5.28, o 600 foi reprovado por "muito peso"): `clamp(24px, 3vw, 46px)/1.18`, 24ch, alinhado à esquerda, bloco centralizado na página (o centralizado e maior da v5.26 foi reprovado: "muito grande e nada elegante").
 - **Visão e valores** (`section.light.vr-sec#principios`, clara com moléculas nas laterais):
   1. Título da **visão** **alinhado à esquerda e maior** (v5.28, `clamp(48px, 6vw, 100px)`), sem o rótulo "Visão" e sem o cabeçalho "Nossos valores · 01 / 10", colado aos valores para ler como uma seção só: "Criar, transformar e evoluir!" numa linha no desktop, palavras sobem uma a uma; frase "A tecnologia dos polímeros..." em mono.
   2. **Valores** (`#vr`): lista dos 10 à esquerda com um **indicador que desliza** até o ativo (`.vr-ind`, faixa amarela + fundo Navy suave) e **card branco** à direita (cota, valor, "Na prática", fonte, 10 marcadores). **Sem trava de rolagem desde a v5.28** (o Luiz achou a navegação travada): o usuário escolhe o valor por clique ou hover; **troca automática a cada 3 s** com a barra amarela na base do card (`.vr-bar`), pausa com o mouse/foco na lista ou no card, só roda com a seção na tela e só no desktop; depois do 10 volta ao 01. **A lista tem exatamente a altura do card** (grid `stretch`, itens com `flex: 1`): topo e base alinhados. **Troca do card:** o conteúdo sai na direção da rolagem, uma cortina Navy (`.vr-wipe`, com fio amarelo) cruza o card, o novo conteúdo entra em camadas e o card balança de leve (elastic). Card com altura fixa (a do maior valor). **Espaço da foto** (`.vr-media`, 2:1, máx. 30vh) no topo do card, com a legenda `[foto · Valor]` que troca junto; fotos ainda não geradas (aguardam aprovação do Luiz para gastar créditos do Flow). **Celular:** esteira arrastada com o dedo (`.vr-sw`, montada pelo JS a partir da lista), sem rolagem automática nem trava: encaixe card a card (`scroll-snap`), card com 85% da largura e o próximo à mostra na borda direita da tela, sinalizador "Arraste para o lado →" que some no primeiro arraste, contador "01 / 10" com 10 marcadores. A lista empilhada saiu do celular. Cota vertical escondida.
@@ -192,6 +195,7 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 - Textos em rascunho, reescritos a partir da página "Tecnologia LG".
 
 ### 6.5.4 Valores · compromisso ambiental em esteira com fotos e vidro (v5.31)
+- **v5.32, fichas brancas:** o Luiz pediu cards brancos e informação mais característica. O cartão ativo é uma **ficha branca fosca** (`rgba(244,245,247,.86)` + desfoque) com: número e tema, frase ou dado em destaque (o "%" em azul-escuro com grifo amarelo), práticas em linhas com marcador de conferido e **faixa escura "Como comprovamos" de ponta a ponta no rodapé**. As abas inativas também são brancas. No celular o cartão de texto segue o mesmo padrão. (O texto abaixo descreve a base da v5.31; as cores dos cartões são as desta linha.)
 - `section.env2#meio-ambiente`. **Identidade por fotos, sem verde** (decisão do Luiz: imagens fazem mais sentido que cores). O Luiz achou a página "muito azul" e pediu mais do **efeito de vidro do header**; por isso a foto ocupa a seção e o texto fica em vidro.
 - **Conteúdo real** (reunião com o marketing + Política Ambiental + Carta Resposta a Clientes), em 5 painéis: 01 Conformidade legal, 02 Resíduos, 03 Energia (contador "50%" de energia renovável), 04 Produção, 05 Pessoas e embalagens. Cada painel: práticas em tópicos e o rótulo "Como comprovamos". Saíram os contadores de rascunho e tudo o que não está em documento (painéis solares, área verde, PCR, % de aparas e de água).
 - **Desktop:** `#env-pin` trava na tela (100svh). **A foto do painel ativo ocupa a seção inteira ao fundo** (`#env-bg`, 5 imagens empilhadas que trocam por opacidade, com zoom lento) sob um véu (`.env2-veil`) que escurece o topo e a base. Os painéis são **cartões de vidro** como o header (`rgba(15,22,38,.42)` + `backdrop-filter: blur(18px) saturate(1.4)`, borda clara), alinhados embaixo à esquerda: o ativo abre com o conteúdo e os outros viram abas pequenas (número e tema). A esteira desliza com a rolagem (`end = max(distância, 2 alturas de tela)`, `scrub`, `refreshPriority: 1`); contador "02 / 05" e barra amarela; clicar numa aba leva até ela. O desfoque só é aplicado no cartão ativo (medido: ~60 quadros por segundo no Chrome headless).
@@ -223,7 +227,7 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
   4. Abertura `#preloader` (timeline da marca empilhada → `heroIn`).
   5. Hero: slides, indicador de setor, parallax em camadas (`.hero-slides`, `#field`, `.hero-inner`, `.hero-sector`, `.hero-iso`).
   6. `molField(host)`: moléculas em canvas (`data-mol="ink"` cores do claro; `data-mol-density` multiplica; `data-mol-edge` só faixas laterais; ResizeObserver redesenha para não esticar; ligações amarelas ao cursor).
-  7. `flowField(host)`: ondas nas seções escuras (cores `rgba(255,209,0,.09)` e `rgba(110,140,205,.075)`, desvio de 10 px num raio de 160 px). Atribuição automática a toda `main section` que não seja `.light`, `.hero`, `.page-hero`, `.px-band` nem tenha `[data-mol]`.
+  7. `darkTex(host)`: cria `div.dk-layer` (pontilhado claro) e, nas seções com mais de 440 px de altura (menos `.env2` e `.num-band`), o símbolo `i.dk-mark` (alternando canto direito e esquerdo). Atribuição automática a toda `main section` que não seja `.light`, `.hero`, `.page-hero`, `.px-band`, `.lgc`. `hdrTone()` (junto do `onScroll`) liga `.on-dark` no header conforme a seção que está atrás dele.
   8. Esteira "Para onde agora?" (pin só em `.rail:not(.rail-free) .rail-track`).
   9. Índice de produtos (`#mat-index`), guia (`#matrix`), comparador.
   10. Página de produto: preenche `data-f` a partir de `?linha=`, `fitName`, aplicações com "ver mais", anterior/próxima, título dinâmico.
@@ -235,6 +239,7 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
   - `display:flex` em `<label>` com texto e link quebra a frase em colunas.
 
 ## 8. Imagens (Google Flow)
+- **v5.32, qualidade:** 9 fotos reexportadas em WebP a partir dos originais do Flow em `Downloads`: `lg-pecas`, `lg-eletronicos`, `lg-planta`, `lg-granulos`, `lg-laboratorio` e `val-parceria` (originais 2K → 2000 × 1116, qualidade 82) e `val-conformidade`, `val-energia`, `val-pessoas` (1376 × 768, qualidade 88). Os `.jpg` antigos dessas 9 foram apagados com autorização do Luiz. **As demais fotos (`sec-*`, `tl-*`, `seg-*`, `dz-*`, `fx-*`, `val-agua`, `val-reciclagem`) não têm original melhor no computador**: estão em 1376 × 768, o tamanho padrão do Flow, e por isso perdem nitidez em tela grande. Para melhorar é preciso baixar a versão 2K de cada uma no Flow (não gasta créditos). Atenção: os arquivos `remo-dz-*` e `remo-fx-*` de `Downloads` **não** são as fotos `dz-*`/`fx-*` do site.
 
 - Geradas no Flow (projeto `509da539-9750-4b16-9d3c-a0bc2c96e240`), 16:9, Nano Banana Pro, 1 por vez, pelo Chrome do Luiz.
 - **Nunca pedir "darker empty area on the left"** (gera faixa escura reta). Usar "even, balanced lighting across the whole frame, no vignette, no dark overlay on any side".
@@ -259,6 +264,7 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 | v5.16 | Responsividade em notebooks (1280 a 1600 px e telas baixas): margens, header, botões e respiro proporcionais; títulos das aberturas pela altura; "Sobre nós" à direita entre 901 e 1080 px; botão "Mostrar notas de UX" removido |
 | v5.17 | Barra preta do wireframe removida (versão vira comentário no HTML); abertura da home ocupa a tela inteira |
 | v5.18 | Seção de contato duplicada removida em História, Valores, Tecnologias e Onde atuamos (fica só a de depois do `</main>`, como na home) |
+| v5.32 | Site todo: header cinza-claro sobre seção escura; pontilhado + símbolo no lugar das linhas de fluxo; hero interno se dissolve na seção seguinte; manifestos em peso 500; esteira ambiental com fichas brancas; 9 fotos reexportadas em WebP |
 | v5.31 | Valores: compromisso ambiental vira esteira de 5 painéis com conteúdo real, foto do painel ativo ao fundo e cartões de vidro; sai a faixa "A Remo em números" de Valores |
 | v5.30 | História: seção LG Chem com a identidade da LG (fonte Catamaran, vermelho) no lugar de "Clientes"; mosaico com molduras para as fotos |
 | v5.29 | Palavra "remo" na tipografia oficial em vetor (header, footer, abertura e transição); faixa da LG Chem removida da home (vai virar seção em História) |
@@ -285,6 +291,7 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 - **Foto antiga de Valores:** `sec-valores.jpg` saiu da abertura, mas continua nos cards "Valores" das esteiras e da home.
 - **Valores (v5.26):** 10 fotos dos valores (Flow, 16:9) ainda não geradas, só o espaço; esteira do celular não testada com o dedo num aparelho real.
 - **Valores (v5.20):** frases "Na prática" a validar; LG Chem "desde 2001" não aparece em nenhum documento oficial (vem do site e de História).
+- **v5.32:** nada foi conferido no Chrome real nem num celular de verdade; fotos de hero ainda em 1376 px (baixar 2K no Flow); `flowField` removido do JS, regra `.flow-bg` sobrou no CSS.
 - **Ambiental (v5.31):** as 3 fotos novas ainda não foram aprovadas pelo Luiz dentro da página; confirmar com a Remo se o "50% renovável" pode ser citado e qual é a fonte; textos em rascunho; CSS antigo `.env`, `.env-*` sem uso. **Seção ISO ainda não atualizada** com os dados reais do certificado (nº 46074/25/I, RINA, validade 20/03/2028, escopo, PDF): planejada, aguardando pedido.
 - **LG Chem (v5.30):** fotos do Flow ainda não aprovadas pelo Luiz dentro da página; a foto de capa tem baixa resolução; textos da seção em rascunho; confirmar com a Remo o uso da marca LG Chem; "desde 2001" sem documento oficial. O destaque em Produtos (`.lg-note`) continua.
 - **Arquivos sem uso:** fotos antigas em `assets/hero/` e `remo-simbolo-contorno.svg` (não apagados).

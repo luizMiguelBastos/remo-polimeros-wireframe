@@ -60,10 +60,21 @@
   // ---------- Header que some ao descer ----------
   const header = $("#header");
   let lastY = 0;
+  // Sobre seção escura lisa o vidro do header clareia (cinza), em vez de escurecer; sobre foto e sobre seção clara fica como está
+  let toneQ = false;
+  const hdrTone = () => {
+    toneQ = false;
+    if (!header) return;
+    const hit = document.elementsFromPoint(innerWidth / 2, header.offsetHeight / 2).find(e => !header.contains(e) && e.closest("section, footer"));
+    const sec = hit && hit.closest("section, footer");
+    header.classList.toggle("on-dark", !!sec && !sec.matches(".light, .lgc, .footer, .hero, .page-hero, .px-band") && !(sec.matches(".env2") && innerWidth > 900));
+  };
   const onScroll = y => {
     if (header) header.classList.toggle("scrolled", y > 60);
+    if (!toneQ) { toneQ = true; requestAnimationFrame(hdrTone); }
     lastY = y;
   };
+  addEventListener("load", hdrTone); addEventListener("resize", hdrTone); setTimeout(hdrTone, 600);
   if (lenis) lenis.on("scroll", e => onScroll(e.scroll));
   else addEventListener("scroll", () => onScroll(scrollY), { passive: true });
 
@@ -358,50 +369,21 @@
     new IntersectionObserver(([en]) => { on = en.isIntersecting; }).observe(host);
     if (reduced) { on = true; draw(); } else loop();
   };
-  // Fundos escuros: curvas de fluxo, como polímero escorrendo na extrusão
-  const flowField = host => {
-    const cv = document.createElement("canvas");
-    cv.className = "mol-bg flow-bg"; cv.setAttribute("aria-hidden", "true");
-    host.prepend(cv);
-    const ctx = cv.getContext("2d");
-    let W = 0, H = 0, lines = [], mx = -999, my = -999, on = false, t = 0;
-    const size = () => {
-      const dpr = Math.min(devicePixelRatio || 1, 2);
-      W = host.clientWidth; H = host.clientHeight;
-      cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const n = Math.max(8, Math.min(22, Math.round(H / 46)));
-      lines = Array.from({ length: n }, (_, i) => ({
-        y: (i + .5) * H / n, a1: 10 + Math.random() * 22, f1: .0018 + Math.random() * .0016, p1: Math.random() * 6.3,
-        a2: 4 + Math.random() * 8, f2: .006 + Math.random() * .004, p2: Math.random() * 6.3, s: .25 + Math.random() * .35, y2: Math.random() < .12
-      }));
-    };
-    const draw = () => {
-      ctx.clearRect(0, 0, W, H);
-      if (!reduced) t += 1;
-      for (const l of lines) {
-        ctx.beginPath();
-        for (let x = -10; x <= W + 10; x += 12) {
-          let y = l.y + Math.sin(x * l.f1 + l.p1 + t * .004 * l.s) * l.a1 + Math.sin(x * l.f2 + l.p2 - t * .007 * l.s) * l.a2;
-          const dx = x - mx, dy = y - my, d = Math.hypot(dx, dy);
-          if (d < 160) y += (dy >= 0 ? 1 : -1) * (1 - d / 160) * 10;
-          x === -10 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = l.y2 ? "rgba(255,209,0,.09)" : "rgba(110,140,205,.075)";
-        ctx.lineWidth = l.y2 ? 1.2 : 1;
-        ctx.stroke();
-      }
-    };
-    const loop = () => { if (on) draw(); requestAnimationFrame(loop); };
-    size(); addEventListener("resize", size);
-    if (window.ResizeObserver) { let lw = W, lh = H; new ResizeObserver(() => { if (host.clientWidth !== lw || host.clientHeight !== lh) { size(); lw = W; lh = H; } }).observe(host); }
-    host.addEventListener("pointermove", e => { const r = host.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; });
-    host.addEventListener("pointerleave", () => { mx = my = -999; });
-    new IntersectionObserver(([en]) => { on = en.isIntersecting; }).observe(host);
-    if (reduced) { on = true; draw(); } else loop();
+  // Fundos escuros: o pontilhado dos fundos claros, em tom claro, e o símbolo da marca em contorno, recortado num canto
+  let dkN = 0;
+  const darkTex = host => {
+    const layer = document.createElement("div");
+    layer.className = "dk-layer"; layer.setAttribute("aria-hidden", "true");
+    host.prepend(layer);
+    if (host.matches(".env2, .num-band") || host.offsetHeight < 440) return;
+    const m = document.createElement("i");
+    m.className = "dk-mark" + (dkN++ % 2 ? " alt" : "");
+    layer.appendChild(m);
+    if (motion) gsap.fromTo(m, { yPercent: -7 }, { yPercent: 7, ease: "none", scrollTrigger: { trigger: host, start: "top bottom", end: "bottom top", scrub: true } });
   };
-  // Toda seção azul-escura sem foto de fundo ganha as curvas de fluxo
+  // Toda seção azul-escura sem foto de fundo ganha o pontilhado e o símbolo
   $$("main section:not(.light):not(.hero):not(.page-hero):not(.px-band):not(.lgc):not([data-mol])").forEach(sec => sec.setAttribute("data-mol", ""));
-  $$("[data-mol]").forEach(host => (host.dataset.mol === "ink" ? molField : flowField)(host));
+  $$("[data-mol]").forEach(host => (host.dataset.mol === "ink" ? molField : darkTex)(host));
 
   // ---------- Cursor: rastro de moléculas atrás do ponto amarelo ----------
   if (finePointer && !reduced && $("#cursor")) {
@@ -1203,7 +1185,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.31`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.32`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
