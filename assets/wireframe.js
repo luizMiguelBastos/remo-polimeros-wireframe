@@ -326,10 +326,11 @@
   // ---------- Molécula da marca: fundo de pontos e linhas nas seções escuras ----------
   const molField = host => {
     const cv = document.createElement("canvas");
-    cv.className = "mol-bg"; cv.setAttribute("aria-hidden", "true");
+    const ink = host.dataset.mol === "ink";
+    // No fundo azul a rede fica atrás de todo o conteúdo da seção
+    cv.className = ink ? "mol-bg" : "mol-bg flow-bg"; cv.setAttribute("aria-hidden", "true");
     host.prepend(cv);
     const ctx = cv.getContext("2d");
-    const ink = host.dataset.mol === "ink";
     let W = 0, H = 0, nodes = [], mx = -999, my = -999, on = false;
     const size = () => {
       const dpr = Math.min(devicePixelRatio || 1, 2);
@@ -342,10 +343,10 @@
       // No celular a faixa fica só na margem de 24 px, sem passar por cima dos botões das linhas
       band = !edge ? 0 : W < 700 ? 22 : Math.min(W / 2, Math.max(120, (W - Math.min(W, 1320)) / 2 + 40));
       const area = edge ? 2 * band * H : W * H;
-      const n = Math.round(Math.min(90, area / 16000) * (+host.dataset.molDensity || 1));
+      const n = Math.round(Math.min(90, area / 16000) * (+host.dataset.molDensity || (ink ? 1 : .7)));
       nodes = Array.from({ length: n }, (_, i) => {
         const x = edge ? (i % 2 ? W - Math.random() * band : Math.random() * band) : Math.random() * W;
-        return { x, y: Math.random() * H, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25, r: 1.2 + Math.random() * 2.2, y2: Math.random() < .45, right: edge && i % 2 === 1 };
+        return { x, y: Math.random() * H, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25, r: 1.2 + Math.random() * 2.2, rot: Math.random() * Math.PI / 3, y2: Math.random() < .45, right: edge && i % 2 === 1 };
       });
     };
     const edge = "molEdge" in host.dataset;
@@ -371,8 +372,19 @@
         if (dm < 180) { ctx.strokeStyle = `rgba(255,209,0,${(1 - dm / 180) * .35})`; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(mx, my); ctx.stroke(); }
       }
       for (const a of nodes) {
-        ctx.fillStyle = a.y2 ? "rgba(255,209,0,.85)" : (ink ? "rgba(0,31,95,.55)" : "rgba(110,140,205,.65)");
-        ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2); ctx.fill();
+        if (ink) {
+          ctx.fillStyle = a.y2 ? "rgba(255,209,0,.85)" : "rgba(0,31,95,.55)";
+          ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2); ctx.fill();
+          continue;
+        }
+        // Fundo azul: a mesma rede em negativo, mas cada nó é um pequeno hexágono vazado (o miolo é apagado para as ligações não atravessarem)
+        const R = 2.6 + a.r * 1.25;
+        ctx.beginPath();
+        for (let k = 0; k < 6; k++) { const an = a.rot + k * Math.PI / 3; k ? ctx.lineTo(a.x + Math.cos(an) * R, a.y + Math.sin(an) * R) : ctx.moveTo(a.x + Math.cos(an) * R, a.y + Math.sin(an) * R); }
+        ctx.closePath();
+        ctx.globalCompositeOperation = "destination-out"; ctx.fillStyle = "#000"; ctx.fill();
+        ctx.globalCompositeOperation = "source-over";
+        ctx.strokeStyle = a.y2 ? "rgba(255,209,0,.7)" : "rgba(110,140,205,.6)"; ctx.lineWidth = 1; ctx.stroke();
       }
     };
     const loop = () => { if (on) draw(); requestAnimationFrame(loop); };
@@ -384,87 +396,9 @@
     new IntersectionObserver(([en]) => { on = en.isIntersecting; }).observe(host);
     if (reduced) { on = true; draw(); } else loop();
   };
-  // Fundos escuros: cadeias de polímero. Poucas cadeias longas e sinuosas, feitas de pequenos círculos ligados em sequência,
-  // com grupos laterais, que ondulam bem devagar. Remete a moléculas, como a rede dos fundos claros, mas com outro desenho.
-  const chainField = (host, idx) => {
-    const cv = document.createElement("canvas");
-    cv.className = "mol-bg flow-bg"; cv.setAttribute("aria-hidden", "true");
-    host.prepend(cv);
-    const ctx = cv.getContext("2d");
-    const BOND = 15, TAU = Math.PI * 2;
-    let W = 0, H = 0, chains = [], mx = -999, my = -999, on = false, t = idx * 3.1;
-    // Sorteio com semente: as cadeias não mudam de lugar quando a seção muda de altura
-    const rnd = (a, b) => { const v = Math.sin(a * 127.1 + b * 311.7 + idx * 74.7) * 43758.5453; return v - Math.floor(v); };
-    const size = () => {
-      const dpr = Math.min(devicePixelRatio || 1, 2);
-      W = host.clientWidth; H = host.clientHeight;
-      cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const bands = Math.max(1, Math.round(H / 520)), bh = H / bands, per = W < 700 ? 1 : W < 1100 ? 2 : 3;
-      chains = [];
-      for (let b = 0; b < bands; b++) for (let k = 0; k < per; k++) chains.push({
-        x: (k + .15 + rnd(b, k) * .7) * W / per, y: (b + .2 + rnd(k + 5, b) * .6) * bh, a: rnd(b + 2, k + 9) * TAU,
-        n: 22 + Math.floor(rnd(k + 1, b + 3) * 26), f1: .05 + rnd(b + 4, k) * .04, f2: .14 + rnd(k, b + 6) * .08, p1: rnd(b, k + 7) * TAU, p2: rnd(k + 8, b) * TAU,
-        A: .9 + rnd(b + 1, k + 1) * .5, B: .3 + rnd(k + 2, b + 2) * .25, s: .5 + rnd(b + 3, k + 3) * .7, side: 3 + Math.floor(rnd(k + 4, b + 4) * 3)
-      });
-      draw(true);
-    };
-    const draw = full => {
-      const top = host.getBoundingClientRect().top;
-      const y0 = full ? 0 : Math.max(0, -top - 60), y1 = full ? H : Math.min(H, innerHeight - top + 60);
-      if (y1 <= y0) return;
-      if (!reduced) t += .005;
-      ctx.clearRect(0, y0, W, y1 - y0);
-      ctx.save(); ctx.beginPath(); ctx.rect(0, y0, W, y1 - y0); ctx.clip();
-      const dots = [], gold = [];
-      ctx.beginPath();
-      for (const c of chains) {
-        if (c.y < y0 - 760 || c.y > y1 + 760) continue;
-        // A cadeia cresce do meio para as duas pontas; a direção de cada ligação ondula com o tempo
-        const pts = [[c.x, c.y]];
-        for (const dir of [1, -1]) {
-          let x = c.x, y = c.y;
-          for (let i = 1; i <= c.n; i++) {
-            const s = i * dir, th = c.a + c.A * Math.sin(s * c.f1 + c.p1 + t * c.s) + c.B * Math.sin(s * c.f2 + c.p2 - t * c.s * 1.4);
-            x += Math.cos(th) * BOND * dir; y += Math.sin(th) * BOND * dir;
-            dir > 0 ? pts.push([x, y]) : pts.unshift([x, y]);
-          }
-        }
-        // O mouse afasta de leve os átomos próximos
-        for (const p of pts) { const dx = p[0] - mx, dy = p[1] - my, d = Math.hypot(dx, dy); if (d < 130 && d > .01) { const k = (1 - d / 130) * 12 / d; p[0] += dx * k; p[1] += dy * k; } }
-        ctx.moveTo(pts[0][0], pts[0][1]);
-        for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
-        for (let i = 1; i < pts.length - 1; i++) {
-          const p = pts[i];
-          (i % 9 === 4 ? gold : dots).push(p[0], p[1]);
-          if (i % c.side) continue;
-          // Grupo lateral: uma ligação curta para fora da cadeia, com um anel na ponta, alternando o lado
-          const tx = pts[i + 1][0] - pts[i - 1][0], ty = pts[i + 1][1] - pts[i - 1][1], L = Math.hypot(tx, ty) || 1, sg = (i / c.side) % 2 ? 1 : -1;
-          const nx = -ty / L * sg, ny = tx / L * sg;
-          ctx.moveTo(p[0], p[1]); ctx.lineTo(p[0] + nx * 10, p[1] + ny * 10);
-          ctx.moveTo(p[0] + nx * 16.5, p[1] + ny * 13.5); ctx.arc(p[0] + nx * 13.5, p[1] + ny * 13.5, 3, 0, TAU);
-        }
-      }
-      ctx.lineWidth = 1; ctx.lineCap = "round"; ctx.lineJoin = "round";
-      ctx.strokeStyle = "rgba(120,150,215,.2)"; ctx.stroke();
-      ctx.fillStyle = "rgba(120,150,215,.36)"; ctx.beginPath();
-      for (let k = 0; k < dots.length; k += 2) { ctx.moveTo(dots[k] + 1.7, dots[k + 1]); ctx.arc(dots[k], dots[k + 1], 1.7, 0, TAU); }
-      ctx.fill();
-      ctx.fillStyle = "rgba(255,209,0,.5)"; ctx.beginPath();
-      for (let k = 0; k < gold.length; k += 2) { ctx.moveTo(gold[k] + 2.2, gold[k + 1]); ctx.arc(gold[k], gold[k + 1], 2.2, 0, TAU); }
-      ctx.fill();
-      ctx.restore();
-    };
-    const loop = () => { if (on) draw(false); requestAnimationFrame(loop); };
-    size(); addEventListener("resize", size);
-    if (window.ResizeObserver) { let lw = W, lh = H; new ResizeObserver(() => { if (host.clientWidth !== lw || host.clientHeight !== lh) { size(); lw = W; lh = H; } }).observe(host); }
-    host.addEventListener("pointermove", e => { const r = host.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; });
-    host.addEventListener("pointerleave", () => { mx = my = -999; });
-    new IntersectionObserver(([en]) => { on = en.isIntersecting; }).observe(host);
-    if (!reduced) loop();
-  };
-  // Toda seção azul-escura sem foto de fundo ganha as cadeias de polímero
+  // Toda seção azul-escura sem foto de fundo ganha a rede de moléculas em negativo, com nós em hexágono
   $$("main section:not(.light):not(.hero):not(.page-hero):not(.px-band):not(.lgc):not([data-mol])").forEach(sec => sec.setAttribute("data-mol", ""));
-  $$("[data-mol]").forEach((host, k) => (host.dataset.mol === "ink" ? molField : chainField)(host, k));
+  $$("[data-mol]").forEach(host => molField(host));
 
   // ---------- Cursor: rastro de moléculas atrás do ponto amarelo ----------
   if (finePointer && !reduced && $("#cursor")) {
@@ -1264,7 +1198,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.37`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.39`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
