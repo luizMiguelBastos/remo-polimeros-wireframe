@@ -200,7 +200,7 @@ section { position: relative; padding: clamp(80px, 12vw, 160px) 0; }
 /* ---------- Manifesto ---------- */
 .manifesto { min-height: 100svh; display: flex; align-items: center; overflow: hidden; }
 .manifesto .texture { position: absolute; inset: 0; pointer-events: none; display: grid; place-items: end; padding: 24px; font: 11px var(--f-mono); color: var(--slate); }
-.manifesto p { font: 600 clamp(24px, 3vw, 46px)/1.14 var(--f-sans); font-stretch: 115%; letter-spacing: -.015em; margin: 0; max-width: 24ch; position: relative; }
+.manifesto p { font: 400 clamp(24px, 3vw, 46px)/1.18 var(--f-sans); font-stretch: 115%; letter-spacing: -.015em; margin: 0; max-width: 24ch; position: relative; }
 .manifesto .w { opacity: .14; }
 .manifesto .m-progress { margin-top: 40px; display: flex; align-items: center; gap: 14px; font: 12px var(--f-mono); color: var(--steel); }
 .manifesto .m-progress i { width: 160px; height: 1px; background: var(--line-d); position: relative; }
@@ -1839,7 +1839,7 @@ body:has(#product-page) { background-image: none; }
 /* Missão como manifesto (mesma ideia de História, no escuro) */
 /* Manifesto da missão: mesmo padrão do manifesto de História (tamanho, alinhamento à esquerda, largura) */
 .mf2 { min-height: 100svh; display: flex; align-items: center; }
-.mf2-text { font: 600 clamp(24px, 3vw, 46px)/1.14 var(--f-sans); font-stretch: 115%; letter-spacing: -.015em; max-width: 24ch; margin: 0; color: var(--white); }
+.mf2-text { font: 400 clamp(24px, 3vw, 46px)/1.18 var(--f-sans); font-stretch: 115%; letter-spacing: -.015em; max-width: 24ch; margin: 0; color: var(--white); }
 .mf2-text .w { opacity: .14; }
 .mf2-text.lit .w { opacity: 1; }
 .mf2-progress { margin-top: 40px; display: flex; align-items: center; gap: 14px; font: 12px var(--f-mono); color: var(--steel); }
@@ -1847,13 +1847,16 @@ body:has(#product-page) { background-image: none; }
 .mf2-progress i b { position: absolute; inset: 0; background: var(--yellow); transform-origin: 0 50%; transform: scaleX(0); }
 
 /* Valores: lista à esquerda, card claro à direita que troca com a rolagem */
-.vr { min-height: 100svh; display: flex; align-items: center; }
-.vr .wrap { width: 100%; }
+.vr { margin-top: clamp(40px, 4vw, 56px); }
 .vr-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
 .vr-head .vm-k { margin: 0; }
 .vr-count { color: var(--slate); }
 .vr-count b { color: var(--navy); font-weight: 600; }
-.vr-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; align-items: center; margin-top: 20px; }
+.vr-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; align-items: stretch; }
+/* A lista ocupa exatamente a altura do card: topo e base alinhados */
+.vr-grid .vr-list { display: flex; flex-direction: column; }
+.vr-grid .vr-list li:not(.vr-ind) { flex: 1 1 0; display: flex; }
+.vr-grid .vr-item { align-items: center; }
 .vr-list { position: relative; list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-l); }
 .vr-list li { position: relative; border-bottom: 1px solid var(--line-l); }
 /* Indicador que desliza até o valor ativo */
@@ -1870,6 +1873,16 @@ body:has(#product-page) { background-image: none; }
 .vr-wipe { position: absolute; inset: 0; z-index: 2; background: var(--navy); transform: scaleX(0); pointer-events: none; }
 .vr-wipe::after { content: ""; position: absolute; top: 0; bottom: 0; right: 0; width: 4px; background: var(--yellow); }
 .vr-in { position: relative; }
+/* Barra da troca automática (3 s) na base do card */
+.vr-bar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; height: 3px; background: var(--line-l); }
+.vr-bar i { display: block; height: 100%; background: var(--yellow); transform: scaleX(0); transform-origin: left; }
+/* Título da visão alinhado à esquerda na seção dos valores */
+.vr-sec .vm-intro { align-items: flex-start; text-align: left; }
+.vr-sec .vm-intro .eyebrow { justify-content: flex-start; }
+.vr-sec .vm-vis { margin: 16px 0 0; }
+/* Título com mais ênfase e colado aos valores: lê como uma seção só (v5.28) */
+.vr-sec .vm-intro .eyebrow { margin-bottom: 18px; }
+.vr-sec .vm-h { font-size: clamp(48px, 6vw, 100px); line-height: .98; letter-spacing: -.03em; }
 /* Espaço da foto de cada valor (fotos ainda não geradas: moldura com a legenda) */
 .vr-media { display: grid; place-items: center; width: 100%; aspect-ratio: 2 / 1; max-height: 30vh; margin-bottom: 24px; border-radius: 6px; background: rgba(11, 18, 32, .06) center / cover no-repeat; }
 .vr-media .mono { font-size: 12px; color: var(--slate); }
@@ -1904,7 +1917,6 @@ body:has(#product-page) { background-image: none; }
 .lg-note p { margin: 0; font-size: 17px; color: var(--ink); }
 
 @media (max-width: 900px) {
-  .vr { min-height: 0; padding-top: 24px; }
   #principios .cota.v { display: none; }
   .vr-grid { grid-template-columns: 1fr; }
   .vr-card { display: none; }

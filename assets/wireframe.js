@@ -879,7 +879,7 @@
   const vmi = $(".vm-intro");
   if (vmi && motion) {
     gsap.timeline({ scrollTrigger: { trigger: vmi, start: "top 80%" } })
-      .from([$(".eyebrow", vmi), $(".vm-k", vmi)], { y: 16, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.08 })
+      .from([$(".eyebrow", vmi)], { y: 16, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.08 })
       .from($$(".vm-h .mw > span", vmi), { yPercent: 110, duration: 1.1, ease: "expo.out", stagger: 0.14 }, 0.1)
       .from($(".vm-vis", vmi), { y: 20, opacity: 0, duration: 0.9, ease: "expo.out" }, 0.55);
   }
@@ -947,7 +947,17 @@
     }
     const title = $("#vr-title"), proof = $("#vr-proof"), cota = $("#vr-cota"), cur = $("#vr-cur");
     const mlbl = $("#vr-mlbl"), card = $(".vr-card", vr), inner = $(".vr-in", vr), wipe = $(".vr-wipe", vr), ind = $(".vr-ind", vr), list = $(".vr-list", vr);
-    let i = 0, st = null, tl = null;
+    let i = 0, tl = null;
+    // Troca automática a cada 3 s (barra de progresso no card); pausa no hover/foco e fora da tela
+    const bar = $("#vr-bar"), desk = matchMedia("(min-width: 901px)");
+    let visible = false, paused = false, tw = null;
+    const run = () => {
+      if (!motion || !bar) return;
+      if (tw) tw.kill();
+      gsap.set(bar, { scaleX: 0 });
+      tw = gsap.to(bar, { scaleX: 1, duration: 3, ease: "none", paused: !visible || paused || !desk.matches, onComplete: () => show((i + 1) % items.length) });
+    };
+    const sync = () => { if (tw) (visible && !paused && desk.matches) ? tw.resume() : tw.pause(); };
     // Indicador que desliza até o valor ativo na lista
     const moveInd = (anim = true) => {
       const li = items[i].parentElement;
@@ -962,7 +972,8 @@
       items.forEach((x, k) => { x.classList.toggle("on", k === i); x.setAttribute("aria-pressed", String(k === i)); });
       ticks.forEach((t, k) => t.classList.toggle("on", k <= i));
       moveInd();
-      const set = () => { title.textContent = $(".vr-nm", b).textContent; proof.textContent = d.proof; cota.textContent = `Valor ${d.no} / 10 · ${d.short}`; cur.textContent = d.no; if (mlbl) mlbl.textContent = `[foto · ${d.short}]`; };
+      run();
+      const set = () => { title.textContent = $(".vr-nm", b).textContent; proof.textContent = d.proof; cota.textContent = `Valor ${d.no} / 10 · ${d.short}`; if (cur) cur.textContent = d.no; if (mlbl) mlbl.textContent = `[foto · ${d.short}]`; };
       if (!motion) { set(); return; }
       // Troca do card: conteúdo sai na direção da rolagem, uma cortina Navy cruza o card, o novo conteúdo entra e o card balança de leve
       if (tl) tl.progress(1).kill();
@@ -979,12 +990,17 @@
     ticks[0].classList.add("on");
     moveInd(false);
     addEventListener("resize", () => moveInd(false));
-    // Clique na lista: com a rolagem presa, leva até o trecho daquele valor; sem ela, troca direto
-    items.forEach((b, n) => b.addEventListener("click", () => {
-      if (!st) { show(n); return; }
-      const y = st.start + (st.end - st.start) * (n + 0.5) / items.length;
-      if (lenis) lenis.scrollTo(y, { duration: 1.2 }); else scrollTo({ top: y, behavior: "smooth" });
-    }));
+    // O usuário escolhe: clique ou hover (mouse) num valor troca o card na hora
+    items.forEach((b, n) => {
+      b.addEventListener("click", () => show(n));
+      if (finePointer) b.addEventListener("mouseenter", () => show(n));
+    });
+    const grid = $(".vr-grid", vr);
+    grid.addEventListener("mouseenter", () => { paused = true; sync(); });
+    grid.addEventListener("mouseleave", () => { paused = grid.contains(document.activeElement); sync(); });
+    grid.addEventListener("focusin", () => { paused = true; sync(); });
+    grid.addEventListener("focusout", e => { if (!grid.contains(e.relatedTarget)) { paused = false; sync(); } });
+    if (desk.addEventListener) desk.addEventListener("change", sync);
     // Card com altura fixa (a do maior valor): nada muda de tamanho ao trocar
     const fit = () => {
       const b = items[i];
@@ -994,18 +1010,14 @@
         items.forEach(x => { node.textContent = get(x); max = Math.max(max, node.offsetHeight); });
         node.textContent = now; node.style.minHeight = max + "px";
       });
+      moveInd(false);
     };
     fit();
     if (document.fonts) document.fonts.ready.then(fit);
     let fitT; addEventListener("resize", () => { clearTimeout(fitT); fitT = setTimeout(fit, 150); });
     if (motion) {
-      gsap.matchMedia().add("(min-width: 901px)", () => {
-        st = ScrollTrigger.create({
-          trigger: vr, start: "top top", end: () => "+=" + innerHeight * 2.4, pin: true, invalidateOnRefresh: true, refreshPriority: 1,
-          onUpdate: s => show(Math.min(items.length - 1, Math.floor(s.progress * items.length)))
-        });
-        return () => { st = null; };
-      });
+      run();
+      ScrollTrigger.create({ trigger: vr, start: "top 75%", end: "bottom 25%", onToggle: s => { visible = s.isActive; sync(); } });
       gsap.timeline({ scrollTrigger: { trigger: vr, start: "top 80%" } })
         .from($$(".vr-head > *", vr), { y: 20, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.08 })
         .from($$(".vr-list li:not(.vr-ind)", vr), { x: -24, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.04 }, 0.1)
@@ -1119,7 +1131,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.27`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.28`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
