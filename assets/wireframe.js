@@ -400,7 +400,7 @@
     if (reduced) { on = true; draw(); } else loop();
   };
   // Toda seção azul-escura sem foto de fundo ganha as curvas de fluxo
-  $$("main section:not(.light):not(.hero):not(.page-hero):not(.px-band):not([data-mol])").forEach(sec => sec.setAttribute("data-mol", ""));
+  $$("main section:not(.light):not(.hero):not(.page-hero):not(.px-band):not(.lgc):not([data-mol])").forEach(sec => sec.setAttribute("data-mol", ""));
   $$("[data-mol]").forEach(host => (host.dataset.mol === "ink" ? molField : flowField)(host));
 
   // ---------- Cursor: rastro de moléculas atrás do ponto amarelo ----------
@@ -494,6 +494,14 @@
           gsap.to(batch.map(c => $(".hc-img", c)), { clipPath: "inset(0% 0 0 0)", duration: 1.3, ease: "expo.inOut", stagger: 0.12, delay: 0.15 });
         }
       });
+    }
+    // História, seção LG Chem: fotos do mosaico entram em cortina e têm leve paralaxe
+    const lgm = $(".lgc-mosaic");
+    if (lgm) {
+      const tiles = $$(".lgc-ph", lgm);
+      gsap.set(tiles, { clipPath: "inset(100% 0 0 0)" });
+      ScrollTrigger.batch(tiles, { start: "top 92%", once: true, onEnter: b => gsap.to(b, { clipPath: "inset(0% 0 0 0)", duration: 1.3, ease: "expo.inOut", stagger: 0.1 }) });
+      tiles.forEach(tile => gsap.fromTo($("i", tile), { yPercent: -6 }, { yPercent: 6, ease: "none", scrollTrigger: { trigger: tile, start: "top bottom", end: "bottom top", scrub: true } }));
     }
     $$(".px-band .px-media").forEach(m => {
       gsap.fromTo(m, { yPercent: -10 }, { yPercent: 10, ease: "none", scrollTrigger: { trigger: m.parentElement, start: "top bottom", end: "bottom top", scrub: true } });
@@ -1131,7 +1139,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.29`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.30`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
