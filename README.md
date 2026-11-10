@@ -1,4 +1,4 @@
-# Remo Polímeros · Wireframe v5.39
+# Remo Polímeros · Wireframe v5.40
 
 Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e distribuidora de resinas de engenharia desde 1989; site atual: remopolimeros.com.br). Serve para validar **usabilidade**, **navegação**, **onde fica cada informação** e a **identidade visual** antes das fotos reais. A meta é um site nível Awwwards: movimento, credibilidade e cara de feito sob medida.
 
@@ -29,8 +29,8 @@ Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e d
 - **README:** atualizar a cada versão junto com o resto (estado, histórico, pendências).
 - **Versão (furar cache):** a cada versão, trocar `?v=X.Y` em todos os HTML, o comentário `<!-- WIREFRAME vX.Y -->` no topo do `<body>` (a barra superior saiu na v5.17; o comentário mantém a conferência do deploy por `curl | grep`) e o título dinâmico da página de produto em `wireframe.js`:
   ```bash
-  for f in *.html; do sed -i '' -E 's/\?v=5\.39/?v=5.40/g; s/WIREFRAME v5\.39/WIREFRAME v5.40/g; s/Wireframe v5\.39/Wireframe v5.40/g' "$f"; done
-  sed -i '' 's/Wireframe v5\.39/Wireframe v5.40/' assets/wireframe.js
+  for f in *.html; do sed -i '' -E 's/\?v=5\.40/?v=5.41/g; s/WIREFRAME v5\.40/WIREFRAME v5.41/g; s/Wireframe v5\.40/Wireframe v5.41/g' "$f"; done
+  sed -i '' 's/Wireframe v5\.40/Wireframe v5.41/' assets/wireframe.js
   ```
 - **Testes no desktop:** servidor local `python3 -m http.server 8765` na pasta do projeto; testar no **Chrome real do Luiz** (extensão Claude in Chrome: aba própria, ações em lote, zoom para detalhes, fechar a aba no fim). Conferir 1440 px, console e rolagem lateral. Simular chegada de outra página: `sessionStorage.setItem('remo-nav','1')`; rever a abertura completa: `sessionStorage.clear()` e recarregar.
 - **Tudo que muda no desktop precisa ter o seu padrão no celular.** Nenhuma alteração é dada como pronta sem a validação mobile abaixo. Se algo não couber, adaptar (empilhar, reduzir, esconder detalhe decorativo) e dizer ao Luiz o que mudou no mobile.
@@ -145,7 +145,7 @@ Construção: triângulo amarelo arredondado ao fundo (só contorno); triângulo
 - Fim das páginas: faixa de números → esteira horizontal "Para onde agora?" (cards das outras seções, com pin no desktop) → contato → footer. **Uma única seção de contato por página**, sempre logo depois do `</main>` (comentário `<!-- CONTATO (todas as páginas) -->`).
 - **Sem barra superior do wireframe** (removida na v5.17, junto com "Rever abertura"; o botão "Mostrar notas de UX" saiu na v5.16). A versão fica só no comentário `<!-- WIREFRAME vX.Y -->`. As anotações `.note` continuam no HTML, sempre ocultas. Para rever a abertura: `sessionStorage.clear()` e recarregar.
 
-## 6. Componentes (estado atual, v5.39)
+## 6. Componentes (estado atual, v5.40)
 
 ### 6.1 Hero principal (home) — aprovado, não mexer na tipografia nem na organização
 - Tudo à esquerda e embaixo: rótulo "Polímeros especiais · Desde 1989", título "Polímeros de engenharia," (menor, branco) + "feitos sob medida." (grande, amarelo), palavra que troca a cada 3 s (sob medida, para você, personalizados, com precisão, do seu jeito), traço amarelo que se desenha e estica a cada troca, texto de apoio, botões "Sobre nós" e "Nossos produtos".
@@ -181,7 +181,7 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 ### 6.5.2 Valores · manifesto da missão, visão e valores em rolagem (v5.26)
 - **Missão** (`section.vm-dark#missao`, azul-noite com o pontilhado e o símbolo, sem padding próprio): a missão é um **manifesto** (`#mf2`) travado na tela por 1,4 altura de tela; as palavras acendem com a rolagem; barra "Role para ler". **Sem sublinhados** (reprovados na v5.25). **Tipografia igual à do manifesto de História** (v5.27; peso 400 nos dois manifestos desde a v5.28, o 600 foi reprovado por "muito peso"): `clamp(24px, 3vw, 46px)/1.18`, 24ch, alinhado à esquerda, bloco centralizado na página (o centralizado e maior da v5.26 foi reprovado: "muito grande e nada elegante").
 - **Visão e valores** (`section.light.vr-sec#principios`, clara com moléculas nas laterais):
-  1. Título da **visão** **alinhado à esquerda e maior** (v5.28, `clamp(48px, 6vw, 100px)`), sem o rótulo "Visão" e sem o cabeçalho "Nossos valores · 01 / 10", colado aos valores para ler como uma seção só: "Criar, transformar e evoluir!" numa linha no desktop, palavras sobem uma a uma; frase "A tecnologia dos polímeros..." em mono.
+  1. Título da **visão** **alinhado à esquerda e maior** (v5.28, `clamp(48px, 6vw, 100px)`), sem o rótulo "Visão" e sem o cabeçalho "Nossos valores · 01 / 10", colado aos valores para ler como uma seção só: "Criar, transformar e evoluir." numa linha no desktop, palavras sobem uma a uma; frase "A tecnologia dos polímeros..." em mono.
   2. **Valores** (`#vr`): lista dos 10 à esquerda com um **indicador que desliza** até o ativo (`.vr-ind`, faixa amarela + fundo Navy suave) e **card branco** à direita (cota, valor, "Na prática", fonte, 10 marcadores). **Sem trava de rolagem desde a v5.28** (o Luiz achou a navegação travada): o usuário escolhe o valor por clique ou hover; **troca automática a cada 3 s** com a barra amarela na base do card (`.vr-bar`), pausa com o mouse/foco na lista ou no card, só roda com a seção na tela e só no desktop; depois do 10 volta ao 01. **A lista tem exatamente a altura do card** (grid `stretch`, itens com `flex: 1`): topo e base alinhados. **Troca do card:** o conteúdo sai na direção da rolagem, uma cortina Navy (`.vr-wipe`, com fio amarelo) cruza o card, o novo conteúdo entra em camadas e o card balança de leve (elastic). Card com altura fixa (a do maior valor). **Espaço da foto** (`.vr-media`, 2:1, máx. 30vh) no topo do card, com a legenda `[foto · Valor]` que troca junto; fotos ainda não geradas (aguardam aprovação do Luiz para gastar créditos do Flow). **Celular:** esteira arrastada com o dedo (`.vr-sw`, montada pelo JS a partir da lista), sem rolagem automática nem trava: encaixe card a card (`scroll-snap`), card com 85% da largura e o próximo à mostra na borda direita da tela, sinalizador "Arraste para o lado →" que some no primeiro arraste, contador "01 / 10" com 10 marcadores. A lista empilhada saiu do celular. Cota vertical escondida.
 - A trava do manifesto tem `refreshPriority` para os rótulos do header e as travas seguintes (ISO, esteira) calcularem certo.
 - **Reprovados:** sublinhados no manifesto e valores no escuro (v5.25); rede/molécula dos valores (v5.22 a v5.24), card azul com número gigante amarelo atrás (v5.20/v5.21), lista + palco "sem identidade".
@@ -270,6 +270,7 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 | v5.16 | Responsividade em notebooks (1280 a 1600 px e telas baixas): margens, header, botões e respiro proporcionais; títulos das aberturas pela altura; "Sobre nós" à direita entre 901 e 1080 px; botão "Mostrar notas de UX" removido |
 | v5.17 | Barra preta do wireframe removida (versão vira comentário no HTML); abertura da home ocupa a tela inteira |
 | v5.18 | Seção de contato duplicada removida em História, Valores, Tecnologias e Onde atuamos (fica só a de depois do `</main>`, como na home) |
+| v5.40 | Título de Valores termina em ponto final: "Criar, transformar e evoluir." |
 | v5.39 | Fundos azuis com a rede dos fundos claros em negativo, com nós em hexágono (saem os anéis de carbono) |
 | v5.38 | Anéis de carbono abstratos, com cadeia, nos fundos azuis (saem as cadeias de polímero) |
 | v5.37 | Cadeias de polímero nos fundos azuis (sai o suminagashi); sem degradê antes de seção clara; temas ambientais por mouse; "comprovado" só dentro das fichas; 10 fotos dos valores |
