@@ -57,6 +57,21 @@
     }
   });
 
+  // ---------- Títulos principais: o sinal final (. ! ?) fica em cor diferente da letra anterior ----------
+  const pt = el => {
+    const tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    let last = null, nd;
+    while ((nd = tw.nextNode())) if (nd.nodeValue.trim()) last = nd;
+    if (!last || last.parentElement.closest(".pt")) return;
+    const txt = last.nodeValue.replace(/\s+$/, "");
+    if (!/[.!?]$/.test(txt)) return;
+    const sp = document.createElement("span");
+    sp.className = "pt"; sp.textContent = txt.slice(-1);
+    last.nodeValue = txt.slice(0, -1);
+    last.parentNode.insertBefore(sp, last.nextSibling);
+  };
+  $$("main h1, main h2, .contact-band h2, .rail h2").forEach(h => { if (!h.closest(".lgc") && !h.classList.contains("ph-big")) pt(h); });
+
   // ---------- Header que some ao descer ----------
   const header = $("#header");
   let lastY = 0;
@@ -67,7 +82,7 @@
     if (!header) return;
     const hit = document.elementsFromPoint(innerWidth / 2, header.offsetHeight / 2).find(e => !header.contains(e) && e.closest("section, footer"));
     const sec = hit && hit.closest("section, footer");
-    header.classList.toggle("on-dark", !!sec && !sec.matches(".light, .lgc, .footer, .hero, .page-hero, .px-band") && !(sec.matches(".env2") && innerWidth > 900));
+    header.classList.toggle("on-dark", !!sec && !sec.matches(".light, .lgc, .footer, .hero, .page-hero, .px-band") && !hit.closest(".env3-stage"));
   };
   const onScroll = y => {
     if (header) header.classList.toggle("scrolled", y > 60);
@@ -369,21 +384,85 @@
     new IntersectionObserver(([en]) => { on = en.isIntersecting; }).observe(host);
     if (reduced) { on = true; draw(); } else loop();
   };
-  // Fundos escuros: o pontilhado dos fundos claros, em tom claro, e o símbolo da marca em contorno, recortado num canto
-  let dkN = 0;
-  const darkTex = host => {
-    const layer = document.createElement("div");
-    layer.className = "dk-layer"; layer.setAttribute("aria-hidden", "true");
-    host.prepend(layer);
-    if (host.matches(".env2, .num-band") || host.offsetHeight < 440) return;
-    const m = document.createElement("i");
-    m.className = "dk-mark" + (dkN++ % 2 ? " alt" : "");
-    layer.appendChild(m);
-    if (motion) gsap.fromTo(m, { yPercent: -7 }, { yPercent: 7, ease: "none", scrollTrigger: { trigger: host, start: "top bottom", end: "bottom top", scrub: true } });
+  // Fundos escuros: linhas no estilo suminagashi (tinta marmorizada na água). São as curvas de nível de um campo de
+  // distâncias deformado: anéis irregulares em volta de alguns centros, que se encontram sem se cruzar. Bem sutis e lentas.
+  const sumiField = (host, idx) => {
+    const cv = document.createElement("canvas");
+    cv.className = "mol-bg flow-bg"; cv.setAttribute("aria-hidden", "true");
+    host.prepend(cv);
+    const ctx = cv.getContext("2d");
+    const CELL = 12, GAP = 30, TILE = 540;
+    let W = 0, H = 0, cols = 0, rows = 0, grid = null, drops = [], mx = -999, my = -999, on = false, t = idx * 7.3, tick = 0;
+    // Sorteio com semente: os centros não mudam de lugar quando a seção muda de altura
+    const rnd = (a, b) => { const v = Math.sin(a * 127.1 + b * 311.7 + idx * 74.7) * 43758.5453; return v - Math.floor(v); };
+    const size = () => {
+      const dpr = Math.min(devicePixelRatio || 1, 1.5);
+      W = host.clientWidth; H = host.clientHeight;
+      cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cols = Math.ceil(W / CELL) + 1; rows = Math.ceil(H / CELL) + 1;
+      grid = new Float32Array(cols * rows);
+      const tc = Math.max(1, Math.round(W / TILE)), tr = Math.max(1, Math.round(H / TILE)), tw = W / tc, th = H / tr;
+      drops = [];
+      for (let r = 0; r < tr; r++) for (let c = 0; c < tc; c++)
+        drops.push({ x: (c + .15 + rnd(c, r) * .7) * tw, y: (r + .15 + rnd(r + 9, c) * .7) * th, s: .8 + rnd(c + 3, r + 5) * .5, o: rnd(c + 7, r + 2) * GAP * 3 });
+      draw(true);
+    };
+    const draw = full => {
+      if (!grid) return;
+      // Só a faixa da seção que está na tela é calculada
+      const top = host.getBoundingClientRect().top;
+      const r0 = full ? 0 : Math.max(0, Math.floor((-top - 40) / CELL)), r1 = full ? rows - 1 : Math.min(rows - 1, Math.ceil((innerHeight - top + 40) / CELL));
+      if (r1 <= r0) return;
+      if (!reduced) t += .004;
+      for (let r = r0; r <= r1; r++) {
+        const y = r * CELL;
+        for (let c = 0; c < cols; c++) {
+          const x = c * CELL;
+          const wx = x + 40 * Math.sin(y * .0061 + t) + 22 * Math.sin((x + y) * .0113 - t * 1.3);
+          const wy = y + 40 * Math.sin(x * .0057 - t * .8) + 22 * Math.sin((x - y) * .0097 + t * 1.1);
+          let best = 1e9, bi = 0;
+          for (let k = 0; k < drops.length; k++) { const d = drops[k], v = Math.hypot(wx - d.x, wy - d.y) * d.s + d.o; if (v < best) { best = v; bi = k; } }
+          const dm = Math.hypot(x - mx, y - my);
+          if (dm < 170) best += (1 - dm / 170) * (1 - dm / 170) * 26;
+          grid[r * cols + c] = best / GAP + .4 * Math.sin(best * .017 + bi);
+        }
+      }
+      ctx.clearRect(0, r0 * CELL, W, (r1 - r0) * CELL);
+      const gold = [];
+      ctx.beginPath();
+      for (let r = r0; r < r1; r++) for (let c = 0; c < cols - 1; c++) {
+        const i = r * cols + c, a = grid[i], b = grid[i + 1], d = grid[i + cols], e = grid[i + cols + 1];
+        const lo = Math.min(a, b, d, e), hi = Math.max(a, b, d, e);
+        for (let L = Math.ceil(lo); L < hi; L++) {
+          const x = c * CELL, y = r * CELL, q = [];
+          if ((a < L) !== (b < L)) q.push(x + CELL * (L - a) / (b - a), y);
+          if ((b < L) !== (e < L)) q.push(x + CELL, y + CELL * (L - b) / (e - b));
+          if ((d < L) !== (e < L)) q.push(x + CELL * (L - d) / (e - d), y + CELL);
+          if ((a < L) !== (d < L)) q.push(x, y + CELL * (L - a) / (d - a));
+          for (let k = 0; k + 3 < q.length; k += 4) {
+            if (L % 7 === 3) gold.push(q[k], q[k + 1], q[k + 2], q[k + 3]);
+            else { ctx.moveTo(q[k], q[k + 1]); ctx.lineTo(q[k + 2], q[k + 3]); }
+          }
+        }
+      }
+      ctx.lineWidth = 1; ctx.lineCap = "round";
+      ctx.strokeStyle = "rgba(110,140,205,.11)"; ctx.stroke();
+      ctx.beginPath();
+      for (let k = 0; k < gold.length; k += 4) { ctx.moveTo(gold[k], gold[k + 1]); ctx.lineTo(gold[k + 2], gold[k + 3]); }
+      ctx.strokeStyle = "rgba(255,209,0,.11)"; ctx.stroke();
+    };
+    // Um quadro sim, um não: o movimento é lento e o custo cai pela metade
+    const loop = () => { if (on && (tick++ & 1)) draw(false); requestAnimationFrame(loop); };
+    size(); addEventListener("resize", size);
+    if (window.ResizeObserver) { let lw = W, lh = H; new ResizeObserver(() => { if (host.clientWidth !== lw || host.clientHeight !== lh) { size(); lw = W; lh = H; } }).observe(host); }
+    host.addEventListener("pointermove", e => { const r = host.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; });
+    host.addEventListener("pointerleave", () => { mx = my = -999; });
+    new IntersectionObserver(([en]) => { on = en.isIntersecting; }).observe(host);
+    if (!reduced) loop();
   };
-  // Toda seção azul-escura sem foto de fundo ganha o pontilhado e o símbolo
+  // Toda seção azul-escura sem foto de fundo ganha as linhas suminagashi
   $$("main section:not(.light):not(.hero):not(.page-hero):not(.px-band):not(.lgc):not([data-mol])").forEach(sec => sec.setAttribute("data-mol", ""));
-  $$("[data-mol]").forEach(host => (host.dataset.mol === "ink" ? molField : darkTex)(host));
+  $$("[data-mol]").forEach((host, k) => (host.dataset.mol === "ink" ? molField : sumiField)(host, k));
 
   // ---------- Cursor: rastro de moléculas atrás do ponto amarelo ----------
   if (finePointer && !reduced && $("#cursor")) {
@@ -550,7 +629,7 @@
       wi = (wi + 1) % WORDS.length;
       const cur = $(".sw-word", swap);
       const next = document.createElement("span");
-      next.className = "sw-word"; next.textContent = WORDS[wi];
+      next.className = "sw-word"; next.textContent = WORDS[wi]; pt(next);
       next.style.position = "absolute"; next.style.left = "0"; next.style.top = "0"; next.style.whiteSpace = "nowrap";
       swap.appendChild(next);
       gsap.timeline({ onComplete: () => { cur.remove(); next.style.position = ""; next.style.whiteSpace = ""; busy = false; } })
@@ -904,14 +983,13 @@
     }
   }
 
-  // ---------- Valores: compromisso ambiental em esteira (desktop: trava e desliza; celular: arrasta) ----------
-  const envT = $("#env-track");
-  if (envT) {
-    const panels = $$(".env2-p", envT), cnt = $("#env-count"), bar = $("#env-bar"), pin = $("#env-pin");
-    const n = panels.length, pad = k => String(k).padStart(2, "0"), desk = matchMedia("(min-width: 901px)");
-    let cur = -1;
-    const bgs = $$("#env-bg i");
-    // O 50% conta na primeira vez que o painel de Energia fica ativo
+  // ---------- Valores: compromisso ambiental (temas à esquerda, ficha à direita; troca por clique ou sozinha a cada 7 s) ----------
+  const env3 = $("#env3");
+  if (env3) {
+    const tabs = $$(".env3-tab", env3), panes = $$(".env3-p", env3), bgs = $$("#env-bg i"), wipe = $(".env3-wipe", env3), tabBox = $(".env3-tabs", env3), card = $(".env3-card", env3);
+    const n = panes.length, DUR = 7, bars = tabs.map(b => $("i", b));
+    let cur = 0, inView = false, hold = false, tl = null;
+    // O 50% conta na primeira vez que o tema Energia aparece
     const count = p => {
       const c = $("[data-env-count]", p);
       if (!c || c.dataset.done) return;
@@ -920,52 +998,47 @@
       const o = { v: 0 };
       gsap.to(o, { v: +c.dataset.envCount, duration: 1.6, ease: "power3.out", onUpdate: () => { c.textContent = Math.round(o.v); } });
     };
-    // Painel ativo: cartão de vidro aberto e a foto dele ao fundo da seção
-    const setOn = i => {
-      if (i === cur) return;
-      cur = i;
-      panels.forEach((p, k) => p.classList.toggle("on", k === i));
-      bgs.forEach((b, k) => b.classList.toggle("on", k === i));
-      cnt.textContent = `${pad(i + 1)} / ${pad(n)}`;
-      if (cur > 0 || desk.matches) count(panels[i]);
+    // Barra de tempo no tema ativo; ao encher, passa para o próximo. Para quando a seção sai da tela ou o mouse está em cima
+    const run = () => {
+      if (!motion) return;
+      gsap.killTweensOf(bars); gsap.set(bars, { scaleX: 0 });
+      if (!inView || hold) return;
+      gsap.to(bars[cur], { scaleX: 1, duration: DUR, ease: "none", onComplete: () => show((cur + 1) % n) });
     };
-    // Celular: a foto de cada painel entra em cortina na primeira vez que ele aparece
-    const seen = p => { p.classList.add("seen"); if (!desk.matches) count(p); };
-    if (window.IntersectionObserver) {
-      const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) seen(e.target); }), { threshold: 0.3 });
-      panels.forEach(p => io.observe(p));
-    } else panels.forEach(seen);
-    setOn(0);
-    // Sem trava (celular, ou movimento reduzido): contador e barra seguem o arraste lateral
-    if (!motion) pin.closest(".env2").classList.add("free");
-    envT.addEventListener("scroll", () => {
-      if (desk.matches && motion) return;
-      const max = envT.scrollWidth - envT.clientWidth, pr = max > 0 ? envT.scrollLeft / max : 0;
-      setOn(Math.round(pr * (n - 1)));
-      bar.style.transform = `scaleX(${pr})`;
-      pin.classList.add("used");
-    }, { passive: true });
-    if (motion) {
-      gsap.matchMedia().add("(min-width: 901px)", () => {
-        const dist = () => panels[n - 1].offsetLeft - panels[0].offsetLeft;
-        const tw = gsap.to(envT, {
-          x: () => -dist(), ease: "none",
-          scrollTrigger: {
-            trigger: pin, start: "top top", end: () => "+=" + Math.max(dist(), innerHeight * 2), pin: true, scrub: 0.8, invalidateOnRefresh: true, refreshPriority: 1,
-            onUpdate: st => { setOn(Math.round(st.progress * (n - 1))); gsap.set(bar, { scaleX: st.progress }); }
-          }
-        });
-        // Clicar num painel leva a esteira até ele
-        const onClick = e => {
-          const p = e.target.closest(".env2-p");
-          if (!p) return;
-          const st = tw.scrollTrigger, y = st.start + (st.end - st.start) * panels.indexOf(p) / (n - 1);
-          if (lenis) lenis.scrollTo(y, { duration: 1.2 }); else scrollTo(0, y);
-        };
-        envT.addEventListener("click", onClick);
-        return () => { envT.removeEventListener("click", onClick); gsap.set(envT, { clearProps: "transform" }); gsap.set(bar, { clearProps: "transform" }); };
-      });
-    }
+    const show = i => {
+      if (i === cur) { run(); return; }
+      const from = panes[cur], to = panes[i];
+      cur = i;
+      tabs.forEach((b, k) => { b.classList.toggle("on", k === i); b.setAttribute("aria-selected", k === i ? "true" : "false"); });
+      bgs.forEach((b, k) => b.classList.toggle("on", k === i));
+      if (tabBox.scrollWidth > tabBox.clientWidth) tabBox.scrollTo({ left: tabs[i].offsetLeft - tabBox.offsetLeft - 24, behavior: "smooth" });
+      if (tl) tl.progress(1);
+      if (!motion) { from.classList.remove("on"); to.classList.add("on"); count(to); return; }
+      // A ficha atual sai para a esquerda, uma linha amarela cruza o topo e o conteúdo novo entra em cascata pela direita
+      const kids = [...$(".env2-body", to).children];
+      tl = gsap.timeline({ onComplete: () => { gsap.set([from, wipe, ...kids], { clearProps: "all" }); tl = null; } })
+        .to(from, { autoAlpha: 0, x: -32, duration: .32, ease: "power2.in" })
+        .fromTo(wipe, { scaleX: 0, transformOrigin: "0 50%" }, { scaleX: 1, duration: .42, ease: "expo.inOut" }, 0)
+        .add(() => {
+          // A ficha tem a altura do próprio conteúdo: a altura anima da ficha que sai para a que entra
+          const h0 = card.offsetHeight;
+          from.classList.remove("on"); to.classList.add("on"); count(to);
+          const h1 = card.offsetHeight;
+          if (h0 !== h1) gsap.fromTo(card, { height: h0 }, { height: h1, duration: .6, ease: "expo.inOut", clearProps: "height" });
+        })
+        .set(wipe, { transformOrigin: "100% 50%" })
+        .to(wipe, { scaleX: 0, duration: .55, ease: "expo.inOut" })
+        .fromTo(kids, { x: 48, opacity: 0 }, { x: 0, opacity: 1, duration: .75, ease: "expo.out", stagger: .07 }, "<");
+      run();
+    };
+    tabs.forEach((b, k) => b.addEventListener("click", () => show(k)));
+    if (finePointer) [tabBox, $(".env3-card", env3)].forEach(el => {
+      el.addEventListener("pointerenter", () => { hold = true; run(); });
+      el.addEventListener("pointerleave", () => { hold = false; run(); });
+    });
+    if (window.IntersectionObserver) new IntersectionObserver(([en]) => { inView = en.isIntersecting; if (inView) count(panes[cur]); run(); }, { threshold: 0.35 }).observe(env3);
+    else { inView = true; run(); }
+    document.addEventListener("visibilitychange", () => { hold = document.hidden; run(); });
   }
 
   // ---------- Valores: a lista avança com a rolagem e o card claro troca (desktop); no celular, lista aberta ----------
@@ -1185,7 +1258,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.32`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.36`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {

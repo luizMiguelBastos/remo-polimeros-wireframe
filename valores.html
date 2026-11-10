@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Valores · Remo Polímeros · Wireframe v5.32</title>
+  <title>Valores · Remo Polímeros · Wireframe v5.36</title>
   <meta name="description" content="Missão, valores, compromisso ambiental e certificação ISO 9001:2015 da Remo Polímeros.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
   <script>try{if(sessionStorage.getItem("remo-nav")==="1")document.documentElement.classList.add("tx-in")}catch(e){}</script>
   <link rel="preload" as="image" href="assets/img/val-parceria.webp">
-  <link rel="icon" type="image/svg+xml" href="assets/logo/remo-simbolo.svg?v=5.32">
-  <link rel="stylesheet" href="assets/wireframe.css?v=5.32">
+  <link rel="icon" type="image/svg+xml" href="assets/logo/remo-simbolo.svg?v=5.36">
+  <link rel="stylesheet" href="assets/wireframe.css?v=5.36">
 </head>
 <body>
 
@@ -20,18 +20,18 @@
 <div class="sheet" id="sheet" aria-hidden="true">
   <canvas class="sheet-mol" id="sheet-mol"></canvas>
   <div class="sheet-inner sheet-lockup">
-    <img src="assets/logo/remo-simbolo.svg?v=5.32" alt="" class="sheet-mark">
+    <img src="assets/logo/remo-simbolo.svg?v=5.36" alt="" class="sheet-mark">
     <div class="word sheet-big"><span class="wm"></span></div>
     <div class="sheet-meta"><span class="sheet-dest mono" id="sheet-dest"></span></div>
   </div>
 </div>
 <div class="cursor" id="cursor" aria-hidden="true"><span id="cursor-label"></span></div>
 
-<!-- WIREFRAME v5.32 -->
+<!-- WIREFRAME v5.36 -->
 
 <header class="site-header" id="header">
   <div class="wrap">
-    <a href="index.html" class="logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo-branco.svg?v=5.32" alt="" class="logo-mark" width="40" height="36"><span class="wm" aria-hidden="true"></span>
+    <a href="index.html" class="logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo-branco.svg?v=5.36" alt="" class="logo-mark" width="40" height="36"><span class="wm" aria-hidden="true"></span>
     </a>
     <span class="hdr-sec" id="hdr-sec" aria-hidden="true"></span>
     <nav class="nav" id="nav" aria-label="Principal">
@@ -49,7 +49,7 @@
 
 <main>
 <section class="page-hero photo">
-  <div class="ph-media" style="background-image:url(assets/img/val-parceria.webp)" aria-hidden="true"></div><div class="ph-veil" aria-hidden="true"></div>
+  <div class="ph-clip" aria-hidden="true"><div class="ph-media" style="background-image:url(assets/img/val-parceria.webp)" aria-hidden="true"></div><div class="ph-veil" aria-hidden="true"></div></div>
   <div class="wrap ph-wrap">
     <div class="eyebrow">Valores</div>
     <div class="ph-id ph-home">
@@ -127,73 +127,75 @@
   </div>
 </section>
 
-<!-- COMPROMISSO AMBIENTAL: foto de fundo que troca a cada painel + cartões de vidro (desktop: trava e desliza; celular: arrasta) -->
-<section class="env2" data-mol id="meio-ambiente">
-  <div class="env2-pin" id="env-pin">
-    <div class="env2-bg" id="env-bg" aria-hidden="true"><i class="on" style="background-image:url(assets/img/val-conformidade.webp)"></i><i style="background-image:url(assets/img/val-reciclagem.jpg)"></i><i style="background-image:url(assets/img/val-energia.webp)"></i><i style="background-image:url(assets/img/val-agua.jpg)"></i><i style="background-image:url(assets/img/val-pessoas.webp)"></i><span class="env2-veil"></span></div>
-    <div class="wrap env2-head">
-      <div>
-        <div class="eyebrow">Compromisso ambiental</div>
-        <h2 data-reveal>Cuidado em <span class="hl">cada etapa.</span></h2>
+<!-- COMPROMISSO AMBIENTAL: temas à esquerda e ficha à direita; a foto de fundo e a ficha trocam por clique ou sozinhas a cada 7 s -->
+<section class="env3" data-mol id="meio-ambiente">
+  <div class="env3-stage">
+    <div class="env3-bg" id="env-bg" aria-hidden="true"><i class="on" style="background-image:url(assets/img/val-conformidade.webp)"></i><i style="background-image:url(assets/img/val-reciclagem.jpg)"></i><i style="background-image:url(assets/img/val-energia.webp)"></i><i style="background-image:url(assets/img/val-agua.jpg)"></i><i style="background-image:url(assets/img/val-pessoas.webp)"></i><span class="env3-veil"></span></div>
+    <div class="wrap env3-in">
+      <div class="env3-head">
+        <div>
+          <div class="eyebrow">Compromisso ambiental</div>
+          <h2 data-reveal>Cuidado em <span class="hl">cada etapa.</span></h2>
+        </div>
+        <p class="lead" data-reveal>Meio ambiente é requisito de operação na Remo. Cada prática tem documento, contrato ou laudo que a comprova.</p>
       </div>
-      <p class="lead" data-reveal>Meio ambiente é requisito de operação na Remo. Cada prática tem documento, contrato ou laudo que a comprova.</p>
-      <div class="env2-nav">
-        <span class="mono" id="env-count">01 / 05</span>
-        <span class="env2-bar" aria-hidden="true"><i id="env-bar"></i></span>
-        <span class="env2-hint" aria-hidden="true">Arraste para o lado <i>→</i></span>
+      <div class="env3-grid" id="env3">
+        <div class="env3-tabs" role="tablist" aria-label="Temas do compromisso ambiental">
+        <button class="env3-tab on" type="button" role="tab" aria-selected="true" data-cursor="Ver"><span class="mono">01</span><b>Conformidade legal</b><i aria-hidden="true"></i></button>
+        <button class="env3-tab" type="button" role="tab" aria-selected="false" data-cursor="Ver"><span class="mono">02</span><b>Resíduos</b><i aria-hidden="true"></i></button>
+        <button class="env3-tab" type="button" role="tab" aria-selected="false" data-cursor="Ver"><span class="mono">03</span><b>Energia</b><i aria-hidden="true"></i></button>
+        <button class="env3-tab" type="button" role="tab" aria-selected="false" data-cursor="Ver"><span class="mono">04</span><b>Produção</b><i aria-hidden="true"></i></button>
+        <button class="env3-tab" type="button" role="tab" aria-selected="false" data-cursor="Ver"><span class="mono">05</span><b>Pessoas e embalagens</b><i aria-hidden="true"></i></button>
+        </div>
+        <div class="env3-card">
+          <span class="env3-wipe" aria-hidden="true"></span>
+        <article class="env3-p on" role="tabpanel" aria-label="Conformidade legal">
+          <div class="env2-body">
+            <span class="env2-no">01 / 05</span>
+            <h3>Conformidade legal</h3>
+            <p class="env2-tag">Operamos dentro da lei, com as licenças em dia.</p>
+            <ul><li>Operação em conformidade com o IBAMA</li><li>Licença de Operação e alvará municipal atualizados</li><li>Vistoria ambiental interna para avaliar e mitigar riscos</li></ul>
+            <div class="env2-proof"><span class="mono">Como comprovamos</span><p>Cadastro Técnico Federal no IBAMA, Licença de Operação e levantamento anual de aspectos e impactos ambientais.</p></div>
+          </div>
+        </article>
+        <article class="env3-p" role="tabpanel" aria-label="Resíduos">
+          <div class="env2-body">
+            <span class="env2-no">02 / 05</span>
+            <h3>Resíduos</h3>
+            <p class="env2-tag">O que sobra tem destino certo.</p>
+            <ul><li>Coleta seletiva em toda a fábrica</li><li>Recicláveis vendidos como sucata: papelão, sacos, big bags e filme stretch</li><li>Óleo das extrusoras vendido para reutilização</li><li>Não recicláveis com destinação correta</li></ul>
+            <div class="env2-proof"><span class="mono">Como comprovamos</span><p>CADRI e inventários de resíduos enviados ao órgão ambiental.</p></div>
+          </div>
+        </article>
+        <article class="env3-p" role="tabpanel" aria-label="Energia">
+          <div class="env2-body">
+            <span class="env2-no">03 / 05</span>
+            <h3>Energia</h3>
+            <p class="env2-big"><b><span data-env-count="50">0</span><small>%</small></b><span>da energia contratada vem de fontes renováveis</span></p>
+            <ul><li>Contrato de compra de energia com metade vinda de fontes renováveis</li><li>Estoque com iluminação natural, que reduz o consumo</li></ul>
+            <div class="env2-proof"><span class="mono">Como comprovamos</span><p>Contrato de compra de energia.</p></div>
+          </div>
+        </article>
+        <article class="env3-p" role="tabpanel" aria-label="Produção">
+          <div class="env2-body">
+            <span class="env2-no">04 / 05</span>
+            <h3>Produção</h3>
+            <p class="env2-tag">Processo limpo e consciente.</p>
+            <ul><li>Reuso de água na produção</li><li>Reuso de materiais</li><li>5S aplicado em todos os setores</li><li>Controle de ruído e de fumaça (opacidade)</li></ul>
+            <div class="env2-proof"><span class="mono">Como comprovamos</span><p>Laudos de ruído e de opacidade e monitoramento periódico de efluentes.</p></div>
+          </div>
+        </article>
+        <article class="env3-p" role="tabpanel" aria-label="Pessoas e embalagens">
+          <div class="env2-body">
+            <span class="env2-no">05 / 05</span>
+            <h3>Pessoas e embalagens</h3>
+            <p class="env2-tag">Consciência dentro e fora da fábrica.</p>
+            <ul><li>Palestras de conscientização ambiental para os colaboradores</li><li>Pallets de madeira de reflorestamento</li></ul>
+            <div class="env2-proof"><span class="mono">Como comprovamos</span><p>Treinamentos periódicos sobre riscos ambientais e compra de pallets de reflorestamento.</p></div>
+          </div>
+        </article>
+        </div>
       </div>
-    </div>
-    <div class="env2-track" id="env-track" aria-label="Práticas ambientais da Remo">
-      <article class="env2-p on">
-        <div class="env2-media" style="background-image:url(assets/img/val-conformidade.webp)"><i style="background-image:url(assets/img/val-conformidade.webp)"></i><span class="mono">[foto · conformidade legal]</span></div>
-        <div class="env2-body">
-          <span class="env2-no">01 / 05</span>
-          <h3>Conformidade legal</h3>
-          <p class="env2-tag">Operamos dentro da lei, com as licenças em dia.</p>
-          <ul><li>Operação em conformidade com o IBAMA</li><li>Licença de Operação e alvará municipal atualizados</li><li>Vistoria ambiental interna para avaliar e mitigar riscos</li></ul>
-          <div class="env2-proof"><span class="mono">Como comprovamos</span><p>Cadastro Técnico Federal no IBAMA, Licença de Operação e levantamento anual de aspectos e impactos ambientais.</p></div>
-        </div>
-      </article>
-      <article class="env2-p">
-        <div class="env2-media" style="background-image:url(assets/img/val-reciclagem.jpg)"><i style="background-image:url(assets/img/val-reciclagem.jpg)"></i><span class="mono">[foto · resíduos]</span></div>
-        <div class="env2-body">
-          <span class="env2-no">02 / 05</span>
-          <h3>Resíduos</h3>
-          <p class="env2-tag">O que sobra tem destino certo.</p>
-          <ul><li>Coleta seletiva em toda a fábrica</li><li>Recicláveis vendidos como sucata: papelão, sacos, big bags e filme stretch</li><li>Óleo das extrusoras vendido para reutilização</li><li>Não recicláveis com destinação correta</li></ul>
-          <div class="env2-proof"><span class="mono">Como comprovamos</span><p>CADRI e inventários de resíduos enviados ao órgão ambiental.</p></div>
-        </div>
-      </article>
-      <article class="env2-p">
-        <div class="env2-media" style="background-image:url(assets/img/val-energia.webp)"><i style="background-image:url(assets/img/val-energia.webp)"></i><span class="mono">[foto · energia]</span></div>
-        <div class="env2-body">
-          <span class="env2-no">03 / 05</span>
-          <h3>Energia</h3>
-          <p class="env2-big"><b><span data-env-count="50">0</span><small>%</small></b><span>da energia contratada vem de fontes renováveis</span></p>
-          <ul><li>Contrato de compra de energia com metade vinda de fontes renováveis</li><li>Estoque com iluminação natural, que reduz o consumo</li></ul>
-          <div class="env2-proof"><span class="mono">Como comprovamos</span><p>Contrato de compra de energia.</p></div>
-        </div>
-      </article>
-      <article class="env2-p">
-        <div class="env2-media" style="background-image:url(assets/img/val-agua.jpg)"><i style="background-image:url(assets/img/val-agua.jpg)"></i><span class="mono">[foto · produção]</span></div>
-        <div class="env2-body">
-          <span class="env2-no">04 / 05</span>
-          <h3>Produção</h3>
-          <p class="env2-tag">Processo limpo e consciente.</p>
-          <ul><li>Reuso de água na produção</li><li>Reuso de materiais</li><li>5S aplicado em todos os setores</li><li>Controle de ruído e de fumaça (opacidade)</li></ul>
-          <div class="env2-proof"><span class="mono">Como comprovamos</span><p>Laudos de ruído e de opacidade e monitoramento periódico de efluentes.</p></div>
-        </div>
-      </article>
-      <article class="env2-p">
-        <div class="env2-media" style="background-image:url(assets/img/val-pessoas.webp)"><i style="background-image:url(assets/img/val-pessoas.webp)"></i><span class="mono">[foto · pessoas e embalagens]</span></div>
-        <div class="env2-body">
-          <span class="env2-no">05 / 05</span>
-          <h3>Pessoas e embalagens</h3>
-          <p class="env2-tag">Consciência dentro e fora da fábrica.</p>
-          <ul><li>Palestras de conscientização ambiental para os colaboradores</li><li>Pallets de madeira de reflorestamento</li></ul>
-          <div class="env2-proof"><span class="mono">Como comprovamos</span><p>Treinamentos periódicos sobre riscos ambientais e compra de pallets de reflorestamento.</p></div>
-        </div>
-      </article>
     </div>
   </div>
   <div class="wrap env2-foot">
@@ -365,7 +367,7 @@
 <footer class="footer" data-mol="ink">
   <div class="wrap">
     <div class="f-top">
-      <a href="index.html" class="f-logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo.svg?v=5.32" alt="" class="f-mark"><span class="wm" aria-hidden="true"></span></a>
+      <a href="index.html" class="f-logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo.svg?v=5.36" alt="" class="f-mark"><span class="wm" aria-hidden="true"></span></a>
       <p class="f-tag">Polímeros de engenharia,<br>feitos sob medida.</p>
       <a href="contato.html" class="btn f-cta">Fale com um especialista <span class="arr">→</span></a>
     </div>
@@ -394,7 +396,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<script src="assets/data.js?v=5.32"></script>
-<script src="assets/wireframe.js?v=5.32"></script>
+<script src="assets/data.js?v=5.36"></script>
+<script src="assets/wireframe.js?v=5.36"></script>
 </body>
 </html>
