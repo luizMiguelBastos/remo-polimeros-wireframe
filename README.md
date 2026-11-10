@@ -1,4 +1,4 @@
-# Remo Polímeros · Wireframe v5.40
+# Remo Polímeros · Wireframe v5.42
 
 Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e distribuidora de resinas de engenharia desde 1989; site atual: remopolimeros.com.br). Serve para validar **usabilidade**, **navegação**, **onde fica cada informação** e a **identidade visual** antes das fotos reais. A meta é um site nível Awwwards: movimento, credibilidade e cara de feito sob medida.
 
@@ -29,8 +29,8 @@ Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e d
 - **README:** atualizar a cada versão junto com o resto (estado, histórico, pendências).
 - **Versão (furar cache):** a cada versão, trocar `?v=X.Y` em todos os HTML, o comentário `<!-- WIREFRAME vX.Y -->` no topo do `<body>` (a barra superior saiu na v5.17; o comentário mantém a conferência do deploy por `curl | grep`) e o título dinâmico da página de produto em `wireframe.js`:
   ```bash
-  for f in *.html; do sed -i '' -E 's/\?v=5\.40/?v=5.41/g; s/WIREFRAME v5\.40/WIREFRAME v5.41/g; s/Wireframe v5\.40/Wireframe v5.41/g' "$f"; done
-  sed -i '' 's/Wireframe v5\.40/Wireframe v5.41/' assets/wireframe.js
+  for f in *.html; do sed -i '' -E 's/\?v=5\.42/?v=5.43/g; s/WIREFRAME v5\.42/WIREFRAME v5.43/g; s/Wireframe v5\.42/Wireframe v5.43/g' "$f"; done
+  sed -i '' 's/Wireframe v5\.42/Wireframe v5.43/' assets/wireframe.js
   ```
 - **Testes no desktop:** servidor local `python3 -m http.server 8765` na pasta do projeto; testar no **Chrome real do Luiz** (extensão Claude in Chrome: aba própria, ações em lote, zoom para detalhes, fechar a aba no fim). Conferir 1440 px, console e rolagem lateral. Simular chegada de outra página: `sessionStorage.setItem('remo-nav','1')`; rever a abertura completa: `sessionStorage.clear()` e recarregar.
 - **Tudo que muda no desktop precisa ter o seu padrão no celular.** Nenhuma alteração é dada como pronta sem a validação mobile abaixo. Se algo não couber, adaptar (empilhar, reduzir, esconder detalhe decorativo) e dizer ao Luiz o que mudou no mobile.
@@ -94,7 +94,7 @@ Wireframe de alta fidelidade do novo site da **Remo Polímeros** (fabricante e d
 - Seções claras (`.light`): papel pontilhado (1 px a cada 18 px) + moléculas em baixo contraste (`molField`).
 - **v5.34:** o quadriculado de 96 px do fundo geral (`body`) saiu; o Luiz não quer textura sobre textura. No escuro fica só o suminagashi.
 - **Hero antes de seção clara (v5.37): corte seco, sem degradê.** O Luiz testou quatro versões de degradê para o claro (v5.32 a v5.36) e concluiu que ele só faz sentido antes de seção escura (Valores e Contato), onde continua. A foto e o véu ficam dentro de `.ph-clip`.
-- Seções escuras sem foto (v5.39, **decisão final do Luiz**): **a mesma rede de moléculas dos fundos claros, em negativo** (`molField`, ligações e nós em azul-claro com parte em amarelo), com uma diferença sutil: **cada nó é um pequeno hexágono vazado** em vez de um ponto. Densidade 0,7 da dos fundos claros; fica atrás de todo o conteúdo. Reprovados, em ordem: linhas onduladas horizontais, pontilhado + símbolo da logo (v5.32), suminagashi (v5.33 a v5.36), cadeias de polímero (v5.37, "parecem serpentes"), anéis de carbono abstratos com cadeia (v5.38) e, só em prévia, grânulos e tríades do símbolo.
+- Seções escuras sem foto (v5.42): **a mesma rede de moléculas dos fundos claros, em negativo e como detalhe** (`molField`), sobre **o pontilhado da marca em tom claro** (grade de 22 px, no próprio canvas `.mol-bg.flow-bg`). Regras do Luiz: **sem azul**, só **branco e amarelo**; "subliminar é subliminar mesmo, elas devem ser detalhes". Por isso: 60% da densidade dos fundos claros (teto de 150 nós), ligações com opacidade máxima de 0,11, **nós em hexágonos pequenos e cheios** (raio de 2,3 a 3,7 px; branco a 0,2 e amarelo a 0,3). **As moléculas não passam por cima da tipografia**: a cada 24 quadros a seção é varrida e cada texto, botão, imagem, SVG ou card perto da tela vira um obstáculo (folga de 20 × 16 px) do qual os nós desviam e que as ligações não atravessam. Reprovados, em ordem: linhas onduladas horizontais, pontilhado + símbolo da logo (v5.32), suminagashi (v5.33 a v5.36), cadeias de polímero (v5.37), anéis de carbono abstratos (v5.38), hexágonos vazados em azul (v5.39), triângulos cheios em azul com densidade alta (v5.41) e, só em prévia, grânulos e tríades do símbolo.
 - **Ponto final dos títulos principais (v5.33):** em todo `h1` e `h2` de seção, o sinal final (. ! ?) fica em cor diferente da letra anterior: depois de palavra amarela fica branco; nos outros casos, amarelo, inclusive em fundo claro (o Luiz pediu "apenas nos títulos principais, independente da seção"; é a única exceção à regra do amarelo sobre claro). Feito pelo JS (`pt()` envolve o sinal em `span.pt`), inclusive nas palavras que trocam no hero. A seção LG Chem fica de fora.
 - **Header (v5.32):** sobre seção escura lisa o vidro fica **cinza-claro** (`.site-header.on-dark`, `rgba(190,194,204,.46)`), o mesmo tom que ele tem sobre seção clara; não escurece mais. Sobre foto (hero, faixa de fábrica, esteira ambiental no desktop) e sobre seção clara continua como era.
 - **Hero das páginas internas (v5.32):** a base da foto se dissolve na seção seguinte (`.page-hero.photo::after` com a cor e o pontilhado dela, máscara em degradê suave). Quando a seção seguinte é clara, o degradê é curto e discreto (84 a 132 px; a primeira versão, de até 330 px, foi reprovada por cobrir demais a foto). A home não muda (foto em tela cheia). A foto de fundo da faixa de contato também nasce do azul-noite, sem linha de corte.
@@ -145,7 +145,7 @@ Construção: triângulo amarelo arredondado ao fundo (só contorno); triângulo
 - Fim das páginas: faixa de números → esteira horizontal "Para onde agora?" (cards das outras seções, com pin no desktop) → contato → footer. **Uma única seção de contato por página**, sempre logo depois do `</main>` (comentário `<!-- CONTATO (todas as páginas) -->`).
 - **Sem barra superior do wireframe** (removida na v5.17, junto com "Rever abertura"; o botão "Mostrar notas de UX" saiu na v5.16). A versão fica só no comentário `<!-- WIREFRAME vX.Y -->`. As anotações `.note` continuam no HTML, sempre ocultas. Para rever a abertura: `sessionStorage.clear()` e recarregar.
 
-## 6. Componentes (estado atual, v5.40)
+## 6. Componentes (estado atual, v5.42)
 
 ### 6.1 Hero principal (home) — aprovado, não mexer na tipografia nem na organização
 - Tudo à esquerda e embaixo: rótulo "Polímeros especiais · Desde 1989", título "Polímeros de engenharia," (menor, branco) + "feitos sob medida." (grande, amarelo), palavra que troca a cada 3 s (sob medida, para você, personalizados, com precisão, do seu jeito), traço amarelo que se desenha e estica a cada troca, texto de apoio, botões "Sobre nós" e "Nossos produtos".
@@ -232,7 +232,7 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
   4. Abertura `#preloader` (timeline da marca empilhada → `heroIn`).
   5. Hero: slides, indicador de setor, parallax em camadas (`.hero-slides`, `#field`, `.hero-inner`, `.hero-sector`, `.hero-iso`).
   6. `molField(host)`: moléculas em canvas (`data-mol="ink"` cores do claro; `data-mol-density` multiplica; `data-mol-edge` só faixas laterais; ResizeObserver redesenha para não esticar; ligações amarelas ao cursor).
-  7. Fundos escuros: o próprio `molField(host)` (sem `data-mol="ink"`), que desenha os nós como hexágonos vazados e põe o canvas atrás do conteúdo (`.flow-bg`). Atribuição automática a toda `main section` que não seja `.light`, `.hero`, `.page-hero`, `.px-band`, `.lgc`. `hdrTone()` (junto do `onScroll`) liga `.on-dark` no header conforme a seção que está atrás dele (fora do palco com foto `.env3-stage`).
+  7. Fundos escuros: o próprio `molField(host)` (sem `data-mol="ink"`), que desenha os nós como hexágonos pequenos e cheios, desvia da tipografia (`scan()` + `inObs()`) e põe o canvas atrás do conteúdo (`.flow-bg`). Atribuição automática a toda `main section` que não seja `.light`, `.hero`, `.page-hero`, `.px-band`, `.lgc`. `hdrTone()` (junto do `onScroll`) liga `.on-dark` no header conforme a seção que está atrás dele (fora do palco com foto `.env3-stage`).
   8. Esteira "Para onde agora?" (pin só em `.rail:not(.rail-free) .rail-track`).
   9. Índice de produtos (`#mat-index`), guia (`#matrix`), comparador.
   10. Página de produto: preenche `data-f` a partir de `?linha=`, `fitName`, aplicações com "ver mais", anterior/próxima, título dinâmico.
@@ -270,6 +270,8 @@ Fundo branco pontilhado com moléculas; título com quadradinho amarelo e linha 
 | v5.16 | Responsividade em notebooks (1280 a 1600 px e telas baixas): margens, header, botões e respiro proporcionais; títulos das aberturas pela altura; "Sobre nós" à direita entre 901 e 1080 px; botão "Mostrar notas de UX" removido |
 | v5.17 | Barra preta do wireframe removida (versão vira comentário no HTML); abertura da home ocupa a tela inteira |
 | v5.18 | Seção de contato duplicada removida em História, Valores, Tecnologias e Onde atuamos (fica só a de depois do `</main>`, como na home) |
+| v5.42 | Fundos azuis: rede como detalhe, só branco e amarelo, menos partículas, hexágonos pequenos |
+| v5.41 | Fundos azuis: pontilhado, triângulos cheios e discretos, mais ligações e moléculas fora da tipografia |
 | v5.40 | Título de Valores termina em ponto final: "Criar, transformar e evoluir." |
 | v5.39 | Fundos azuis com a rede dos fundos claros em negativo, com nós em hexágono (saem os anéis de carbono) |
 | v5.38 | Anéis de carbono abstratos, com cadeia, nos fundos azuis (saem as cadeias de polímero) |

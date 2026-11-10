@@ -2269,3 +2269,6 @@ body { background-image: none; }
 .env2-req { font: 12px var(--f-mono); color: rgba(244, 245, 247, .62); text-decoration: underline; text-decoration-color: rgba(244, 245, 247, .3); text-underline-offset: 4px; white-space: nowrap; transition: color .3s; }
 .env2-req:hover { color: var(--white); }
 @media (max-width: 900px) { .env3 .env2-proof { grid-template-columns: minmax(0, 1fr); row-gap: 10px; } }
+
+/* ---------- v5.41: fundos azuis com o pontilhado da marca (o mesmo dos fundos claros, em tom claro) atrás da rede de moléculas ---------- */
+.mol-bg.flow-bg { background-image: radial-gradient(rgba(244, 245, 247, .085) 1px, transparent 1.3px); background-size: 22px 22px; }

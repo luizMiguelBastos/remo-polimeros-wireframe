@@ -332,6 +332,20 @@
     host.prepend(cv);
     const ctx = cv.getContext("2d");
     let W = 0, H = 0, nodes = [], mx = -999, my = -999, on = false;
+    // Fundo azul: as moléculas não passam por cima da tipografia. De tempos em tempos a seção é varrida e cada bloco de
+    // texto, botão, imagem ou card perto da tela vira um obstáculo: os nós desviam dele e as ligações não o atravessam.
+    const AVOID = "h1,h2,h3,h4,h5,p,li,dt,dd,a,button,label,input,select,textarea,img,figure,svg,table,span,small,strong,b,time,.eyebrow,.mono,[class*='card']";
+    let obs = [], tick = 0;
+    const scan = () => {
+      const hr = host.getBoundingClientRect();
+      obs = [];
+      host.querySelectorAll(AVOID).forEach(el => {
+        const r = el.getBoundingClientRect();
+        if (r.width < 4 || r.height < 4 || r.bottom < -240 || r.top > innerHeight + 240) return;
+        obs.push([r.left - hr.left - 20, r.top - hr.top - 16, r.right - hr.left + 20, r.bottom - hr.top + 16]);
+      });
+    };
+    const inObs = (x, y) => { for (const o of obs) if (x > o[0] && x < o[2] && y > o[1] && y < o[3]) return o; return null; };
     const size = () => {
       const dpr = Math.min(devicePixelRatio || 1, 2);
       const pW = W, pH = H;
@@ -343,10 +357,11 @@
       // No celular a faixa fica só na margem de 24 px, sem passar por cima dos botões das linhas
       band = !edge ? 0 : W < 700 ? 22 : Math.min(W / 2, Math.max(120, (W - Math.min(W, 1320)) / 2 + 40));
       const area = edge ? 2 * band * H : W * H;
-      const n = Math.round(Math.min(90, area / 16000) * (+host.dataset.molDensity || (ink ? 1 : .7)));
+      // No azul a rede é um detalhe: 60% da densidade dos fundos claros
+      const n = Math.round(Math.min(ink ? 90 : 150, area / 16000) * (+host.dataset.molDensity || (ink ? 1 : .6)));
       nodes = Array.from({ length: n }, (_, i) => {
         const x = edge ? (i % 2 ? W - Math.random() * band : Math.random() * band) : Math.random() * W;
-        return { x, y: Math.random() * H, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25, r: 1.2 + Math.random() * 2.2, rot: Math.random() * Math.PI / 3, y2: Math.random() < .45, right: edge && i % 2 === 1 };
+        return { x, y: Math.random() * H, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25, r: 1.2 + Math.random() * 2.2, rot: Math.random() * Math.PI * 2, y2: Math.random() < .45, right: edge && i % 2 === 1 };
       });
     };
     const edge = "molEdge" in host.dataset;
@@ -360,16 +375,24 @@
           if (a.x < 0 || a.x > W) a.vx *= -1; if (a.y < 0 || a.y > H) a.vy *= -1;
           if (edge && (a.right ? a.x < W - band : a.x > band)) { a.x -= a.vx; a.vx *= -1; }
         }
+        if (ink) continue;
+        // Dentro de um obstáculo: sai pela borda mais próxima e segue na direção contrária
+        const o = inObs(a.x, a.y);
+        if (o) {
+          const dl = a.x - o[0], dr = o[2] - a.x, dt = a.y - o[1], db = o[3] - a.y, m = Math.min(dl, dr, dt, db), st = reduced ? m + 1 : Math.min(m + 1, 4);
+          if (m === dl) { a.x -= st; a.vx = -Math.abs(a.vx); } else if (m === dr) { a.x += st; a.vx = Math.abs(a.vx); }
+          else if (m === dt) { a.y -= st; a.vy = -Math.abs(a.vy); } else { a.y += st; a.vy = Math.abs(a.vy); }
+        }
       }
       ctx.lineCap = "round";
       for (let i = 0; i < nodes.length; i++) {
         const a = nodes[i];
         for (let j = i + 1; j < nodes.length; j++) {
           const b = nodes[j], d = Math.hypot(a.x - b.x, a.y - b.y);
-          if (d < LINK) { const al = (1 - d / LINK) * (ink ? .28 : .22); ctx.strokeStyle = a.y2 ? `rgba(255,209,0,${al})` : (ink ? `rgba(0,31,95,${al})` : `rgba(110,140,205,${al})`); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
+          if (d < LINK) { if (!ink && (inObs(a.x + (b.x - a.x) * .25, a.y + (b.y - a.y) * .25) || inObs((a.x + b.x) / 2, (a.y + b.y) / 2) || inObs(a.x + (b.x - a.x) * .75, a.y + (b.y - a.y) * .75))) continue; const al = (1 - d / LINK) * (ink ? .28 : .11); ctx.strokeStyle = a.y2 ? `rgba(255,209,0,${al})` : (ink ? `rgba(0,31,95,${al})` : `rgba(244,245,247,${al})`); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
         }
         const dm = Math.hypot(a.x - mx, a.y - my);
-        if (dm < 180) { ctx.strokeStyle = `rgba(255,209,0,${(1 - dm / 180) * .35})`; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(mx, my); ctx.stroke(); }
+        if (dm < 180) { ctx.strokeStyle = `rgba(255,209,0,${(1 - dm / 180) * (ink ? .35 : .18)})`; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(mx, my); ctx.stroke(); }
       }
       for (const a of nodes) {
         if (ink) {
@@ -377,24 +400,23 @@
           ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2); ctx.fill();
           continue;
         }
-        // Fundo azul: a mesma rede em negativo, mas cada nó é um pequeno hexágono vazado (o miolo é apagado para as ligações não atravessarem)
-        const R = 2.6 + a.r * 1.25;
+        // Fundo azul: a mesma rede em negativo, só em branco e amarelo e bem apagada; cada nó é um hexágono pequeno e cheio
+        if (inObs(a.x, a.y)) continue;
+        const R = 1.5 + a.r * .65;
         ctx.beginPath();
         for (let k = 0; k < 6; k++) { const an = a.rot + k * Math.PI / 3; k ? ctx.lineTo(a.x + Math.cos(an) * R, a.y + Math.sin(an) * R) : ctx.moveTo(a.x + Math.cos(an) * R, a.y + Math.sin(an) * R); }
         ctx.closePath();
-        ctx.globalCompositeOperation = "destination-out"; ctx.fillStyle = "#000"; ctx.fill();
-        ctx.globalCompositeOperation = "source-over";
-        ctx.strokeStyle = a.y2 ? "rgba(255,209,0,.7)" : "rgba(110,140,205,.6)"; ctx.lineWidth = 1; ctx.stroke();
+        ctx.fillStyle = a.y2 ? "rgba(255,209,0,.3)" : "rgba(244,245,247,.2)"; ctx.fill();
       }
     };
-    const loop = () => { if (on) draw(); requestAnimationFrame(loop); };
+    const loop = () => { if (on) { if (!ink && tick++ % 24 === 0) scan(); draw(); } requestAnimationFrame(loop); };
     size(); addEventListener("resize", size);
     // A seção muda de altura depois da carga (conteúdo animado, fontes): redesenha no tamanho novo para não esticar
     if (window.ResizeObserver) { let lw = W, lh = H; new ResizeObserver(() => { if (host.clientWidth !== lw || host.clientHeight !== lh) { size(); lw = W; lh = H; } }).observe(host); }
     host.addEventListener("pointermove", e => { const r = host.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; });
     host.addEventListener("pointerleave", () => { mx = my = -999; });
     new IntersectionObserver(([en]) => { on = en.isIntersecting; }).observe(host);
-    if (reduced) { on = true; draw(); } else loop();
+    if (reduced) { on = true; if (!ink) { scan(); for (let k = 0; k < 40; k++) draw(); } else draw(); } else loop();
   };
   // Toda seção azul-escura sem foto de fundo ganha a rede de moléculas em negativo, com nós em hexágono
   $$("main section:not(.light):not(.hero):not(.page-hero):not(.px-band):not(.lgc):not([data-mol])").forEach(sec => sec.setAttribute("data-mol", ""));
@@ -1198,7 +1220,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.40`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.42`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
