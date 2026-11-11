@@ -336,6 +336,8 @@
     // texto, botão, imagem ou card perto da tela vira um obstáculo: os nós desviam dele e as ligações não o atravessam.
     const AVOID = "h1,h2,h3,h4,h5,p,li,dt,dd,a,button,label,input,select,textarea,img,figure,svg,table,span,small,strong,b,time,.eyebrow,.mono,[class*='card']";
     let obs = [], tick = 0;
+    // No fundo claro o desvio só vale onde for pedido (data-mol-avoid), como no manifesto de História
+    const avoid = host.dataset.mol !== "ink" || "molAvoid" in host.dataset;
     const scan = () => {
       const hr = host.getBoundingClientRect();
       obs = [];
@@ -375,7 +377,7 @@
           if (a.x < 0 || a.x > W) a.vx *= -1; if (a.y < 0 || a.y > H) a.vy *= -1;
           if (edge && (a.right ? a.x < W - band : a.x > band)) { a.x -= a.vx; a.vx *= -1; }
         }
-        if (ink) continue;
+        if (!avoid) continue;
         // Dentro de um obstáculo: sai pela borda mais próxima e segue na direção contrária
         const o = inObs(a.x, a.y);
         if (o) {
@@ -389,13 +391,14 @@
         const a = nodes[i];
         for (let j = i + 1; j < nodes.length; j++) {
           const b = nodes[j], d = Math.hypot(a.x - b.x, a.y - b.y);
-          if (d < LINK) { if (!ink && (inObs(a.x + (b.x - a.x) * .25, a.y + (b.y - a.y) * .25) || inObs((a.x + b.x) / 2, (a.y + b.y) / 2) || inObs(a.x + (b.x - a.x) * .75, a.y + (b.y - a.y) * .75))) continue; const al = (1 - d / LINK) * (ink ? .28 : .11); ctx.strokeStyle = a.y2 ? `rgba(255,209,0,${al})` : (ink ? `rgba(0,31,95,${al})` : `rgba(244,245,247,${al})`); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
+          if (d < LINK) { if (avoid && (inObs(a.x + (b.x - a.x) * .25, a.y + (b.y - a.y) * .25) || inObs((a.x + b.x) / 2, (a.y + b.y) / 2) || inObs(a.x + (b.x - a.x) * .75, a.y + (b.y - a.y) * .75))) continue; const al = (1 - d / LINK) * (ink ? .28 : .11); ctx.strokeStyle = a.y2 ? `rgba(255,209,0,${al})` : (ink ? `rgba(0,31,95,${al})` : `rgba(244,245,247,${al})`); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
         }
         const dm = Math.hypot(a.x - mx, a.y - my);
         if (dm < 180) { ctx.strokeStyle = `rgba(255,209,0,${(1 - dm / 180) * (ink ? .35 : .18)})`; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(mx, my); ctx.stroke(); }
       }
       for (const a of nodes) {
         if (ink) {
+          if (avoid && inObs(a.x, a.y)) continue;
           ctx.fillStyle = a.y2 ? "rgba(255,209,0,.85)" : "rgba(0,31,95,.55)";
           ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2); ctx.fill();
           continue;
@@ -409,7 +412,7 @@
         ctx.fillStyle = a.y2 ? "rgba(255,209,0,.3)" : "rgba(244,245,247,.2)"; ctx.fill();
       }
     };
-    const loop = () => { if (on) { if (!ink && tick++ % 24 === 0) scan(); draw(); } requestAnimationFrame(loop); };
+    const loop = () => { if (on) { if (avoid && tick++ % 24 === 0) scan(); draw(); } requestAnimationFrame(loop); };
     size(); addEventListener("resize", size);
     // A seção muda de altura depois da carga (conteúdo animado, fontes): redesenha no tamanho novo para não esticar
     if (window.ResizeObserver) { let lw = W, lh = H; new ResizeObserver(() => { if (host.clientWidth !== lw || host.clientHeight !== lh) { size(); lw = W; lh = H; } }).observe(host); }
@@ -456,8 +459,8 @@
     [rL[3], rR[0], c1].forEach(i => gold.add(i));
     const drawRing = () => {
       const S = Math.min(W, H), k = S * .215, u = Math.max(.55, S / 420);
-      // Quase de frente e em diagonal (o anel da direita fica acima do da esquerda): só um balanço leve, para os hexágonos continuarem reconhecíveis
-      const roll = Math.sin(t * .8) * .34 + Math.max(-.75, Math.min(.75, vel * .013)), yaw = Math.sin(t * .55 + 1) * .36, pit = Math.sin(t * .4) * .14, spin = -1.08 + Math.sin(t * .3) * .12;
+      // Em diagonal (o anel da direita fica acima do da esquerda) e girando na horizontal, em torno do eixo vertical
+      const roll = Math.max(-.5, Math.min(.5, vel * .008)), yaw = t * .9, pit = .1 + Math.sin(t * .4) * .08, spin = -1.08;
       const pr = P.map(o => {
         const x0 = o.p[0] * Math.cos(spin) - o.p[1] * Math.sin(spin), y0 = o.p[0] * Math.sin(spin) + o.p[1] * Math.cos(spin), z = o.p[2];
         const y1 = y0 * Math.cos(roll) - z * Math.sin(roll), z1 = y0 * Math.sin(roll) + z * Math.cos(roll);
@@ -487,34 +490,28 @@
     const drawDna = () => {
       const R = W * .34, len = H * .84, u = Math.max(.6, W / 300), tilt = .2;
       const pt = (i, ph) => {
-        const an = i * .46 + t * 1.6 + ph, y = (i / (N - 1) - .5) * len, x = Math.cos(an) * R, z = Math.sin(an);
+        const an = i * .46 + t * .75 + ph, y = (i / (N - 1) - .5) * len, x = Math.cos(an) * R, z = Math.sin(an);
         return [W / 2 + x * Math.cos(tilt) - y * Math.sin(tilt) * .3, H / 2 + y + x * Math.sin(tilt), (z + 1) / 2];
       };
       const A = [], B = [];
       for (let i = 0; i < N; i++) { A.push(pt(i, 0)); B.push(pt(i, Math.PI * .92)); }
       ctx.lineCap = "round";
-      // degraus: metade de cada lado; um a cada três é amarelo
-      for (let i = 0; i < N; i++) {
-        const a = A[i], b = B[i], m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], d = (a[2] + b[2]) / 2, y = i % 3 === 1;
-        seg(a, m, y ? "255,209,0" : BASE, (y ? .3 + a[2] * .45 : .1 + a[2] * .22) * (y ? GA : BA), 1.1 * u);
-        seg(m, b, BASE, (.1 + b[2] * .22) * BA, 1.1 * u);
-      }
-      [A, B].forEach(s => { for (let i = 0; i < N - 1; i++) seg(s[i], s[i + 1], BASE, (.16 + (s[i][2] + s[i + 1][2]) / 2 * .4) * BA, 1.3 * u); });
-      A.map((p, i) => [p, i % 3 === 1]).concat(B.map(p => [p, false])).sort((p, q) => p[0][2] - q[0][2]).forEach(([p, y]) => {
-        ctx.fillStyle = y ? `rgba(255,209,0,${Math.min(1, (.45 + p[2] * .5) * GA)})` : `rgba(${BASE},${Math.min(1, (.25 + p[2] * .5) * BA)})`;
-        hex(p[0], p[1], (2 + p[2] * 2.2) * u);
+      // degraus e fitas só em azul (sem amarelo), com traço mais grosso
+      for (let i = 0; i < N; i++) { const a = A[i], b = B[i]; seg(a, b, BASE, (.16 + (a[2] + b[2]) / 2 * .3) * BA, 1.9 * u); }
+      [A, B].forEach(s => { for (let i = 0; i < N - 1; i++) seg(s[i], s[i + 1], BASE, (.3 + (s[i][2] + s[i + 1][2]) / 2 * .45) * BA, 2.6 * u); });
+      A.concat(B).sort((p, q) => p[2] - q[2]).forEach(p => {
+        ctx.fillStyle = `rgba(${BASE},${Math.min(1, (.4 + p[2] * .5) * BA)})`;
+        hex(p[0], p[1], (2.8 + p[2] * 2.4) * u);
       });
     };
 
-    // A rolagem não comanda a molécula, só dá um impulso: a velocidade da rolagem (suavizada) soma ao movimento próprio
-    // e se dissipa sozinha. No DNA, rolar para baixo acelera o giro e rolar para cima freia e inverte; no anel, inclina.
     const draw = () => {
       if (!W) return;
       if (!reduced) {
         const y = scrollY, dy = Math.max(-90, Math.min(90, y - lastY));
         lastY = y; vel = vel * .93 + dy * .07;
         if (Math.abs(vel) < .01) vel = 0;
-        t += .0055 + vel * (dna ? .0026 : .0009);
+        t += .0055 + vel * (dna ? .0034 : .0022);
       }
       ctx.clearRect(0, 0, W, H); (dna ? drawDna : drawRing)();
     };
@@ -1323,7 +1320,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.53`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.54`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
@@ -1374,6 +1371,32 @@
       gsap.from(".p-nav", { opacity: 0, duration: 1, ease: "power2.out", delay: 0.9 });
       gsap.fromTo(".pa-photos .ph", { clipPath: "inset(100% 0 0 0)" }, { clipPath: "inset(0% 0 0 0)", duration: 1.3, ease: "expo.inOut", stagger: 0.12, scrollTrigger: { trigger: ".pa-photos", start: "top 85%" } });
     }
+  }
+
+  // ---------- Entrada ao rolar, no site todo: o que ainda não tinha animação própria sobe e aparece quando entra na tela ----------
+  // Usa as propriedades CSS `translate` e `opacity` por classe, que não brigam com o `transform` do GSAP; quem já é
+  // animado pelo GSAP (estilo em linha), está em bloco travado ou dentro de um elemento já revelado fica de fora.
+  if (motion && window.IntersectionObserver) {
+    const SKIP = "[data-reveal],[data-lines],.mat-body,.manifesto,#mf2,.hscroll,.rail,.vr-card,.vr-sw,.env3-card,.env3-bg,.lgc-mosaic,.hub-grid,.seg-grid,.env-grid,.seal,.site-header,canvas,.rv";
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      io.unobserve(e.target);
+      e.target.classList.add("in");
+      setTimeout(() => e.target.classList.remove("rv", "in"), 1500);
+    }), { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+    $$("main section:not(.hero):not(.page-hero), section.contact-band, footer.footer").forEach(sec => {
+      const seen = new Map();
+      $$(".eyebrow, h2, h3, .lead, .note, .btn, article, figure, li, dl > div, table, form .field, [class*='-card'], .f-logo, .footer .grid > div", sec).forEach(el => {
+        // fora também o que está oculto na carga (conteúdo de sanfona, notas): nunca entraria na tela e ficaria invisível ao abrir
+        if (el.closest(SKIP) || el.style.transform || el.style.opacity || el.style.clipPath || !el.offsetWidth || !el.offsetHeight) return;
+        if (el.parentElement.closest(".rv")) return;
+        const n = seen.get(el.parentElement) || 0;
+        seen.set(el.parentElement, n + 1);
+        el.style.setProperty("--rvd", Math.min(n, 6) * 70 + "ms");
+        el.classList.add("rv");
+        io.observe(el);
+      });
+    });
   }
 
   if (hasGsap) { ScrollTrigger.sort(); ScrollTrigger.refresh(); }
