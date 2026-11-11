@@ -2468,3 +2468,23 @@ body { background-image: none; }
   .iso2-duo { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 600px) { .iso2-comps { margin-left: -16px; margin-right: -16px; padding: 0 16px 6px; scroll-padding: 0 16px; } }
+
+/* ---------- v5.60: atalhos no hero das páginas internas; 5 compromissos num painel azul-noite com textura e luz ---------- */
+.ph-jump { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+.ph-jump .btn { -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); background: rgba(15, 22, 38, .28); }
+.ph-jump .arr { display: inline-block; }
+@media (max-width: 600px) { .ph-jump .btn { flex: 1 1 auto; justify-content: center; } }
+.iso2-pol { position: relative; overflow: hidden; margin-top: clamp(64px, 7vw, 112px); padding: clamp(28px, 4.4vw, 72px); border-radius: 14px; background: var(--night); color: var(--white); box-shadow: 0 30px 70px rgba(8, 12, 22, .2); }
+.iso2-pol > :not(canvas) { position: relative; z-index: 1; }
+.iso2-pol-head .mono { color: rgba(244, 245, 247, .6); }
+.iso2-pol-head .mono::before { content: ""; display: inline-block; width: 14px; height: 2px; margin-right: 10px; vertical-align: middle; border-radius: 99px; background: var(--yellow); }
+.iso2-pol-head h3 { color: var(--white); }
+.iso2-pol-head .h-sep { margin-top: 26px; }
+.iso2-pol-head p { color: rgba(244, 245, 247, .78); padding-bottom: 4px; }
+.iso2-comp-card { background: rgba(244, 245, 247, .05); border-color: rgba(244, 245, 247, .14); color: var(--white); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.iso2-n { color: rgba(244, 245, 247, .16); }
+.iso2-comp-card b { color: rgba(244, 245, 247, .86); }
+.iso2-comp-card:hover { border-color: rgba(244, 245, 247, .34); }
+.iso2-comp-card.on { background: rgba(244, 245, 247, .1); border-color: rgba(244, 245, 247, .3); }
+.iso2-comp-card.on b { color: var(--white); }
+@media (max-width: 900px) { .iso2-comp-card, .iso2-comp-card.on { background: rgba(244, 245, 247, .08); border-color: rgba(244, 245, 247, .2); } .iso2-pol { padding: 26px 20px 24px; border-radius: 10px; } .iso2-comps { margin-left: -20px; margin-right: -20px; padding: 0 20px 6px; scroll-padding: 0 20px; } }
