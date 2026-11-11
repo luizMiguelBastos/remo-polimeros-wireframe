@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Valores · Remo Polímeros · Wireframe v5.56</title>
+  <title>Valores · Remo Polímeros · Wireframe v5.57</title>
   <meta name="description" content="Missão, valores, compromisso ambiental e certificação ISO 9001:2015 da Remo Polímeros.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
   <script>try{if(sessionStorage.getItem("remo-nav")==="1")document.documentElement.classList.add("tx-in")}catch(e){}</script>
   <link rel="preload" as="image" href="assets/img/val-parceria.webp">
-  <link rel="icon" type="image/svg+xml" href="assets/logo/remo-simbolo.svg?v=5.56">
-  <link rel="stylesheet" href="assets/wireframe.css?v=5.56">
+  <link rel="icon" type="image/svg+xml" href="assets/logo/remo-simbolo.svg?v=5.57">
+  <link rel="stylesheet" href="assets/wireframe.css?v=5.57">
 </head>
 <body>
 
@@ -20,18 +20,18 @@
 <div class="sheet" id="sheet" aria-hidden="true">
   <canvas class="sheet-mol" id="sheet-mol"></canvas>
   <div class="sheet-inner sheet-lockup">
-    <img src="assets/logo/remo-simbolo.svg?v=5.56" alt="" class="sheet-mark">
+    <img src="assets/logo/remo-simbolo.svg?v=5.57" alt="" class="sheet-mark">
     <div class="word sheet-big"><span class="wm"></span></div>
     <div class="sheet-meta"><span class="sheet-dest mono" id="sheet-dest"></span></div>
   </div>
 </div>
 <div class="cursor" id="cursor" aria-hidden="true"><span id="cursor-label"></span></div>
 
-<!-- WIREFRAME v5.56 -->
+<!-- WIREFRAME v5.57 -->
 
 <header class="site-header" id="header">
   <div class="wrap">
-    <a href="index.html" class="logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo-branco.svg?v=5.56" alt="" class="logo-mark" width="40" height="36"><span class="wm" aria-hidden="true"></span>
+    <a href="index.html" class="logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo-branco.svg?v=5.57" alt="" class="logo-mark" width="40" height="36"><span class="wm" aria-hidden="true"></span>
     </a>
     <span class="hdr-sec" id="hdr-sec" aria-hidden="true"></span>
     <nav class="nav" id="nav" aria-label="Principal">
@@ -79,7 +79,7 @@
 </section>
 
 <!-- Visão e valores (seção clara): título da visão e os valores em rolagem com o card ao lado -->
-<section class="light vr-sec" id="principios" data-mol="ink" data-mol-edge data-mol-density=".8">
+<section class="light vr-sec" id="principios" data-mol="ink" data-mol-avoid data-mol-density=".75">
   <div class="wrap">
     <div class="vm-intro">
       <div class="eyebrow">Visão e valores</div>
@@ -137,6 +137,7 @@
         <div>
           <div class="eyebrow">Compromisso ambiental</div>
           <h2 data-reveal>Cuidado em <span class="hl">cada etapa.</span></h2>
+          <span class="h-sep env3-sep" id="env-sep" aria-hidden="true"></span>
         </div>
         <p class="lead" data-reveal>Meio ambiente é requisito de operação na Remo. Cada prática tem documento, contrato ou laudo que a comprova.</p>
       </div>
@@ -201,59 +202,64 @@
   </div>
 </section>
 
-<section class="iso" id="qualidade" style="padding:clamp(64px,8vw,112px) 0">
-  <div class="wrap iso-stage" id="iso-stage">
-    <div class="seal" id="seal">
-      <svg viewBox="0 0 400 400" aria-hidden="true">
-        <defs><path id="ring" d="M200,200 m-170,0 a170,170 0 1,1 340,0 a170,170 0 1,1 -340,0"/></defs>
-        <g id="ring-g">
-          <circle cx="200" cy="200" r="190" fill="none" stroke="rgba(244,245,247,.14)"/>
-          <text class="ring-text"><textPath href="#ring">Padrão internacional de produção · Qualidade certificada · Rastreabilidade · </textPath></text>
-        </g>
-      </svg>
-      <div class="core"><div><b>ISO</b><span>9001:2015*</span></div></div>
-    </div>
-    <div>
+<!-- QUALIDADE E CERTIFICAÇÃO (fundo claro): texto e pilares à esquerda, ficha do certificado com os dados reais à direita -->
+<section class="light iso2" id="qualidade" data-mol="ink" data-mol-edge data-mol-density=".7">
+  <div class="wrap iso2-grid">
+    <div class="iso2-txt">
       <div class="eyebrow">Qualidade e certificação</div>
       <h2 data-lines class="iso-title">
         <span class="line"><span>Certificação ISO.</span></span>
         <span class="line"><span class="hl">Padrão internacional</span></span>
         <span class="line"><span class="hl">de produção.</span></span>
       </h2>
-      <p class="lead" data-reveal>Processos auditados e reconhecidos internacionalmente, da formulação à entrega. Cada lote segue normas e procedimentos documentados, com rastreabilidade e melhoria contínua.</p>
-      <div style="display:flex;gap:12px;flex-wrap:wrap;margin:28px 0 48px" data-reveal>
-        <a href="#" class="btn">Baixar certificado (PDF) <span class="arr">↓</span></a>
-        <a href="contato.html" class="btn ghost">Falar com a Qualidade</a>
+      <span class="h-sep" aria-hidden="true"></span>
+      <p class="lead">Processos auditados e reconhecidos internacionalmente, da formulação à entrega. Cada lote segue normas e procedimentos documentados, com rastreabilidade e melhoria contínua.</p>
+      <div class="iso2-cta">
+        <a href="contato.html" class="btn" data-cursor="Ir">Solicitar o certificado <span class="arr">→</span></a>
+        <a href="contato.html" class="btn ghost" data-cursor="Ir">Falar com a Qualidade</a>
       </div>
-      <div class="q-cards" data-reveal>
-        <article class="q-card" data-cursor="Ver">
-          <span class="gi">01 · Política da Qualidade</span>
-          <b class="q-big">5 compromissos</b>
-          <ol class="q-more">
-            <li>Qualidade, preços e prazos competitivos</li>
-            <li>Colaboradores valorizados e capacitados</li>
-            <li>Persistência e continuidade</li>
-            <li>Melhoria contínua e novas tecnologias</li>
-            <li>Não aceitação de erros</li>
-          </ol>
-        </article>
-        <article class="q-card" data-cursor="Ver">
-          <span class="gi">02 · Controle por lote</span>
-          <b class="q-big">COA por lote</b>
-          <p class="q-more">Certificado de análise e amostra retida de cada produção.</p>
-        </article>
-        <article class="q-card" data-cursor="Ver">
-          <span class="gi">03 · Rastreabilidade</span>
-          <b class="q-big">Lote a lote</b>
-          <p class="q-more">Normas e procedimentos documentados em cada etapa, da formulação à entrega, com melhoria contínua dos processos.</p>
-        </article>
-      </div>
-      <p class="note"><b>Destaque da ISO:</b> header, esta seção (fixa na tela enquanto o selo gira) e rodapé. * Número provisório; certificado em PDF pendente.</p>
     </div>
+    <article class="iso2-card" id="iso-card" aria-label="Certificado ISO 9001:2015">
+      <header class="iso2-top">
+        <div class="seal iso2-seal" id="seal">
+          <svg viewBox="0 0 400 400" aria-hidden="true">
+        <defs><path id="ring" d="M200,200 m-170,0 a170,170 0 1,1 340,0 a170,170 0 1,1 -340,0"/></defs>
+        <g id="ring-g">
+          <circle cx="200" cy="200" r="190" fill="none" stroke="rgba(244,245,247,.14)"/>
+          <text class="ring-text"><textPath href="#ring">Padrão internacional de produção · Qualidade certificada · Rastreabilidade · </textPath></text>
+        </g>
+      </svg>
+          <div class="core"><div><b>ISO</b></div></div>
+        </div>
+        <div>
+          <span class="mono">Sistema de gestão da qualidade</span>
+          <b class="iso2-norm">ISO 9001:2015</b>
+          <span class="iso2-status" id="iso-status"><i aria-hidden="true"></i>Certificado vigente</span>
+        </div>
+      </header>
+      <dl class="iso2-rows">
+        <div><dt>Certificado nº</dt><dd>46074/25/I</dd></div>
+        <div><dt>Organismo certificador</dt><dd>RINA</dd></div>
+        <div><dt>Emissão</dt><dd>21/03/2025</dd></div>
+        <div><dt>Validade</dt><dd>20/03/2028</dd></div>
+        <div class="wide"><dt>Empresa certificada</dt><dd>Remo Polímeros Indústria e Comércio de Resinas Plásticas LTDA</dd></div>
+      </dl>
+      <div class="iso2-life" aria-hidden="true">
+        <div class="iso2-bar"><i id="iso-life" data-from="2025-03-21" data-to="2028-03-20"></i></div>
+        <div class="iso2-ends"><span>03/2025</span><span>03/2028</span></div>
+      </div>
+    </article>
+  </div>
+  <div class="wrap">
+    <ol class="iso2-pillars">
+      <li><span class="mono">01 · Política da Qualidade</span><b>5 compromissos</b><p>Qualidade, preços e prazos competitivos; colaboradores valorizados e capacitados; persistência e continuidade; melhoria contínua e novas tecnologias; não aceitação de erros.</p></li>
+      <li><span class="mono">02 · Controle por lote</span><b>COA por lote</b><p>Certificado de análise e amostra retida de cada produção.</p></li>
+      <li><span class="mono">03 · Rastreabilidade</span><b>Lote a lote</b><p>Normas e procedimentos documentados em cada etapa, da formulação à entrega, com melhoria contínua dos processos.</p></li>
+    </ol>
   </div>
 </section>
 
-<section class="rail light" aria-label="Outras seções">
+<section class="rail light" data-mol="ink" data-mol-density=".45" aria-label="Outras seções">
   <div class="rail-pin">
     <div class="wrap rail-head">
       <div class="eyebrow">Continue explorando</div>
@@ -360,7 +366,7 @@
 <footer class="footer" data-mol="ink">
   <div class="wrap">
     <div class="f-top">
-      <a href="index.html" class="f-logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo.svg?v=5.56" alt="" class="f-mark"><span class="wm" aria-hidden="true"></span></a>
+      <a href="index.html" class="f-logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo.svg?v=5.57" alt="" class="f-mark"><span class="wm" aria-hidden="true"></span></a>
       <p class="f-tag">Polímeros de engenharia,<br>feitos sob medida.</p>
       <a href="contato.html" class="btn f-cta">Fale com um especialista <span class="arr">→</span></a>
     </div>
@@ -389,7 +395,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<script src="assets/data.js?v=5.56"></script>
-<script src="assets/wireframe.js?v=5.56"></script>
+<script src="assets/data.js?v=5.57"></script>
+<script src="assets/wireframe.js?v=5.57"></script>
 </body>
 </html>

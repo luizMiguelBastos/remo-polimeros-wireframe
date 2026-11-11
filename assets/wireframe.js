@@ -345,7 +345,7 @@
     cv.className = ink ? "mol-bg" : "mol-bg flow-bg"; cv.setAttribute("aria-hidden", "true");
     host.prepend(cv);
     const ctx = cv.getContext("2d");
-    let W = 0, H = 0, nodes = [], mx = -999, my = -999, on = false;
+    let W = 0, H = 0, nodes = [], clusters = [], mx = -999, my = -999, on = false;
     // Fundo azul: as moléculas não passam por cima da tipografia. De tempos em tempos a seção é varrida e cada bloco de
     // texto, botão, imagem ou card perto da tela vira um obstáculo: os nós desviam dele e as ligações não o atravessam.
     const AVOID = "h1,h2,h3,h4,h5,p,li,dt,dd,a,button,label,input,select,textarea,img,figure,svg,table,span,small,strong,b,time,.eyebrow,.mono,[class*='card']";
@@ -368,7 +368,7 @@
       W = host.clientWidth; H = host.clientHeight;
       cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       // Já desenhadas e mesma largura (só a altura mudou, ex.: conteúdo trocando): reposiciona na proporção, sem sortear de novo
-      if (nodes.length && pW === W && pH) { const k = H / pH; nodes.forEach(a => { a.y *= k; }); return; }
+      if (nodes.length && pW === W && pH) { const k = H / pH; nodes.forEach(a => { a.y *= k; }); clusters.forEach(c => { c.y *= k; }); return; }
       // data-mol-edge: moléculas só nas faixas laterais, deixando o miolo livre para o conteúdo
       // No celular a faixa fica só na margem de 24 px, sem passar por cima dos botões das linhas
       band = !edge ? 0 : W < 700 ? 22 : Math.min(W / 2, Math.max(120, (W - Math.min(W, 1320)) / 2 + 40));
@@ -379,16 +379,34 @@
         const x = edge ? (i % 2 ? W - Math.random() * band : Math.random() * band) : Math.random() * W;
         return { x, y: Math.random() * H, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25, r: 1.2 + Math.random() * 2.2, rot: Math.random() * Math.PI * 2, y2: Math.random() < .45, right: edge && i % 2 === 1 };
       });
+      // Fundo azul: em vez de partículas soltas e distantes, pequenos aglomerados de 4 ou 5 que ficam juntos e por isso
+      // se ligam, formando polígonos que mudam de forma; cada aglomerado vaga devagar pela seção
+      clusters = [];
+      if (!ink && n) {
+        clusters = Array.from({ length: Math.max(1, Math.round(n / 4.5)) }, () => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .14, vy: (Math.random() - .5) * .14 }));
+        nodes.forEach((a, i) => { a.c = clusters[i % clusters.length]; const an = Math.random() * Math.PI * 2, d = 20 + Math.random() * 62; a.x = a.c.x + Math.cos(an) * d; a.y = a.c.y + Math.sin(an) * d; });
+      }
     };
     const edge = "molEdge" in host.dataset;
     let band = 0;
     const LINK = 130;
     const draw = () => {
       ctx.clearRect(0, 0, W, H);
+      if (!reduced) for (const c of clusters) {
+        c.x += c.vx; c.y += c.vy;
+        if (c.x < 40 || c.x > W - 40) c.vx *= -1; if (c.y < 40 || c.y > H - 40) c.vy *= -1;
+      }
       for (const a of nodes) {
         if (!reduced) {
+          if (a.c) {
+            // preso por um elástico fraco ao centro do aglomerado: passa de 88 px, é puxado de volta
+            const dx = a.x - a.c.x, dy = a.y - a.c.y, d = Math.hypot(dx, dy);
+            if (d > 88) { a.vx -= dx / d * .012; a.vy -= dy / d * .012; }
+            const sp = Math.hypot(a.vx, a.vy); if (sp > .3) { a.vx *= .3 / sp; a.vy *= .3 / sp; }
+            a.x += a.c.vx; a.y += a.c.vy;
+          }
           a.x += a.vx; a.y += a.vy;
-          if (a.x < 0 || a.x > W) a.vx *= -1; if (a.y < 0 || a.y > H) a.vy *= -1;
+          if (!a.c) { if (a.x < 0 || a.x > W) a.vx *= -1; if (a.y < 0 || a.y > H) a.vy *= -1; }
           if (edge && (a.right ? a.x < W - band : a.x > band)) { a.x -= a.vx; a.vx *= -1; }
         }
         if (!avoid) continue;
@@ -861,6 +879,14 @@
 
     // Selo ISO gira com a rolagem
     if ($("#qualidade")) gsap.to("#ring-g", { rotation: 200, transformOrigin: "50% 50%", ease: "none", scrollTrigger: { trigger: "#qualidade", start: "top bottom", end: "bottom top", scrub: true } });
+    // Certificado ISO: a barra mostra em que ponto da vigência o certificado está hoje
+    const life = $("#iso-life");
+    if (life) {
+      const a = +new Date(life.dataset.from), b = +new Date(life.dataset.to), f = Math.max(0, Math.min(1, (Date.now() - a) / (b - a)));
+      if (Date.now() > b && $("#iso-status")) $("#iso-status").hidden = true;
+      gsap.fromTo(life, { scaleX: 0 }, { scaleX: f, duration: 1.6, ease: "expo.out", scrollTrigger: { trigger: life, start: "top 88%" } });
+      gsap.fromTo("#iso-card", { clipPath: "inset(100% 0 0 0 round 10px)", y: 50 }, { clipPath: "inset(0% 0 0 0 round 10px)", y: 0, duration: 1.3, ease: "expo.inOut", scrollTrigger: { trigger: "#iso-card", start: "top 85%" } });
+    }
     if ($("#seal")) gsap.from("#seal .core", { scale: 0.7, opacity: 0, duration: 1.2, ease: "expo.out", scrollTrigger: { trigger: "#seal", start: "top 75%" } });
 
   } else {
@@ -1059,7 +1085,7 @@
   const env3 = $("#env3");
   if (env3) {
     const tabs = $$(".env3-tab", env3), panes = $$(".env3-p", env3), bgs = $$("#env-bg i"), wipe = $(".env3-wipe", env3), tabBox = $(".env3-tabs", env3), card = $(".env3-card", env3);
-    const n = panes.length, DUR = 7, bars = tabs.map(b => $("i", b));
+    const n = panes.length, DUR = 7, bars = tabs.map(b => $("i", b)), sep = $("#env-sep");
     let cur = 0, inView = false, hold = false, tl = null;
     // O 50% conta na primeira vez que o tema Energia aparece
     const count = p => {
@@ -1083,6 +1109,8 @@
       cur = i;
       tabs.forEach((b, k) => { b.classList.toggle("on", k === i); b.setAttribute("aria-selected", k === i ? "true" : "false"); });
       bgs.forEach((b, k) => b.classList.toggle("on", k === i));
+      // O separador sob o título muda de tamanho a cada tema, como o do hero muda a cada foto
+      if (sep) motion ? gsap.to(sep, { width: 44 + i * 30, duration: .9, ease: "expo.inOut" }) : (sep.style.width = 44 + i * 30 + "px");
       if (tabBox.scrollWidth > tabBox.clientWidth) tabBox.scrollTo({ left: tabs[i].offsetLeft - tabBox.offsetLeft - 24, behavior: "smooth" });
       if (tl) tl.progress(1);
       if (!motion) { from.classList.remove("on"); to.classList.add("on"); count(to); return; }
@@ -1342,7 +1370,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.56`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.57`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {

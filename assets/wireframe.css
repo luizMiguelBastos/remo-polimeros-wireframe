@@ -2352,3 +2352,47 @@ body { background-image: none; }
 .page-hero.photo:has(+ .vm-dark)::after { display: none; }
 /* Zigue-zague de luz: no manifesto o foco fica em cima, à esquerda; na seção seguinte a sombra fica embaixo, à direita */
 .vr-sec { background-image: radial-gradient(rgba(11, 18, 32, .075) 1px, transparent 1.3px), radial-gradient(ellipse 62% 58% at 100% 100%, rgba(11, 18, 32, .1), rgba(11, 18, 32, 0) 72%); background-size: 22px 22px, 100% 100%; background-repeat: repeat, no-repeat; }
+
+/* ---------- v5.57: separador dinâmico no compromisso ambiental; seção ISO em fundo claro, com a ficha do certificado ---------- */
+.env3-sep { margin-top: 16px; width: 44px; }
+.iso2 { padding: clamp(80px, 9vw, 136px) 0; background-image: radial-gradient(rgba(11, 18, 32, .075) 1px, transparent 1.3px), radial-gradient(ellipse 58% 56% at 0% 0%, rgba(11, 18, 32, .09), rgba(11, 18, 32, 0) 72%); background-size: 22px 22px, 100% 100%; background-repeat: repeat, no-repeat; }
+.iso2-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(40px, 5vw, 88px); align-items: center; }
+.iso2 .iso-title { margin: 0; color: var(--ink); }
+.iso2 .h-sep { margin: 26px 0 22px; }
+.iso2 .lead { max-width: 46ch; color: var(--slate); margin: 0; }
+.iso2-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+.iso2-card { position: relative; overflow: hidden; background: #fff; border-radius: 10px; box-shadow: 0 30px 70px rgba(11, 18, 32, .14); color: var(--ink); }
+.iso2-top { display: flex; align-items: center; gap: clamp(16px, 2vw, 28px); padding: clamp(20px, 2.2vw, 30px); background: var(--night); color: var(--white); }
+.iso2-seal { width: clamp(96px, 9vw, 132px); margin: 0; flex: none; }
+.iso2-seal .ring-text { font-size: 15px; letter-spacing: .34em; fill: rgba(244, 245, 247, .62); }
+.iso2-seal .core { inset: 24%; }
+.iso2-seal .core b { font-size: clamp(20px, 2vw, 28px); }
+.iso2-top .mono { display: block; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: rgba(244, 245, 247, .62); }
+.iso2-norm { display: block; margin: 8px 0 12px; font: 600 clamp(28px, 2.9vw, 44px)/1 var(--f-sans); font-stretch: 118%; letter-spacing: -.025em; }
+.iso2-status { display: inline-flex; align-items: center; gap: 8px; font: 12px var(--f-mono); color: var(--yellow); }
+.iso2-status i { width: 7px; height: 7px; border-radius: 50%; background: var(--yellow); animation: isoPulse 2.4s var(--ease) infinite; }
+@keyframes isoPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 209, 0, .5); } 60% { box-shadow: 0 0 0 7px rgba(255, 209, 0, 0); } }
+.iso2-rows { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; padding: 4px clamp(20px, 2.2vw, 30px) 0; }
+.iso2-rows > div { padding: 16px 0; border-bottom: 1px solid var(--line-l); }
+.iso2-rows > .wide { grid-column: 1 / -1; }
+.iso2-rows dt { font: 11px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--slate); }
+.iso2-rows dd { margin: 6px 0 0; font: 600 clamp(17px, 1.5vw, 21px)/1.2 var(--f-sans); font-stretch: 108%; letter-spacing: -.01em; }
+.iso2-rows > .wide dd { font-weight: 500; font-size: 16px; }
+.iso2-life { padding: 20px clamp(20px, 2.2vw, 30px) 24px; }
+.iso2-bar { height: 4px; border-radius: 99px; background: var(--line-l); overflow: hidden; }
+.iso2-bar i { display: block; height: 100%; background: var(--yellow); transform-origin: left; transform: scaleX(0); }
+.iso2-ends { display: flex; justify-content: space-between; margin-top: 8px; font: 11px var(--f-mono); color: var(--slate); }
+.iso2-pillars { list-style: none; margin: clamp(48px, 5vw, 80px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 48px); }
+.iso2-pillars li { position: relative; padding-top: 22px; border-top: 1px solid var(--line-l); }
+.iso2-pillars li::before { content: ""; position: absolute; left: 0; top: -1px; width: 44px; height: 3px; background: var(--yellow); transition: width .6s var(--ease); }
+.iso2-pillars li:hover::before { width: 100%; }
+.iso2-pillars .mono { font-size: 12px; color: var(--slate); }
+.iso2-pillars b { display: block; margin: 12px 0 10px; font: 600 clamp(22px, 2vw, 30px)/1.1 var(--f-sans); font-stretch: 115%; letter-spacing: -.02em; color: var(--ink); }
+.iso2-pillars p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--slate); }
+@media (max-width: 900px) {
+  .iso2-grid { grid-template-columns: minmax(0, 1fr); }
+  .iso2-pillars { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .iso2-cta .btn { flex: 1 1 100%; justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) { .iso2-bar i { transform: scaleX(.55); } .iso2-status i { animation: none; } }
+.iso2 .iso-title { font-size: clamp(30px, 3.45vw, 54px); }
