@@ -72,6 +72,20 @@
   };
   $$("main h1, main h2, .contact-band h2, .rail h2").forEach(h => { if (!h.closest(".lgc") && !h.classList.contains("ph-big")) pt(h); });
 
+  // ---------- Passar o mouse com intenção ----------
+  // Quando a página rola, os itens passam por baixo do cursor parado e o navegador dispara "mouse entrou". Aqui o item só
+  // reage se o cursor se moveu de verdade (a posição na tela mudou) e ficou um instante em cima dele.
+  let rsx = -1, rsy = -1, realAt = 0;
+  document.addEventListener("pointermove", e => { if (e.screenX !== rsx || e.screenY !== rsy) { rsx = e.screenX; rsy = e.screenY; realAt = performance.now(); } }, true);
+  const hoverIntent = (el, fn) => {
+    let tm = 0;
+    el.addEventListener("pointermove", e => {
+      if (e.pointerType !== "mouse" || tm || performance.now() - realAt > 80) return;
+      tm = setTimeout(() => { tm = 0; fn(); }, 90);
+    });
+    el.addEventListener("pointerleave", () => { clearTimeout(tm); tm = 0; });
+  };
+
   // ---------- Header que some ao descer ----------
   const header = $("#header");
   let lastY = 0;
@@ -1092,7 +1106,7 @@
     // Passar o mouse num tema já troca (como na lista dos valores, logo acima); o toque e o teclado trocam pelo clique
     tabs.forEach((b, k) => {
       b.addEventListener("click", () => show(k));
-      b.addEventListener("pointerenter", e => { if (e.pointerType === "mouse") show(k); });
+      hoverIntent(b, () => show(k));
     });
     if (finePointer) [tabBox, $(".env3-card", env3)].forEach(el => {
       el.addEventListener("pointerenter", () => { hold = true; run(); });
@@ -1134,6 +1148,14 @@
       upd();
       track.addEventListener("scroll", () => { upd(); sw.classList.add("used"); }, { passive: true });
     }
+    // Tabela periódica dos valores (desktop): cada valor é uma célula com número, símbolo e nome curto
+    const SYM = { "Integridade": "In", "Indústria brasileira": "Ib", "Ética": "Ét", "Compromisso": "Co", "Agilidade": "Ag", "Eficiência": "Ef", "Confiança": "Cf", "Flexibilidade": "Fl", "Qualidade": "Qu", "Persistência": "Pe" };
+    items.forEach(b => {
+      const sy = document.createElement("span"), sh = document.createElement("span");
+      sy.className = "vr-sym"; sy.setAttribute("aria-hidden", "true"); sy.textContent = SYM[b.dataset.short] || b.dataset.short.slice(0, 2);
+      sh.className = "vr-sh"; sh.setAttribute("aria-hidden", "true"); sh.textContent = b.dataset.short;
+      b.append(sy, sh);
+    });
     const title = $("#vr-title"), proof = $("#vr-proof"), cota = $("#vr-cota"), cur = $("#vr-cur");
     const media = $("#vr-media"), card = $(".vr-card", vr), inner = $(".vr-in", vr), wipe = $(".vr-wipe", vr), ind = $(".vr-ind", vr), list = $(".vr-list", vr);
     let i = 0, tl = null;
@@ -1179,10 +1201,10 @@
     ticks[0].classList.add("on");
     moveInd(false);
     addEventListener("resize", () => moveInd(false));
-    // O usuário escolhe: clique ou hover (mouse) num valor troca o card na hora
+    // O usuário escolhe: clique, ou passar o mouse com intenção (rolar a página com o cursor parado em cima não troca)
     items.forEach((b, n) => {
       b.addEventListener("click", () => show(n));
-      if (finePointer) b.addEventListener("mouseenter", () => show(n));
+      if (finePointer) hoverIntent(b, () => show(n));
     });
     const grid = $(".vr-grid", vr);
     grid.addEventListener("mouseenter", () => { paused = true; sync(); });
@@ -1320,7 +1342,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.54`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.55`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {

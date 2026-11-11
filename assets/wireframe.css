@@ -2313,3 +2313,37 @@ body { background-image: none; }
 .rv { opacity: 0; translate: 0 34px; transition: opacity .95s var(--ease) var(--rvd, 0ms), translate 1.05s var(--ease) var(--rvd, 0ms) !important; }
 .rv.in { opacity: 1; translate: 0 0; }
 @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; translate: none; } }
+
+/* ---------- v5.55: tabela periódica dos valores (desktop); luz e sombra nas seções de tipografia ---------- */
+.vr-sym, .vr-sh { display: none; }
+@media (min-width: 901px) {
+  .vr-grid { display: block; }
+  .vr-grid .vr-list { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 8px; border: 0; margin-bottom: 20px; }
+  .vr-grid .vr-list li:not(.vr-ind) { display: block; border: 0; }
+  .vr-list li.vr-ind { display: none; }
+  .vr-grid .vr-item, .vr-grid .vr-item.on { display: flex; flex-direction: column; align-items: flex-start; gap: 0; width: 100%; height: 100%; aspect-ratio: 1 / 1.12; padding: 10px 12px 11px; border: 1px solid var(--line-l); border-radius: 6px; background: rgba(255, 255, 255, .7); color: var(--ink);
+    transition: background .45s var(--ease), color .45s var(--ease), border-color .45s var(--ease), translate .45s var(--ease), box-shadow .45s var(--ease); }
+  .vr-grid .vr-item .vr-nm { display: none; }
+  .vr-grid .vr-item .vr-no { font: 11px var(--f-mono); color: var(--slate); transition: color .45s; }
+  .vr-grid .vr-item .vr-sym { display: block; margin-top: auto; font: 600 clamp(26px, 2.5vw, 38px)/1 var(--f-sans); font-stretch: 112%; letter-spacing: -.02em; }
+  .vr-grid .vr-item .vr-sh { display: block; margin-top: 6px; font: 11px/1.25 var(--f-mono); color: var(--slate); min-height: 2.5em; transition: color .45s; }
+  .vr-grid .vr-item:hover { border-color: var(--navy); translate: 0 -3px; }
+  .vr-grid .vr-item.on { background: var(--night); border-color: var(--night); color: var(--white); translate: 0 -6px; box-shadow: 0 16px 34px rgba(11, 18, 32, .22); }
+  .vr-grid .vr-item.on .vr-no { color: var(--yellow); font-weight: 400; }
+  .vr-grid .vr-item.on .vr-sh { color: rgba(244, 245, 247, .78); }
+  .vr-grid .vr-item.on::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: 0; height: 3px; background: var(--yellow); }
+  /* Card ao lado da foto: foto à esquerda, do topo até o rodapé; texto à direita */
+  .vr-card .vr-in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: var(--vp); align-content: center; }
+  .vr-card .vr-media { grid-column: 1; grid-row: 1 / span 4; margin: calc(-1 * var(--vp)) 0 0 calc(-1 * var(--vp)); aspect-ratio: auto; max-height: none; min-height: clamp(280px, 26vw, 380px); height: calc(100% + var(--vp)); }
+  .vr-card .vr-in > :not(.vr-media) { grid-column: 2; }
+  .vr-card .vr-cota { align-self: end; }
+  .vr-card .vr-foot { margin-top: 0; }
+}
+@media (min-width: 901px) and (max-width: 1180px) { .vr-grid .vr-list { grid-template-columns: repeat(5, minmax(0, 1fr)); } .vr-grid .vr-item, .vr-grid .vr-item.on { aspect-ratio: 1 / .78; } }
+
+/* Luz e sombra (só em seções de tipografia, nunca sobre fotos): uma luz suave vinda de cima e a base mais fechada */
+.mol-bg.flow-bg { background-image: radial-gradient(rgba(244, 245, 247, .085) 1px, transparent 1.3px), radial-gradient(ellipse 75% 46% at 50% 0%, rgba(74, 100, 168, .17), rgba(74, 100, 168, 0) 72%), linear-gradient(180deg, rgba(4, 7, 14, 0) 58%, rgba(4, 7, 14, .42) 100%); background-size: 22px 22px, 100% 100%, 100% 100%; background-repeat: repeat, no-repeat, no-repeat; }
+/* Manifesto de Valores: foco de luz atrás do texto, à esquerda, e sombra na base e à direita */
+.vm-dark > .mol-bg.flow-bg { background-image: radial-gradient(rgba(244, 245, 247, .085) 1px, transparent 1.3px), radial-gradient(ellipse 58% 62% at 24% 46%, rgba(82, 110, 182, .24), rgba(82, 110, 182, 0) 70%), linear-gradient(180deg, rgba(4, 7, 14, .3) 0%, rgba(4, 7, 14, 0) 26%, rgba(4, 7, 14, 0) 60%, rgba(4, 7, 14, .6) 100%); }
+/* Manifesto de História (claro): clarão branco atrás do texto e base levemente acinzentada */
+.manifesto.light { background-image: radial-gradient(rgba(11, 18, 32, .075) 1px, transparent 1.3px), radial-gradient(ellipse 56% 60% at 24% 46%, rgba(255, 255, 255, .9), rgba(255, 255, 255, 0) 70%), linear-gradient(180deg, rgba(11, 18, 32, .05) 0%, rgba(11, 18, 32, 0) 24%, rgba(11, 18, 32, 0) 58%, rgba(11, 18, 32, .11) 100%); background-size: 22px 22px, 100% 100%, 100% 100%; background-repeat: repeat, no-repeat, no-repeat; }
