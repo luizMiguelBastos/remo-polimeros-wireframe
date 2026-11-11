@@ -457,7 +457,7 @@
     const drawRing = () => {
       const S = Math.min(W, H), k = S * .215, u = Math.max(.55, S / 420);
       // Quase de frente e em diagonal (o anel da direita fica acima do da esquerda): só um balanço leve, para os hexágonos continuarem reconhecíveis
-      const roll = Math.sin(t * .8) * .34 + Math.max(-.5, Math.min(.5, vel * .007)), yaw = Math.sin(t * .55 + 1) * .36, pit = Math.sin(t * .4) * .14, spin = -.6 + Math.sin(t * .3) * .12;
+      const roll = Math.sin(t * .8) * .34 + Math.max(-.75, Math.min(.75, vel * .013)), yaw = Math.sin(t * .55 + 1) * .36, pit = Math.sin(t * .4) * .14, spin = -1.08 + Math.sin(t * .3) * .12;
       const pr = P.map(o => {
         const x0 = o.p[0] * Math.cos(spin) - o.p[1] * Math.sin(spin), y0 = o.p[0] * Math.sin(spin) + o.p[1] * Math.cos(spin), z = o.p[2];
         const y1 = y0 * Math.cos(roll) - z * Math.sin(roll), z1 = y0 * Math.sin(roll) + z * Math.cos(roll);
@@ -483,11 +483,11 @@
     };
 
     // --- Fita de DNA: duas fitas de pontos em hélice e os degraus (pares de bases) entre elas ---
-    const N = 26;
+    const N = 20;
     const drawDna = () => {
-      const R = W * .3, len = H * .86, u = Math.max(.6, W / 240), tilt = .2;
+      const R = W * .34, len = H * .84, u = Math.max(.6, W / 300), tilt = .2;
       const pt = (i, ph) => {
-        const an = i * .5 + t * 1.6 + ph, y = (i / (N - 1) - .5) * len, x = Math.cos(an) * R, z = Math.sin(an);
+        const an = i * .46 + t * 1.6 + ph, y = (i / (N - 1) - .5) * len, x = Math.cos(an) * R, z = Math.sin(an);
         return [W / 2 + x * Math.cos(tilt) - y * Math.sin(tilt) * .3, H / 2 + y + x * Math.sin(tilt), (z + 1) / 2];
       };
       const A = [], B = [];
@@ -514,7 +514,7 @@
         const y = scrollY, dy = Math.max(-90, Math.min(90, y - lastY));
         lastY = y; vel = vel * .93 + dy * .07;
         if (Math.abs(vel) < .01) vel = 0;
-        t += .0055 + vel * (dna ? .0011 : .0004);
+        t += .0055 + vel * (dna ? .0026 : .0009);
       }
       ctx.clearRect(0, 0, W, H); (dna ? drawDna : drawRing)();
     };
@@ -1323,7 +1323,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.52`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.53`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {

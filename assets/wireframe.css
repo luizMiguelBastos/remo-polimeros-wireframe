@@ -2297,3 +2297,7 @@ body { background-image: none; }
   .mol-fix { width: 150px; }
   .mol-fix.mol-dna { width: 78px; right: 58px; }
 }
+
+/* ---------- v5.53: fita de DNA mais curta e mais larga ---------- */
+.mol-fix.mol-dna { width: clamp(250px, 25vw, 380px); aspect-ratio: 1 / 1.4; right: max(clamp(48px, 8vw, 150px), calc((100vw - 1320px) / 2 + 96px)); }
+@media (max-width: 900px) { .mol-fix.mol-dna { width: 104px; right: 54px; } }
