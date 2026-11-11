@@ -1159,6 +1159,7 @@
         c.innerHTML = `<div class="vr-media" role="img" aria-label="${d.short}" style="background-image:url(assets/img/vr-${d.no}.webp)"></div>
           <div class="vr-cota" aria-hidden="true"><i></i><span>Valor ${d.no} / 10 · ${d.short}</span></div>
           <h3 class="vr-title">${$(".vr-nm", b).textContent}</h3>
+          <span class="h-sep vr-sep" aria-hidden="true" style="width:${36 + (+d.no) * 12}px"></span>
           <span class="vr-lbl">Na prática</span>
           <p class="vr-proof">${d.proof}</p>`;
         track.appendChild(c);
@@ -1187,6 +1188,8 @@
     const title = $("#vr-title"), proof = $("#vr-proof"), cota = $("#vr-cota"), cur = $("#vr-cur");
     const media = $("#vr-media"), card = $(".vr-card", vr), inner = $(".vr-in", vr), wipe = $(".vr-wipe", vr), ind = $(".vr-ind", vr), list = $(".vr-list", vr);
     let i = 0, tl = null;
+    // O separador sob o título cresce a cada valor, como uma barra de progresso (mesma ideia do compromisso ambiental)
+    const vsep = $("#vr-sep");
     // Troca automática a cada 6 s (barra de progresso no card); pausa no hover/foco e fora da tela
     const bar = $("#vr-bar"), desk = matchMedia("(min-width: 901px)");
     let visible = false, paused = false, tw = null;
@@ -1212,7 +1215,7 @@
       ticks.forEach((t, k) => t.classList.toggle("on", k <= i));
       moveInd();
       run();
-      const set = () => { title.textContent = $(".vr-nm", b).textContent; proof.textContent = d.proof; cota.textContent = `Valor ${d.no} / 10 · ${d.short}`; if (cur) cur.textContent = d.no; if (media) { media.style.backgroundImage = `url(assets/img/vr-${d.no}.webp)`; media.setAttribute("aria-label", d.short); } };
+      const set = () => { if (vsep) gsap.to(vsep, { width: 36 + (+d.no) * 12, duration: .9, ease: "expo.inOut" }); title.textContent = $(".vr-nm", b).textContent; proof.textContent = d.proof; cota.textContent = `Valor ${d.no} / 10 · ${d.short}`; if (cur) cur.textContent = d.no; if (media) { media.style.backgroundImage = `url(assets/img/vr-${d.no}.webp)`; media.setAttribute("aria-label", d.short); } };
       if (!motion) { set(); return; }
       // Troca do card: conteúdo sai na direção da rolagem, uma cortina Navy cruza o card, o novo conteúdo entra e o card balança de leve
       if (tl) tl.progress(1).kill();
@@ -1223,7 +1226,7 @@
         .set(wipe, { transformOrigin: dir > 0 ? "100% 50%" : "0% 50%" })
         .to(wipe, { scaleX: 0, duration: 0.6, ease: "expo.out" })
         .fromTo(inner, { yPercent: 12 * dir, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.85, ease: "expo.out" }, "<0.05")
-        .fromTo($$(".vr-cota, .vr-title, .vr-lbl, .vr-proof", inner), { y: 22 * dir }, { y: 0, duration: 0.9, ease: "expo.out", stagger: 0.05 }, "<")
+        .fromTo($$(".vr-cota, .vr-title, .vr-sep, .vr-lbl, .vr-proof", inner), { y: 22 * dir }, { y: 0, duration: 0.9, ease: "expo.out", stagger: 0.05 }, "<")
         .fromTo(card, { rotation: 0.8 * dir, y: 14 * dir }, { rotation: 0, y: 0, duration: 1.1, ease: "elastic.out(1, 0.55)" }, 0);
     };
     ticks[0].classList.add("on");
@@ -1370,7 +1373,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.57`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.58`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
@@ -1448,6 +1451,16 @@
       });
     });
   }
+
+  // ---------- Sombras direcionais: o que está à direita da tela projeta sombra para baixo e para a direita; à esquerda, para a esquerda ----------
+  const shade = () => $$(".btn, [class*='-card'], .vr-item, .env3-tab").forEach(el => {
+    if (el.closest(".site-header") || !el.offsetWidth) return;
+    const r = el.getBoundingClientRect(), cx = r.left + r.width / 2, m = innerWidth / 2;
+    el.style.setProperty("--sx", cx < m - 60 ? -1 : cx > m + 60 ? 1 : 0);
+    el.classList.add("shd");
+  });
+  shade(); addEventListener("load", shade);
+  let shT; addEventListener("resize", () => { clearTimeout(shT); shT = setTimeout(shade, 200); });
 
   if (hasGsap) { ScrollTrigger.sort(); ScrollTrigger.refresh(); }
 })();

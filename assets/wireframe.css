@@ -2396,3 +2396,28 @@ body { background-image: none; }
 }
 @media (prefers-reduced-motion: reduce) { .iso2-bar i { transform: scaleX(.55); } .iso2-status i { animation: none; } }
 .iso2 .iso-title { font-size: clamp(30px, 3.45vw, 54px); }
+
+/* ---------- v5.58: sombras direcionais; card de valores com foto de ponta a ponta, separador e degradê; ícone de gestão no selo ISO; véu atrás do título ambiental ---------- */
+/* Sombra discreta em tudo o que é card ou botão; o lado segue a posição na tela (--sx: -1 esquerda, 0 centro, 1 direita) */
+.shd { box-shadow: calc(var(--sx, 0) * 9px) 12px 26px rgba(8, 12, 22, .09); }
+.btn.shd { box-shadow: calc(var(--sx, 0) * 5px) 7px 16px rgba(8, 12, 22, .1); }
+.vr-card.shd, .iso2-card.shd { box-shadow: calc(var(--sx, 0) * 16px) 26px 60px rgba(8, 12, 22, .13); }
+.env3-card.shd { box-shadow: calc(var(--sx, 0) * 14px) 22px 54px rgba(8, 12, 22, .3); }
+@media (min-width: 901px) { .vr-grid .vr-item.on { box-shadow: calc(var(--sx, 0) * 9px) 16px 34px rgba(11, 18, 32, .22); } }
+/* Card de valores */
+.vr-sep { width: 48px; height: 3px; margin: 0 0 22px; }
+.vr-title { margin-bottom: 18px; }
+.vr-card { background: radial-gradient(ellipse 70% 80% at 100% 100%, rgba(11, 18, 32, .075), rgba(11, 18, 32, 0) 70%), #fff; }
+@media (min-width: 901px) {
+  /* A foto cobre a metade esquerda do card, do topo até a base */
+  .vr-card .vr-in { min-height: clamp(300px, 27vw, 400px); padding-bottom: 34px; }
+  .vr-card .vr-media { position: absolute; grid-column: auto; grid-row: auto; left: calc(-1 * var(--vp)); top: calc(-1 * var(--vp)); bottom: calc(-1 * var(--vp)); width: calc(50% + var(--vp) / 2); height: auto; min-height: 0; max-height: none; aspect-ratio: auto; margin: 0; }
+  .vr-card .vr-foot { position: absolute; right: var(--vp); bottom: calc(var(--vp) - 6px); margin: 0; padding: 0; border: 0; }
+}
+/* Selo ISO: ícone de gestão (ciclo de melhoria contínua com o "conferido") no centro */
+.iso2-ico { display: block; width: 62%; height: 62%; margin: auto; fill: none; stroke: var(--yellow); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.iso2-seal .core { display: grid; place-items: center; }
+/* Compromisso ambiental: sombra suave atrás do título e do texto, para a leitura sobre a foto */
+.env3-head { position: relative; isolation: isolate; }
+.env3-head::before { content: ""; position: absolute; z-index: -1; left: -100vw; right: -100vw; top: -140px; bottom: -80px; pointer-events: none;
+  background: linear-gradient(180deg, rgba(8, 12, 22, .5) 0%, rgba(8, 12, 22, .4) 52%, rgba(8, 12, 22, 0) 100%); }
