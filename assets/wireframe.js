@@ -423,42 +423,43 @@
   $$("[data-mol]").forEach(host => molField(host));
 
   // ---------- Molécula fixa dos manifestos (feita da textura: hexágonos pequenos e ligações) ----------
-  // Valores: anel de carbono com cadeia, a fórmula do estireno (base do ABS), quase de frente, com as ligações duplas
+  // Valores: dois anéis de carbono ligados por uma cadeia com ligação dupla, quase de frente, com as ligações duplas
   // desenhadas por dentro do anel, como na química de caderno. História (data-molfix="dna"): fita de DNA girando,
   // porque o manifesto diz que o plástico e a química são o DNA da Remo. data-ink = versão para fundo claro.
   $$("canvas[data-molfix]").forEach(cv => {
     const ctx = cv.getContext("2d"), TAU = Math.PI * 2;
     const ink = "ink" in cv.dataset, dna = cv.dataset.molfix === "dna", BASE = ink ? "0,31,95" : "244,245,247", BA = ink ? 1.5 : 1, GA = ink ? 1.7 : 1;
-    let W = 0, H = 0, on = false, t = 0;
+    let W = 0, H = 0, on = false, t = 0, vel = 0, lastY = scrollY;
     const hex = (x, y, R) => { ctx.beginPath(); for (let q = 0; q < 6; q++) { const an = q * TAU / 6; q ? ctx.lineTo(x + Math.cos(an) * R, y + Math.sin(an) * R) : ctx.moveTo(x + Math.cos(an) * R, y + Math.sin(an) * R); } ctx.closePath(); ctx.fill(); };
     const seg = (a, b, col, al, w) => { ctx.strokeStyle = `rgba(${col},${Math.min(1, al)})`; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke(); };
 
     // --- Anel com cadeia ---
     const P = [], E = [];
     const add = (p, c) => { P.push({ p, c }); return P.length - 1; };
-    const ring = [];
-    for (let k = 0; k < 6; k++) { const a = k * TAU / 6; ring.push(add([-.72 + Math.cos(a) * .64, Math.sin(a) * .64, 0], 1)); }
-    for (let k = 0; k < 6; k++) {
-      E.push([ring[k], ring[(k + 1) % 6], 1]);
-      if (k) { const a = k * TAU / 6; E.push([ring[k], add([-.72 + Math.cos(a) * 1.04, Math.sin(a) * 1.04, 0], 0), 0]); }
-      // ligação dupla por dentro do anel, em lados alternados (pontos invisíveis: c = -1)
-      if (k % 2 === 0) { const a1 = k * TAU / 6 + .2, a2 = (k + 1) * TAU / 6 - .2; E.push([add([-.72 + Math.cos(a1) * .47, Math.sin(a1) * .47, 0], -1), add([-.72 + Math.cos(a2) * .47, Math.sin(a2) * .47, 0], -1), 3]); }
-    }
-    let prev = ring[0];
-    [[.44, .3, .2], [.98, -.04, -.16], [1.5, .28, .18]].forEach((q, i) => {
-      const c = add(q, 1);
-      E.push([prev, c, i === 1 ? 2 : 1]); prev = c;
-      const up = i % 2 ? -1 : 1;
-      E.push([c, add([q[0] + .04, q[1] + up * .38, q[2] + up * .1], 0), 0]);
-      if (i === 2) E.push([c, add([q[0] + .36, q[1] - .14, q[2] - .12], 0), 0]);
-    });
-    const gold = new Set([ring[0], ring[3], P.findIndex(o => o.p[0] === 1.5)]);
+    // Dois anéis de seis carbonos ligados por uma cadeia curta com ligação dupla (a estrutura do estilbeno)
+    const gold = new Set();
+    const mkRing = (cx, join, odd) => {
+      const r = [];
+      for (let k = 0; k < 6; k++) { const a = k * TAU / 6; r.push(add([cx + Math.cos(a) * .58, Math.sin(a) * .58, 0], 1)); }
+      for (let k = 0; k < 6; k++) {
+        E.push([r[k], r[(k + 1) % 6], 1]);
+        if (k !== join) { const a = k * TAU / 6; E.push([r[k], add([cx + Math.cos(a) * .95, Math.sin(a) * .95, 0], 0), 0]); }
+        // ligação dupla por dentro do anel, em lados alternados (pontos invisíveis: c = -1)
+        if (k % 2 === odd) { const a1 = k * TAU / 6 + .2, a2 = (k + 1) * TAU / 6 - .2; E.push([add([cx + Math.cos(a1) * .42, Math.sin(a1) * .42, 0], -1), add([cx + Math.cos(a2) * .42, Math.sin(a2) * .42, 0], -1), 3]); }
+      }
+      return r;
+    };
+    const rL = mkRing(-1.25, 0, 0), rR = mkRing(1.25, 3, 1);
+    const c1 = add([-.25, .27, .14], 1), c2 = add([.25, -.27, -.14], 1);
+    E.push([rL[0], c1, 1], [c1, c2, 2], [c2, rR[3], 1]);
+    E.push([c1, add([-.22, .66, .24], 0), 0], [c2, add([.22, -.66, -.24], 0), 0]);
+    [rL[3], rR[0], c1].forEach(i => gold.add(i));
     const drawRing = () => {
-      const S = Math.min(W, H), k = S * .235, u = Math.max(.55, S / 420);
-      // Quase de frente: só um balanço leve, para o hexágono continuar reconhecível
-      const roll = Math.sin(t * .8) * .34, yaw = Math.sin(t * .55 + 1) * .36, pit = Math.sin(t * .4) * .14, spin = Math.sin(t * .3) * .12;
+      const S = Math.min(W, H), k = S * .215, u = Math.max(.55, S / 420);
+      // Quase de frente e em diagonal (o anel da direita fica acima do da esquerda): só um balanço leve, para os hexágonos continuarem reconhecíveis
+      const roll = Math.sin(t * .8) * .34 + Math.max(-.5, Math.min(.5, vel * .007)), yaw = Math.sin(t * .55 + 1) * .36, pit = Math.sin(t * .4) * .14, spin = -.6 + Math.sin(t * .3) * .12;
       const pr = P.map(o => {
-        const x0 = (o.p[0] - .1) * Math.cos(spin) - o.p[1] * Math.sin(spin), y0 = (o.p[0] - .1) * Math.sin(spin) + o.p[1] * Math.cos(spin), z = o.p[2];
+        const x0 = o.p[0] * Math.cos(spin) - o.p[1] * Math.sin(spin), y0 = o.p[0] * Math.sin(spin) + o.p[1] * Math.cos(spin), z = o.p[2];
         const y1 = y0 * Math.cos(roll) - z * Math.sin(roll), z1 = y0 * Math.sin(roll) + z * Math.cos(roll);
         const x2 = x0 * Math.cos(yaw) + z1 * Math.sin(yaw), z2 = -x0 * Math.sin(yaw) + z1 * Math.cos(yaw);
         const y3 = y1 * Math.cos(pit) - z2 * Math.sin(pit), z3 = y1 * Math.sin(pit) + z2 * Math.cos(pit), f = 1 + z3 * .16;
@@ -505,9 +506,20 @@
       });
     };
 
-    const draw = () => { if (!W) return; if (!reduced) t += .0055; ctx.clearRect(0, 0, W, H); (dna ? drawDna : drawRing)(); };
+    // A rolagem não comanda a molécula, só dá um impulso: a velocidade da rolagem (suavizada) soma ao movimento próprio
+    // e se dissipa sozinha. No DNA, rolar para baixo acelera o giro e rolar para cima freia e inverte; no anel, inclina.
+    const draw = () => {
+      if (!W) return;
+      if (!reduced) {
+        const y = scrollY, dy = Math.max(-90, Math.min(90, y - lastY));
+        lastY = y; vel = vel * .93 + dy * .07;
+        if (Math.abs(vel) < .01) vel = 0;
+        t += .0055 + vel * (dna ? .0011 : .0004);
+      }
+      ctx.clearRect(0, 0, W, H); (dna ? drawDna : drawRing)();
+    };
     const size = () => { const d = Math.min(devicePixelRatio || 1, 2); W = cv.clientWidth; H = cv.clientHeight; cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0); draw(); };
-    const loop = () => { if (on) draw(); requestAnimationFrame(loop); };
+    const loop = () => { if (on) draw(); else lastY = scrollY; requestAnimationFrame(loop); };
     size(); addEventListener("resize", size);
     new IntersectionObserver(([en]) => { on = en.isIntersecting; }).observe(cv);
     if (!reduced) loop();
@@ -1311,7 +1323,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.49`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.52`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
