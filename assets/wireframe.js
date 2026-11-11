@@ -1373,7 +1373,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.58`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.59`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
@@ -1424,6 +1424,17 @@
       gsap.from(".p-nav", { opacity: 0, duration: 1, ease: "power2.out", delay: 0.9 });
       gsap.fromTo(".pa-photos .ph", { clipPath: "inset(100% 0 0 0)" }, { clipPath: "inset(0% 0 0 0)", duration: 1.3, ease: "expo.inOut", stagger: 0.12, scrollTrigger: { trigger: ".pa-photos", start: "top 85%" } });
     }
+  }
+
+  // ---------- ISO: os 5 compromissos em cards; o card ativo abre com o texto e os outros ficam estreitos ----------
+  const comps = $$("#iso-comps .iso2-comp-card");
+  if (comps.length) {
+    const pick = n => comps.forEach((c, k) => c.classList.toggle("on", k === n));
+    comps.forEach((c, n) => {
+      c.addEventListener("click", () => pick(n));
+      c.addEventListener("focus", () => pick(n));
+      if (finePointer) hoverIntent(c, () => pick(n));
+    });
   }
 
   // ---------- Entrada ao rolar, no site todo: o que ainda não tinha animação própria sobe e aparece quando entra na tela ----------
