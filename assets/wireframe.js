@@ -730,6 +730,21 @@
     }, 3000), 1800 + n * 150);
   });
 
+  // ---------- Atalhos do hero: os três nomes ficam à mostra e só um por vez vira botão; o destaque alterna ----------
+  $$(".ph-jump").forEach(nav => {
+    const links = $$(".pj", nav);
+    let k = 0, hold = false;
+    const pick = n => { k = n; links.forEach((a, i) => a.classList.toggle("on", i === n)); };
+    links.forEach((a, n) => {
+      a.addEventListener("focus", () => pick(n));
+      if (finePointer) hoverIntent(a, () => pick(n));
+    });
+    nav.addEventListener("pointerenter", () => { hold = true; });
+    nav.addEventListener("pointerleave", () => { hold = false; });
+    // Mesmo ritmo da palavra do título, que troca a cada 3 s; para com o mouse em cima e com a aba oculta
+    if (motion && links.length > 1) setInterval(() => { if (!hold && !document.hidden && !nav.contains(document.activeElement)) pick((k + 1) % links.length); }, 3000);
+  });
+
   // ---------- Botões magnéticos ----------
   if (motion && finePointer) {
     $$(".btn").forEach(btn => {
@@ -1373,7 +1388,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.61`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.63`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
@@ -1426,15 +1441,29 @@
     }
   }
 
-  // ---------- ISO: os 5 compromissos em cards; o card ativo abre com o texto e os outros ficam estreitos ----------
+  // ---------- ISO: os 5 compromissos em cards; o ativo abre com o texto e, sem interação, passa para o próximo a cada 6 s ----------
   const comps = $$("#iso-comps .iso2-comp-card");
   if (comps.length) {
-    const pick = n => comps.forEach((c, k) => c.classList.toggle("on", k === n));
+    const box = $("#iso-comps"), progs = comps.map(c => $(".iso2-prog", c)), deskC = matchMedia("(min-width: 901px)");
+    let ci = 0, seenC = false, holdC = false;
+    // A barra amarela na base do card ativo é o tempo; para com o mouse em cima, fora da tela e no celular
+    const runC = () => {
+      if (!motion) return;
+      gsap.killTweensOf(progs); gsap.set(progs, { scaleX: 0 });
+      if (!seenC || holdC || !deskC.matches) { gsap.set(progs[ci], { scaleX: 1 }); return; }
+      gsap.to(progs[ci], { scaleX: 1, duration: 6, ease: "none", onComplete: () => pick((ci + 1) % comps.length) });
+    };
+    const pick = n => { ci = n; comps.forEach((c, k) => c.classList.toggle("on", k === n)); runC(); };
     comps.forEach((c, n) => {
       c.addEventListener("click", () => pick(n));
       c.addEventListener("focus", () => pick(n));
-      if (finePointer) hoverIntent(c, () => pick(n));
+      if (finePointer) hoverIntent(c, () => { if (n !== ci) pick(n); });
     });
+    if (finePointer) {
+      box.addEventListener("pointerenter", () => { holdC = true; runC(); });
+      box.addEventListener("pointerleave", () => { holdC = false; runC(); });
+    }
+    if (window.IntersectionObserver) new IntersectionObserver(([en]) => { seenC = en.isIntersecting; runC(); }, { threshold: 0.4 }).observe(box);
   }
 
   // ---------- Entrada ao rolar, no site todo: o que ainda não tinha animação própria sobe e aparece quando entra na tela ----------
