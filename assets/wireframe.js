@@ -1159,14 +1159,14 @@
     const title = $("#vr-title"), proof = $("#vr-proof"), cota = $("#vr-cota"), cur = $("#vr-cur");
     const media = $("#vr-media"), card = $(".vr-card", vr), inner = $(".vr-in", vr), wipe = $(".vr-wipe", vr), ind = $(".vr-ind", vr), list = $(".vr-list", vr);
     let i = 0, tl = null;
-    // Troca automática a cada 3 s (barra de progresso no card); pausa no hover/foco e fora da tela
+    // Troca automática a cada 6 s (barra de progresso no card); pausa no hover/foco e fora da tela
     const bar = $("#vr-bar"), desk = matchMedia("(min-width: 901px)");
     let visible = false, paused = false, tw = null;
     const run = () => {
       if (!motion || !bar) return;
       if (tw) tw.kill();
       gsap.set(bar, { scaleX: 0 });
-      tw = gsap.to(bar, { scaleX: 1, duration: 3, ease: "none", paused: !visible || paused || !desk.matches, onComplete: () => show((i + 1) % items.length) });
+      tw = gsap.to(bar, { scaleX: 1, duration: 6, ease: "none", paused: !visible || paused || !desk.matches, onComplete: () => show((i + 1) % items.length) });
     };
     const sync = () => { if (tw) (visible && !paused && desk.matches) ? tw.resume() : tw.pause(); };
     // Indicador que desliza até o valor ativo na lista
@@ -1342,7 +1342,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.55`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.56`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {

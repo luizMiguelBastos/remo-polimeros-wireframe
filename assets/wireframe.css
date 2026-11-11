@@ -2347,3 +2347,8 @@ body { background-image: none; }
 .vm-dark > .mol-bg.flow-bg { background-image: radial-gradient(rgba(244, 245, 247, .085) 1px, transparent 1.3px), radial-gradient(ellipse 58% 62% at 24% 46%, rgba(82, 110, 182, .24), rgba(82, 110, 182, 0) 70%), linear-gradient(180deg, rgba(4, 7, 14, .3) 0%, rgba(4, 7, 14, 0) 26%, rgba(4, 7, 14, 0) 60%, rgba(4, 7, 14, .6) 100%); }
 /* Manifesto de História (claro): clarão branco atrás do texto e base levemente acinzentada */
 .manifesto.light { background-image: radial-gradient(rgba(11, 18, 32, .075) 1px, transparent 1.3px), radial-gradient(ellipse 56% 60% at 24% 46%, rgba(255, 255, 255, .9), rgba(255, 255, 255, 0) 70%), linear-gradient(180deg, rgba(11, 18, 32, .05) 0%, rgba(11, 18, 32, 0) 24%, rgba(11, 18, 32, 0) 58%, rgba(11, 18, 32, .11) 100%); background-size: 22px 22px, 100% 100%, 100% 100%; background-repeat: repeat, no-repeat, no-repeat; }
+
+/* ---------- v5.56: hero de Valores sem o degradê sobre a foto; sombra discreta no canto inferior direito da seção dos valores ---------- */
+.page-hero.photo:has(+ .vm-dark)::after { display: none; }
+/* Zigue-zague de luz: no manifesto o foco fica em cima, à esquerda; na seção seguinte a sombra fica embaixo, à direita */
+.vr-sec { background-image: radial-gradient(rgba(11, 18, 32, .075) 1px, transparent 1.3px), radial-gradient(ellipse 62% 58% at 100% 100%, rgba(11, 18, 32, .1), rgba(11, 18, 32, 0) 72%); background-size: 22px 22px, 100% 100%; background-repeat: repeat, no-repeat; }
