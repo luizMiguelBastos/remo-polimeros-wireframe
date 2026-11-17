@@ -253,7 +253,7 @@
   addEventListener("resize", fitIso);
   if (document.fonts) document.fonts.ready.then(fitIso);
   const heroIn = () => {
-    if (!motion) return;
+    if (!motion || !$(".hero")) return;
     gsap.from(".hero [data-lines] .line > span", { yPercent: 110, duration: 1.2, ease: "expo.out", stagger: 0.1 });
     gsap.from(".hero [data-reveal]", { y: 30, opacity: 0, duration: 1, ease: "expo.out", stagger: 0.12, delay: 0.35 });
     if ($(".hero .h-sep")) gsap.from(".hero .h-sep", { scaleX: 0, duration: 1, ease: "expo.inOut", delay: 0.5 });
@@ -907,6 +907,8 @@
           lenis ? lenis.scrollTo(st.start + (st.end - st.start) * i / (cards.length - 1), { duration: 1.2 }) : scrollTo(0, st.start + (st.end - st.start) * i / (cards.length - 1));
         };
         steps.addEventListener("click", onClick);
+        // ao sair do desktop o clique é desligado: sem isso ele se acumulava a cada troca de largura e dava erro
+        return () => steps.removeEventListener("click", onClick);
       }
     });
 
@@ -1298,7 +1300,6 @@
       run();
       ScrollTrigger.create({ trigger: vr, start: "top 75%", end: "bottom 25%", onToggle: s => { visible = s.isActive; sync(); } });
       gsap.timeline({ scrollTrigger: { trigger: vr, start: "top 80%" } })
-        .from($$(".vr-head > *", vr), { y: 20, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.08 })
         .fromTo($$(".vr-list li:not(.vr-ind)", vr), { x: -24, opacity: 0 }, { x: 0, opacity: 1, duration: 0.8, ease: "expo.out", stagger: 0.04 }, 0.1)
         .fromTo(card, { clipPath: "inset(100% 0 0 0 round 10px)", y: 60 }, { clipPath: "inset(0% 0 0 0 round 10px)", y: 0, duration: 1.3, ease: "expo.inOut" }, 0.2)
         .from($$(".vr-cota, .vr-title, .vr-lbl, .vr-proof, .vr-foot", card), { y: 30, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.07 }, 0.8);
@@ -1410,7 +1411,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.65`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.66`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
