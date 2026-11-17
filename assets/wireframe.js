@@ -43,7 +43,9 @@
     if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || a.target === "_blank") return;
     const href = a.getAttribute("href");
     if (href.startsWith("#")) {
-      const el = href.length > 1 && $(href);
+      // Link vazio ("#"): destino ainda não existe, então não joga a página para o topo
+      if (href.length === 1) { e.preventDefault(); return; }
+      const el = document.getElementById(href.slice(1));
       if (!el) return;
       e.preventDefault();
       scrollToEl(el);
@@ -51,6 +53,17 @@
     }
     // Links para outras páginas do site passam pela transição com a logo
     const url = new URL(a.href, location.href);
+    // Link para a própria página (com ou sem âncora) só rola: não há recarga, a folha ficaria presa
+    const path = p => p.replace(/index\.html$/, "");
+    if (url.origin === location.origin && path(url.pathname) === path(location.pathname) && url.search === location.search && url.href !== location.href) {
+      const el = url.hash.length > 1 && document.getElementById(decodeURIComponent(url.hash.slice(1)));
+      if (url.hash && !el) return;
+      e.preventDefault();
+      if (el) scrollToEl(el);
+      else if (lenis) lenis.scrollTo(0, { duration: 1.4, force: true });
+      else window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+      return;
+    }
     if (pageTx && url.origin === location.origin && /\.html$/.test(url.pathname) && url.href !== location.href) {
       e.preventDefault();
       pageTx.leave(url.href);
@@ -1388,7 +1401,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.63`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.64`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
