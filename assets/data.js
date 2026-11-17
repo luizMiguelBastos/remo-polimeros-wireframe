@@ -13,11 +13,10 @@ window.REMO_MATERIALS = [
       ["ABS RM 380", "Alto fluxo. Elétricos e eletrônicos, brinquedos e diversos."],
       ["ABS RM 404", "Alta temperatura. Peças internas e externas automotivas."],
       ["ABS RM 749 LG", "Baixo brilho / alta temperatura. Interior de automóveis."],
-      ["ABS RM 121 V0", "Alto impacto, retardante de chama. Atende à Diretiva RoHS."],
       ["ABS RM 221", "Alto impacto, baixo brilho. Chapas, automotivo."],
       ["ABS RM 350UV", "Alto fluxo, alto brilho, resistente a intempéries."]
     ],
-    sheets: 14
+    sheets: 13
   },
   {
     id: "abs-pc", name: "ABS-PC", full: "Composto de ABS e Policarbonato",
