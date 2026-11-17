@@ -2702,3 +2702,6 @@ body { background-image: none; }
   .dp-row::-webkit-scrollbar { display: none; }
   .dp-card { flex: 0 0 104px; }
 }
+
+/* ---------- v5.73: Tecnologias sem o vocabulário de dureza (pedido do marketing da Remo); a seção 02 fica com três recursos de formulação ---------- */
+@media (min-width: 901px) { .hard-levers { grid-template-columns: repeat(3, 1fr); } }

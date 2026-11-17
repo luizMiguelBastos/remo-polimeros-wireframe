@@ -609,7 +609,7 @@
   }
 
   // ---------- Seções brancas: cotas técnicas em Navy ----------
-  const COTAS = ["Ø 3,0 mm", "± 0,02 mm", "Shore 80D", "MFI 12 g/10 min", "ΔE < 0,5", "23 °C · 50% UR", "ISO 527", "1,05 g/cm³"];
+  const COTAS = ["Ø 3,0 mm", "± 0,02 mm", "UL 94 V0", "MFI 12 g/10 min", "ΔE < 0,5", "23 °C · 50% UR", "ISO 527", "1,05 g/cm³"];
   $$("section.light").forEach((sec, k) => {
     const h = document.createElement("div"); h.className = "cota h"; h.setAttribute("aria-hidden", "true");
     h.innerHTML = `<i></i><span>${COTAS[k % COTAS.length]}</span>`;
@@ -1523,7 +1523,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.72`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.73`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
