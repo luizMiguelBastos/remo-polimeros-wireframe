@@ -1398,26 +1398,43 @@
 
   // ---------- Formulário ----------
   const form = $("#contact-form");
-  if (form && new URLSearchParams(location.search).get("tipo") === "amostra") $("#tipo").value = "Solicitar amostra de cor";
-  if (form) form.addEventListener("submit", e => {
-    e.preventDefault();
-    const bad = $$("[required]", form).filter(el => !el.checkValidity());
-    if (bad.length) {
-      bad.forEach(el => { el.focus(); el.blur(); });
-      bad[0].focus();
-      if (!$("#lgpd").checked) $("#lgpd").parentElement.style.color = "#ff8f8f";
-      return;
+  if (form) {
+    // Os campos mudam conforme o assunto; ?tipo= (e ?doc=) na URL chegam com o assunto já escolhido
+    const tipo = $("#tipo"), sets = $$("[data-for]", form), msg = $("#msg"), pre = $("#prefill"), q = new URLSearchParams(location.search);
+    const HINT = { "amostra": "Aplicação da peça, processo, resina atual e acabamento desejado…", "sob-medida": "Exigências técnicas: impacto, temperatura, UV, chama, aparência, normas…", "cotacao": "Cor, embalagem, local de entrega e prazo desejado…", "documentacao": "Conte para que precisa do documento (auditoria, homologação, cadastro)…", "suporte": "Descreva o que está acontecendo no processo ou na peça…", "outro": "Como podemos ajudar?" };
+    const syncTipo = () => {
+      sets.forEach(s => { const on = s.dataset.for === tipo.value; s.hidden = !on; $$("input, select, textarea", s).forEach(f => { f.disabled = !on; }); });
+      if (msg) msg.placeholder = HINT[tipo.value] || HINT.outro;
+    };
+    const has = (sel, v) => sel && [...sel.options].some(o => o.value === v);
+    const t = q.get("tipo"), d = q.get("doc"), docSel = $("#doc");
+    if (has(tipo, t)) {
+      tipo.value = t;
+      if (t === "documentacao" && has(docSel, d)) docSel.value = d;
+      if (pre) { $("#prefill-txt").textContent = "Assunto já escolhido: " + (t === "documentacao" && has(docSel, d) ? docSel.selectedOptions[0].textContent : tipo.selectedOptions[0].textContent); pre.classList.add("show"); }
     }
-    $("#lgpd").parentElement.style.color = "";
-    $("#form-ok").classList.add("show");
-  });
+    if (tipo) { tipo.addEventListener("change", () => { if (pre) pre.classList.remove("show"); syncTipo(); }); syncTipo(); }
+    const lgpd = $("#lgpd");
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const bad = $$("[required]", form).filter(el => !el.checkValidity());
+      lgpd.parentElement.classList.toggle("bad", !lgpd.checked);
+      lgpd.setAttribute("aria-invalid", String(!lgpd.checked));
+      if (bad.length) {
+        bad.forEach(el => { el.focus(); el.blur(); });
+        bad[0].focus();
+        return;
+      }
+      $("#form-ok").classList.add("show");
+    });
+  }
 
   // ---------- Página de produto ----------
   const pp = $("#product-page");
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.67`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.68`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {

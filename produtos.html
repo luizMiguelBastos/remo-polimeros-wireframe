@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Produtos · Remo Polímeros · Wireframe v5.67</title>
+  <title>Produtos · Remo Polímeros · Wireframe v5.68</title>
   <meta name="description" content="Portfólio de resinas de engenharia da Remo Polímeros.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
   <script>try{if(sessionStorage.getItem("remo-nav")==="1")document.documentElement.classList.add("tx-in")}catch(e){}</script>
   <link rel="preload" as="image" href="assets/img/sec-materiais.jpg">
-  <link rel="icon" type="image/svg+xml" href="assets/logo/remo-simbolo.svg?v=5.67">
-  <link rel="stylesheet" href="assets/wireframe.css?v=5.67">
+  <link rel="icon" type="image/svg+xml" href="assets/logo/remo-simbolo.svg?v=5.68">
+  <link rel="stylesheet" href="assets/wireframe.css?v=5.68">
 </head>
 <body>
 
@@ -20,18 +20,18 @@
 <div class="sheet" id="sheet" aria-hidden="true">
   <canvas class="sheet-mol" id="sheet-mol"></canvas>
   <div class="sheet-inner sheet-lockup">
-    <img src="assets/logo/remo-simbolo.svg?v=5.67" alt="" class="sheet-mark">
+    <img src="assets/logo/remo-simbolo.svg?v=5.68" alt="" class="sheet-mark">
     <div class="word sheet-big"><span class="wm"></span></div>
     <div class="sheet-meta"><span class="sheet-dest mono" id="sheet-dest"></span></div>
   </div>
 </div>
 <div class="cursor" id="cursor" aria-hidden="true"><span id="cursor-label"></span></div>
 
-<!-- WIREFRAME v5.67 -->
+<!-- WIREFRAME v5.68 -->
 
 <header class="site-header" id="header">
   <div class="wrap">
-    <a href="index.html" class="logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo-branco.svg?v=5.67" alt="" class="logo-mark" width="40" height="36"><span class="wm" aria-hidden="true"></span>
+    <a href="index.html" class="logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo-branco.svg?v=5.68" alt="" class="logo-mark" width="40" height="36"><span class="wm" aria-hidden="true"></span>
     </a>
     <span class="hdr-sec" id="hdr-sec" aria-hidden="true"></span>
     <nav class="nav" id="nav" aria-label="Principal">
@@ -147,23 +147,43 @@
       <h2 data-reveal class="cb-title">Vamos desenvolver o seu material.</h2>
       <p class="lead" data-reveal>Resposta da equipe técnica em até 1 dia útil.</p>
       <ul class="contact-list">
-        <li><span>Telefone</span>+55 (11) 2175-1000</li>
-        <li><span>WhatsApp</span>[número a definir]</li>
-        <li><span>E-mail</span>remo@remopolimeros.com.br</li>
-        <li><span>Endereço</span>Rod. Presidente Dutra, S/N, km 207,8 · Bonsucesso · Guarulhos/SP · 07178-580</li>
+        <li><span>Telefone</span><div>+55 (11) 2175-1000</div></li>
+        <li><span>WhatsApp</span><div>[número a definir]</div></li>
+        <li><span>E-mail</span><div>remo@remopolimeros.com.br</div></li>
+        <li><span>Endereços</span><div>Rod. Presidente Dutra, S/N, km 207,8 · Bonsucesso · Guarulhos/SP · 07178-580<i class="ad-gap" aria-hidden="true"></i>Av. Papa João Paulo I, 8132 · Jardim Fátima · Guarulhos/SP · 07177-025</div></li>
       </ul>
     </div>
     <form id="contact-form" novalidate>
-      <div class="prefill" id="prefill"><i id="prefill-sw"></i><span id="prefill-txt"></span></div>
+      <div class="prefill" id="prefill" role="status"><i id="prefill-sw" aria-hidden="true"></i><span id="prefill-txt"></span></div>
       <div class="field">
         <label for="tipo">Como podemos ajudar?</label>
         <select id="tipo" required>
-          <option>Solicitar amostra de cor</option>
-          <option>Desenvolver um material sob medida</option>
-          <option>Cotação de produto do portfólio</option>
-          <option>Suporte técnico</option>
-          <option>Outro assunto</option>
+          <option value="amostra">Solicitar amostra de cor</option>
+          <option value="sob-medida">Desenvolver um material sob medida</option>
+          <option value="cotacao">Cotação de produto do portfólio</option>
+          <option value="documentacao">Documentação e certificados</option>
+          <option value="suporte">Suporte técnico</option>
+          <option value="outro">Outro assunto</option>
         </select>
+      </div>
+      <div class="row field-set" data-for="amostra">
+        <div class="field"><label for="am-linha">Linha</label><select id="am-linha"><option>Ainda não sei</option><option>ABS</option><option>ABS-PC</option><option>ASA</option><option>PBT e Compostos</option><option>PC</option><option>PC e Compostos</option><option>PMMA</option><option>POM</option><option>SAN</option></select></div>
+        <div class="field"><label for="am-ref">Referência de cor</label><input id="am-ref" placeholder="Pantone, RAL ou peça física"></div>
+      </div>
+      <div class="row field-set" data-for="sob-medida" hidden>
+        <div class="field"><label for="sm-peca">Aplicação ou peça</label><input id="sm-peca" placeholder="Ex.: moldura de farol"></div>
+        <div class="field"><label for="sm-proc">Processo</label><select id="sm-proc"><option>Injeção</option><option>Extrusão</option><option>Sopro</option><option>Outro</option></select></div>
+      </div>
+      <div class="row field-set" data-for="cotacao" hidden>
+        <div class="field"><label for="ct-linha">Linha ou grade</label><input id="ct-linha" placeholder="Ex.: ABS RM 401"></div>
+        <div class="field"><label for="ct-vol">Volume mensal estimado</label><input id="ct-vol" placeholder="kg por mês"></div>
+      </div>
+      <div class="field field-set" data-for="documentacao" hidden>
+        <label for="doc">Qual documento?</label>
+        <select id="doc"><option value="iso">Certificado ISO 9001:2015</option><option value="ambiental">Documentação ambiental</option><option value="ficha">Ficha técnica de produto</option><option value="outro">Outro documento</option></select>
+      </div>
+      <div class="field field-set" data-for="suporte" hidden>
+        <label for="sp-linha">Linha ou grade em uso</label><input id="sp-linha" placeholder="Ex.: ASA RM 941 UV">
       </div>
       <div class="row">
         <div class="field"><label for="nome">Nome *</label><input id="nome" required autocomplete="name"><span class="err">Informe seu nome.</span></div>
@@ -178,7 +198,7 @@
         <div class="field"><label for="uf">UF</label><input id="uf" maxlength="2" autocomplete="address-level1"></div>
       </div>
       <div class="field"><label for="msg">Mensagem</label><textarea id="msg" placeholder="Aplicação, processo, resina atual, cor de referência…"></textarea></div>
-      <label class="consent"><input type="checkbox" id="lgpd" required> Li e concordo com a <a href="#" style="color:var(--white)">Política de Privacidade</a> (LGPD).</label>
+      <label class="consent"><input type="checkbox" id="lgpd" required> Li e concordo com a <a href="#">Política de Privacidade</a> (LGPD).</label>
       <button class="btn" type="submit">Enviar solicitação <span class="arr">→</span></button>
       <div class="form-ok" id="form-ok" role="status">Recebemos sua solicitação. Nossa equipe técnica responde em até 1 dia útil. (simulação do wireframe, nada foi enviado)</div>
     </form>
@@ -188,7 +208,7 @@
 <footer class="footer" data-mol="ink">
   <div class="wrap">
     <div class="f-top">
-      <a href="index.html" class="f-logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo.svg?v=5.67" alt="" class="f-mark"><span class="wm" aria-hidden="true"></span></a>
+      <a href="index.html" class="f-logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo.svg?v=5.68" alt="" class="f-mark"><span class="wm" aria-hidden="true"></span></a>
       <p class="f-tag">Polímeros de engenharia,<br>feitos sob medida.</p>
       <a href="contato.html" class="btn f-cta">Fale com um especialista <span class="arr">→</span></a>
     </div>
@@ -218,7 +238,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="assets/data.js?v=5.67"></script>
-<script src="assets/wireframe.js?v=5.67"></script>
+<script src="assets/data.js?v=5.68"></script>
+<script src="assets/wireframe.js?v=5.68"></script>
 </body>
 </html>

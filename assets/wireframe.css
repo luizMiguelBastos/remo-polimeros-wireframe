@@ -2577,3 +2577,34 @@ body { background-image: none; }
 /* Seções com bloco preso à rolagem (esteira, linha do tempo): a sombra vai no bloco preso, para não deslizar durante a rolagem */
 .shade-pin-br .rail-pin, .shade-pin-br #tl-pin { background-image: radial-gradient(ellipse 62% 58% at 100% 100%, rgba(11, 18, 32, .1), rgba(11, 18, 32, 0) 72%); background-repeat: no-repeat; }
 .shade-pin-tl .rail-pin, .shade-pin-tl #tl-pin { background-image: radial-gradient(ellipse 58% 56% at 0% 0%, rgba(11, 18, 32, .09), rgba(11, 18, 32, 0) 72%); background-repeat: no-repeat; }
+
+/* ---------- v5.68: Contato. Faixa "Vamos desenvolver o seu material" clara só nesta página; FAQ escura; campos do formulário por assunto ---------- */
+.contact-list li > div { min-width: 0; }
+.field-set[hidden] { display: none; }
+.consent a { color: var(--white); }
+.consent.bad { color: #ff8f8f; }
+/* Faixa clara (só contato.html): sem a foto de fundo, tipografia em tinta, linhas e campos na versão clara */
+.contact-band.light { background-color: var(--white); }
+.contact-band.light .cb-media, .contact-band.light::before { display: none; }
+.contact-band.light .contact-list li { border-top-color: var(--line-l); }
+.contact-band.light .contact-list li span, .contact-band.light .field label { color: var(--slate); }
+.contact-band.light .field input, .contact-band.light .field select, .contact-band.light .field textarea { color: var(--ink); border-bottom-color: rgba(11, 18, 32, .22); }
+.contact-band.light .field input::placeholder, .contact-band.light .field textarea::placeholder { color: rgba(74, 84, 104, .7); }
+.contact-band.light .field input:focus, .contact-band.light .field select:focus, .contact-band.light .field textarea:focus { border-bottom-color: var(--night); box-shadow: 0 1px 0 var(--night); }
+.contact-band.light .field input:user-invalid { border-bottom-color: #b3261e; }
+.contact-band.light .field .err, .contact-band.light .consent.bad { color: #b3261e; }
+.contact-band.light .consent { color: var(--slate); }
+.contact-band.light .consent a { color: var(--ink); }
+.contact-band.light .consent input { accent-color: var(--night); }
+.contact-band.light .form-ok { border-color: var(--night); color: var(--ink); background: rgba(255, 255, 255, .6); }
+.contact-band.light .prefill { border-color: var(--line-l); color: var(--slate); background: rgba(255, 255, 255, .6); }
+.contact-band.light .prefill i { border-color: var(--night); background: var(--yellow); }
+/* FAQ em fundo escuro: pontilhado, moléculas e luz vêm sozinhos por ser seção escura do main */
+.faq-dark details { border-top-color: var(--line-d); }
+.faq-dark details:last-child { border-bottom-color: var(--line-d); }
+.faq-dark summary { color: var(--white); }
+.faq-dark summary::after { color: var(--yellow); }
+.faq-dark details p { color: var(--steel); }
+.faq-dark .faq-grid { position: relative; z-index: 1; }
+.contact-list .ad-gap { display: block; height: 8px; }
+@media (max-width: 700px) { .contact-band.light .cota.v { display: none; } }
