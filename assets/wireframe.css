@@ -2705,3 +2705,13 @@ body { background-image: none; }
 
 /* ---------- v5.73: Tecnologias sem o vocabulário de dureza (pedido do marketing da Remo); a seção 02 fica com três recursos de formulação ---------- */
 @media (min-width: 901px) { .hard-levers { grid-template-columns: repeat(3, 1fr); } }
+
+/* ---------- v5.74: Tecnologias, ensaios do laboratório de qualidade na seção 02 (mesma sanfona dos efeitos de cor, versão escura) ---------- */
+.lab-tests { margin-top: clamp(64px, 7vw, 104px); }
+.lab-tests .lead { max-width: 64ch; margin: 16px 0 0; }
+.lab-tests .hard-index { margin-top: 44px; }
+.lab-tests .mat-inner { padding-bottom: 40px; }
+.lab-tests .mat-inner p { margin: 0; max-width: 46ch; }
+.lab-tests .mi-how { margin: 0; }
+.lt-more { margin: 28px 0 0; font: 13px var(--f-mono); letter-spacing: .04em; color: var(--steel); }
+@media (max-width: 600px) { .lab-tests .mat-head .nm { font-size: 27px; } }
