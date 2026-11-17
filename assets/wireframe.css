@@ -2608,3 +2608,60 @@ body { background-image: none; }
 .faq-dark .faq-grid { position: relative; z-index: 1; }
 .contact-list .ad-gap { display: block; height: 8px; }
 @media (max-width: 700px) { .contact-band.light .cota.v { display: none; } }
+
+/* ---------- v5.69: Onde atuamos, "Um dia com a Remo" em seis cenas presas à rolagem (o vídeo de cada cena toca sozinho) ---------- */
+.day-wrap { padding-bottom: clamp(48px, 6vw, 88px); }
+.day-wrap .sec-head { margin-bottom: 0; }
+.day2 { padding: 0; background: var(--night); position: relative; }
+/* Sem animação: as cenas ficam empilhadas, uma por tela */
+.d2-scene { position: relative; min-height: 86svh; display: flex; align-items: flex-end; overflow: hidden; }
+.d2-media { position: absolute; inset: 0; background: center / cover no-repeat; }
+.d2-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .7s var(--ease); }
+.d2-media video.ready { opacity: 1; }
+/* Sombra discreta só atrás da tipografia, na base da cena */
+.d2-scene::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(0deg, rgba(8, 12, 22, .86) 0%, rgba(8, 12, 22, .52) 24%, rgba(8, 12, 22, .12) 48%, rgba(8, 12, 22, 0) 64%), linear-gradient(180deg, rgba(8, 12, 22, .5) 0%, rgba(8, 12, 22, 0) 30%); }
+.d2-body { position: relative; z-index: 2; width: 100%; padding-bottom: clamp(48px, 7vw, 104px); display: grid; justify-items: start; gap: 14px; }
+.d2-time { font-size: 15px; color: var(--yellow); letter-spacing: .08em; }
+.d2-seg { font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--steel); display: inline-flex; align-items: center; gap: 10px; }
+.d2-seg::before { content: ""; width: 22px; height: 2px; background: var(--yellow); }
+.d2-title { margin: 0; font: 600 clamp(34px, 5vw, 80px)/1 var(--f-sans); font-stretch: 125%; letter-spacing: -.03em; color: var(--white); max-width: 15ch; text-wrap: balance; }
+.d2-link { margin-top: 10px; display: inline-flex; align-items: center; gap: 10px; font: 600 14px/1 var(--f-sans); color: var(--white); text-decoration: none; padding: 12px 18px; border: 1px solid rgba(244, 245, 247, .3); border-radius: 6px; transition: background .4s var(--ease), color .4s var(--ease), border-color .4s var(--ease); }
+.d2-link:hover, .d2-link:focus-visible { background: var(--white); color: var(--ink); border-color: var(--white); }
+.d2-link .arr { transition: translate .4s var(--ease); }
+.d2-link:hover .arr { translate: 4px 0; }
+/* Com animação: palco de uma tela; as cenas se sobrepõem e só a ativa aparece */
+.day2.live .day2-pin { position: relative; height: 100svh; overflow: hidden; }
+.day2.live .d2-scene { position: absolute; inset: 0; min-height: 0; opacity: 0; visibility: hidden; transition: opacity .8s var(--ease), visibility 0s .8s; }
+.day2.live .d2-scene.on { opacity: 1; visibility: visible; z-index: 1; transition: opacity .8s var(--ease), visibility 0s; }
+.day2.live .d2-media { scale: 1.06; transition: scale 1.6s var(--ease); }
+.day2.live .d2-scene.on .d2-media { scale: 1; }
+.day2.live .d2-time { display: none; }
+.day2.live .d2-body > * { opacity: 0; translate: 0 26px; transition: opacity .7s var(--ease), translate .9s var(--ease); }
+.day2.live .d2-scene.on .d2-body > * { opacity: 1; translate: 0 0; }
+.day2.live .d2-scene.on .d2-body > :nth-child(2) { transition-delay: .18s; }
+.day2.live .d2-scene.on .d2-body > :nth-child(3) { transition-delay: .26s; }
+.day2.live .d2-scene.on .d2-body > :nth-child(4) { transition-delay: .36s; }
+/* Relógio, régua de horários e barra de progresso */
+.d2-hud { position: absolute; inset: 0; z-index: 3; pointer-events: none; padding-top: clamp(96px, 13vh, 150px); }
+.d2-hud .eyebrow { color: var(--steel); }
+.d2-clock { margin-top: 14px; font: 600 clamp(64px, 9vw, 148px)/.9 var(--f-sans); font-stretch: 125%; letter-spacing: -.04em; color: var(--white); font-variant-numeric: tabular-nums; text-shadow: 0 2px 30px rgba(8, 12, 22, .45); }
+.d2-rail { list-style: none; margin: 0; padding: 0; position: absolute; right: 24px; top: 50%; translate: 0 -50%; display: grid; gap: 4px; pointer-events: auto; }
+.d2-rail button { display: flex; align-items: center; justify-content: flex-end; gap: 10px; width: 100%; padding: 9px 0; border: 0; background: none; cursor: pointer; font: 12px var(--f-mono); letter-spacing: .08em; color: rgba(244, 245, 247, .55); text-shadow: 0 1px 8px rgba(8, 12, 22, .7); transition: color .4s var(--ease); }
+.d2-rail button i { order: 2; display: block; width: 14px; height: 2px; background: currentColor; transition: width .5s var(--ease), background .4s var(--ease); }
+.d2-rail button:hover, .d2-rail button.done { color: rgba(244, 245, 247, .85); }
+.d2-rail button.on { color: var(--white); }
+.d2-rail button.on i { width: 34px; background: var(--yellow); }
+.d2-rail button:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
+.d2-prog { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: rgba(244, 245, 247, .14); }
+.d2-prog i { display: block; height: 100%; background: var(--yellow); transform-origin: 0 50%; transform: scaleX(0); }
+@media (max-width: 900px) {
+  .d2-hud { padding-top: 92px; }
+  .d2-clock { font-size: clamp(56px, 19vw, 96px); }
+  .d2-rail { position: static; translate: none; display: flex; gap: 0; margin-top: 14px; justify-content: space-between; }
+  .d2-rail button { flex-direction: column; align-items: flex-start; gap: 6px; padding: 8px 0; font-size: 10px; letter-spacing: .04em; }
+  .d2-rail button i { order: 0; width: 10px; }
+  .d2-rail button.on i { width: 22px; }
+  .d2-body { padding-bottom: 56px; }
+  .d2-title { font-size: clamp(30px, 9.4vw, 46px); }
+}
+.d2-hud .eyebrow { color: rgba(244, 245, 247, .82); text-shadow: 0 1px 10px rgba(8, 12, 22, .6); }

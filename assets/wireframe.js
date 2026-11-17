@@ -482,7 +482,7 @@
     if (reduced) { on = true; if (avoid) { scan(); for (let k = 0; k < 40; k++) draw(); } else draw(); } else loop();
   };
   // Toda seção azul-escura sem foto de fundo ganha a rede de moléculas em negativo, com nós em hexágono
-  $$("main section:not(.light):not(.hero):not(.page-hero):not(.px-band):not(.lgc):not([data-mol])").forEach(sec => sec.setAttribute("data-mol", ""));
+  $$("main section:not(.light):not(.hero):not(.page-hero):not(.px-band):not(.lgc):not(.day2):not([data-mol])").forEach(sec => sec.setAttribute("data-mol", ""));
   $$("[data-mol]").forEach(host => molField(host));
 
   // ---------- Molécula fixa dos manifestos (feita da textura: hexágonos pequenos e ligações) ----------
@@ -1396,6 +1396,69 @@
     sync();
   }
 
+  // ---------- Onde atuamos: "Um dia com a Remo" em seis cenas presas à rolagem ----------
+  // A rolagem troca de cena e faz o relógio correr; o vídeo da cena ativa toca sozinho, em laço (não é a rolagem que avança os quadros).
+  // Peso: a página abre só com as fotos; cada vídeo é baixado quando a cena chega (e o da cena seguinte, adiantado); um toca por vez.
+  const day2 = $(".day2");
+  if (day2) {
+    const pinEl = $(".day2-pin", day2), scenes = $$(".d2-scene", day2), n = scenes.length;
+    const mins = scenes.map(sc => { const [h, m] = sc.dataset.time.split(":"); return +h * 60 + +m; });
+    // Movimento reduzido ou economia de dados: ficam só as fotos
+    const lite = reduced || !!(navigator.connection && navigator.connection.saveData);
+    const vid = i => scenes[i] ? $("video", scenes[i]) : null;
+    const load = i => {
+      const v = vid(i);
+      if (!v || lite || v.getAttribute("src") || !v.dataset.src) return;
+      v.addEventListener("playing", () => v.classList.add("ready"), { once: true });
+      v.src = v.dataset.src; v.load();
+    };
+    const play = i => { const v = vid(i); if (v && v.getAttribute("src")) { const p = v.play(); if (p) p.catch(() => {}); } };
+    const pauseAll = except => scenes.forEach((sc, k) => { const v = vid(k); if (v && k !== except && !v.paused) v.pause(); });
+    if (motion) {
+      day2.classList.add("live");
+      const hud = document.createElement("div");
+      hud.className = "wrap d2-hud";
+      hud.innerHTML = `<div class="eyebrow">Um dia com a Remo</div><div class="d2-clock" aria-hidden="true"><b id="d2-clock">${scenes[0].dataset.time}</b></div>
+        <ol class="d2-rail">${scenes.map((sc, i) => `<li><button type="button" data-i="${i}" aria-label="Cena das ${sc.dataset.time}: ${$(".d2-title", sc).textContent}"><i></i>${sc.dataset.time}</button></li>`).join("")}</ol>
+        <div class="d2-prog" aria-hidden="true"><i id="d2-prog"></i></div>`;
+      pinEl.append(hud);
+      const clock = $("#d2-clock", hud), btns = $$(".d2-rail button", hud), prog = $("#d2-prog", hud);
+      let cur = -1, seen = false;
+      const show = i => {
+        if (i === cur) return;
+        cur = i;
+        scenes.forEach((sc, k) => sc.classList.toggle("on", k === i));
+        btns.forEach((b, k) => { b.classList.toggle("on", k === i); b.classList.toggle("done", k < i); });
+        pauseAll(i);
+        // só baixa vídeo quando o palco está perto da tela
+        if (seen) { load(i); load(i + 1); }
+        if (seen) play(i);
+      };
+      const st = ScrollTrigger.create({
+        trigger: pinEl, start: "top top", end: () => "+=" + Math.round(innerHeight * n * .85), pin: true, invalidateOnRefresh: true,
+        onUpdate: sT => {
+          const f = Math.min(n - .0001, sT.progress * n), i = Math.floor(f), fr = f - i;
+          show(i);
+          // o relógio fica parado no horário da cena e só corre no trecho final, até o horário da cena seguinte
+          const run = Math.max(0, (fr - .72) / .28), t = Math.round(mins[i] + ((mins[i + 1] || mins[i]) - mins[i]) * run * run);
+          clock.textContent = String(Math.floor(t / 60)).padStart(2, "0") + ":" + String(t % 60).padStart(2, "0");
+          prog.style.transform = `scaleX(${sT.progress})`;
+        }
+      });
+      show(0);
+      btns.forEach((b, i) => b.addEventListener("click", () => {
+        const y = st.start + (st.end - st.start) * ((i + .5) / n);
+        lenis ? lenis.scrollTo(y, { duration: 1.2 }) : scrollTo({ top: y, behavior: "smooth" });
+      }));
+      // Fora da tela nenhum vídeo toca
+      new IntersectionObserver(([en]) => { seen = en.isIntersecting; if (seen) { load(cur); load(cur + 1); play(cur); } else pauseAll(-1); }, { rootMargin: "200px 0px" }).observe(day2);
+    } else if (!lite) {
+      // Sem animação mas com vídeo permitido (GSAP ausente): as cenas ficam empilhadas e cada vídeo toca quando a cena está na tela
+      const io2 = new IntersectionObserver(es => es.forEach(en => { const i = scenes.indexOf(en.target); if (en.isIntersecting) { load(i); play(i); } else { const v = vid(i); if (v) v.pause(); } }), { threshold: .35 });
+      scenes.forEach(sc => io2.observe(sc));
+    }
+  }
+
   // ---------- Formulário ----------
   const form = $("#contact-form");
   if (form) {
@@ -1434,7 +1497,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.68`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.69`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
@@ -1516,7 +1579,7 @@
   // Usa as propriedades CSS `translate` e `opacity` por classe, que não brigam com o `transform` do GSAP; quem já é
   // animado pelo GSAP (estilo em linha), está em bloco travado ou dentro de um elemento já revelado fica de fora.
   if (motion && window.IntersectionObserver) {
-    const SKIP = "[data-reveal],[data-lines],.mat-body,.manifesto,#mf2,.hscroll,.rail,.vr-card,.vr-sw,.env3-card,.env3-bg,.lgc-mosaic,.hub-grid,.seg-grid,.env-grid,.seal,.site-header,canvas,.rv";
+    const SKIP = "[data-reveal],[data-lines],.mat-body,.manifesto,#mf2,.hscroll,.rail,.vr-card,.vr-sw,.env3-card,.env3-bg,.day2,.lgc-mosaic,.hub-grid,.seg-grid,.env-grid,.seal,.site-header,canvas,.rv";
     const io = new IntersectionObserver(es => es.forEach(e => {
       if (!e.isIntersecting) return;
       io.unobserve(e.target);
