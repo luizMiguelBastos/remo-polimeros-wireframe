@@ -2567,3 +2567,13 @@ body { background-image: none; }
 }
 .no-motion .step { opacity: 1; }
 @media (min-width: 901px) { .no-motion .steps { align-items: stretch; } }
+
+/* ---------- v5.67: "remo" da folha de transição e da abertura em azul-noite; sombra discreta de canto nas seções claras, alternando de lado ---------- */
+.sheet .sheet-lockup .sheet-big, .preloader .sheet-lockup .word { color: var(--night); }
+/* O inverso da luz das seções escuras: no claro, um canto levemente mais escuro. shade-br = embaixo à direita; shade-tl = em cima à esquerda */
+.light.shade-br { background-image: radial-gradient(rgba(11, 18, 32, .075) 1px, transparent 1.3px), radial-gradient(ellipse 62% 58% at 100% 100%, rgba(11, 18, 32, .1), rgba(11, 18, 32, 0) 72%); background-size: 22px 22px, 100% 100%; background-repeat: repeat, no-repeat; }
+.light.shade-tl { background-image: radial-gradient(rgba(11, 18, 32, .075) 1px, transparent 1.3px), radial-gradient(ellipse 58% 56% at 0% 0%, rgba(11, 18, 32, .09), rgba(11, 18, 32, 0) 72%); background-size: 22px 22px, 100% 100%; background-repeat: repeat, no-repeat; }
+.hub.light.shade-br { background-image: radial-gradient(rgba(15, 22, 38, .12) 1px, transparent 1.2px), radial-gradient(ellipse 62% 58% at 100% 100%, rgba(11, 18, 32, .1), rgba(11, 18, 32, 0) 72%); background-size: 18px 18px, 100% 100%; background-repeat: repeat, no-repeat; }
+/* Seções com bloco preso à rolagem (esteira, linha do tempo): a sombra vai no bloco preso, para não deslizar durante a rolagem */
+.shade-pin-br .rail-pin, .shade-pin-br #tl-pin { background-image: radial-gradient(ellipse 62% 58% at 100% 100%, rgba(11, 18, 32, .1), rgba(11, 18, 32, 0) 72%); background-repeat: no-repeat; }
+.shade-pin-tl .rail-pin, .shade-pin-tl #tl-pin { background-image: radial-gradient(ellipse 58% 56% at 0% 0%, rgba(11, 18, 32, .09), rgba(11, 18, 32, 0) 72%); background-repeat: no-repeat; }

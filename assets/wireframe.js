@@ -371,16 +371,21 @@
     // Fundo azul: as moléculas não passam por cima da tipografia. De tempos em tempos a seção é varrida e cada bloco de
     // texto, botão, imagem ou card perto da tela vira um obstáculo: os nós desviam dele e as ligações não o atravessam.
     const AVOID = "h1,h2,h3,h4,h5,p,li,dt,dd,a,button,label,input,select,textarea,img,figure,svg,table,span,small,strong,b,time,.eyebrow,.mono,[class*='card']";
+    // data-mol-avoid="text": só a tipografia e os controles viram obstáculo (não a linha inteira da lista), para as moléculas
+    // andarem pelos vãos entre as colunas de texto sem nunca passar por cima delas
+    const AVOID_TEXT = "h1,h2,h3,h4,h5,p,span,small,strong,b,time,a,label,input,select,textarea,img,svg,figure,li:not(.mat-row),dt,dd,.eyebrow,.mono,.mat-cmp,.mat-body";
     let obs = [], tick = 0;
     // No fundo claro o desvio só vale onde for pedido (data-mol-avoid), como no manifesto de História
     const avoid = host.dataset.mol !== "ink" || "molAvoid" in host.dataset;
     const scan = () => {
       const hr = host.getBoundingClientRect();
       obs = [];
-      host.querySelectorAll(AVOID).forEach(el => {
+      // no modo "text" a folga é menor, para sobrar vão entre as linhas da lista
+      const txt = host.dataset.molAvoid === "text", px = txt ? 12 : 20, py = txt ? 7 : 16;
+      host.querySelectorAll(txt ? AVOID_TEXT : AVOID).forEach(el => {
         const r = el.getBoundingClientRect();
         if (r.width < 4 || r.height < 4 || r.bottom < -240 || r.top > innerHeight + 240) return;
-        obs.push([r.left - hr.left - 20, r.top - hr.top - 16, r.right - hr.left + 20, r.bottom - hr.top + 16]);
+        obs.push([r.left - hr.left - px, r.top - hr.top - py, r.right - hr.left + px, r.bottom - hr.top + py]);
       });
     };
     const inObs = (x, y) => { for (const o of obs) if (x > o[0] && x < o[2] && y > o[1] && y < o[3]) return o; return null; };
@@ -448,7 +453,8 @@
           if (d < LINK) { if (avoid && (inObs(a.x + (b.x - a.x) * .25, a.y + (b.y - a.y) * .25) || inObs((a.x + b.x) / 2, (a.y + b.y) / 2) || inObs(a.x + (b.x - a.x) * .75, a.y + (b.y - a.y) * .75))) continue; const al = (1 - d / LINK) * (ink ? .28 : .11); ctx.strokeStyle = a.y2 ? `rgba(255,209,0,${al})` : (ink ? `rgba(0,31,95,${al})` : `rgba(244,245,247,${al})`); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
         }
         const dm = Math.hypot(a.x - mx, a.y - my);
-        if (dm < 180) { ctx.strokeStyle = `rgba(255,209,0,${(1 - dm / 180) * (ink ? .35 : .18)})`; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(mx, my); ctx.stroke(); }
+        // a ligação até o cursor também não cruza a tipografia
+        if (dm < 180 && !(avoid && (inObs(mx, my) || inObs((a.x + mx) / 2, (a.y + my) / 2) || inObs(a.x + (mx - a.x) * .25, a.y + (my - a.y) * .25) || inObs(a.x + (mx - a.x) * .75, a.y + (my - a.y) * .75)))) { ctx.strokeStyle = `rgba(255,209,0,${(1 - dm / 180) * (ink ? .35 : .18)})`; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(mx, my); ctx.stroke(); }
       }
       for (const a of nodes) {
         if (ink) {
@@ -473,7 +479,7 @@
     host.addEventListener("pointermove", e => { const r = host.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; });
     host.addEventListener("pointerleave", () => { mx = my = -999; });
     new IntersectionObserver(([en]) => { on = en.isIntersecting; }).observe(host);
-    if (reduced) { on = true; if (!ink) { scan(); for (let k = 0; k < 40; k++) draw(); } else draw(); } else loop();
+    if (reduced) { on = true; if (avoid) { scan(); for (let k = 0; k < 40; k++) draw(); } else draw(); } else loop();
   };
   // Toda seção azul-escura sem foto de fundo ganha a rede de moléculas em negativo, com nós em hexágono
   $$("main section:not(.light):not(.hero):not(.page-hero):not(.px-band):not(.lgc):not([data-mol])").forEach(sec => sec.setAttribute("data-mol", ""));
@@ -1411,7 +1417,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.66`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.67`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
