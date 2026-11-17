@@ -1414,8 +1414,11 @@
     };
     const play = i => { const v = vid(i); if (v && v.getAttribute("src")) { const p = v.play(); if (p) p.catch(() => {}); } };
     const pauseAll = except => scenes.forEach((sc, k) => { const v = vid(k); if (v && k !== except && !v.paused) v.pause(); });
+    // Hero e palco no mesmo bloco preso: o primeiro trecho da rolagem desliza o hero para a esquerda e traz o palco pela direita
+    const stage = day2.closest(".day-stage"), heroEl = stage ? $(".page-hero", stage) : null;
     if (motion) {
       day2.classList.add("live");
+      if (stage) stage.classList.add("live");
       const hud = document.createElement("div");
       hud.className = "wrap d2-hud";
       hud.innerHTML = `<div class="eyebrow">Um dia com a Remo</div><div class="d2-clock" aria-hidden="true"><b id="d2-clock">${scenes[0].dataset.time}</b></div>
@@ -1423,7 +1426,8 @@
         <div class="d2-prog" aria-hidden="true"><i id="d2-prog"></i></div>`;
       pinEl.append(hud);
       const clock = $("#d2-clock", hud), btns = $$(".d2-rail button", hud), prog = $("#d2-prog", hud);
-      let cur = -1, seen = false;
+      let cur = -1, seen = false, inView = false, entered = !stage;
+      const see = () => { const v = inView && entered; if (v === seen) return; seen = v; if (seen) { load(cur); load(cur + 1); play(cur); } else pauseAll(-1); };
       const show = i => {
         if (i === cur) return;
         cur = i;
@@ -1434,24 +1438,43 @@
         if (seen) { load(i); load(i + 1); }
         if (seen) play(i);
       };
+      // T = trecho da transição lateral (em telas de rolagem); S = trecho de cada cena
+      const T = stage ? .6 : 0, S = .85, p1 = T / (T + n * S);
+      const slide = p => {
+        if (!stage) return;
+        const e = Math.min(1, p / p1), k = e * e * (3 - 2 * e);
+        heroEl.style.transform = `translate3d(${-k * 100}%, 0, 0)`;
+        day2.style.transform = `translate3d(${(1 - k) * 100}%, 0, 0)`;
+        stage.style.setProperty("--seam", Math.min(1, 4 * k * (1 - k) * 1.4).toFixed(3));
+        entered = k > .02; see();
+      };
       const st = ScrollTrigger.create({
-        trigger: pinEl, start: "top top", end: () => "+=" + Math.round(innerHeight * n * .85), pin: true, invalidateOnRefresh: true,
+        trigger: stage || pinEl, start: "top top", end: () => "+=" + Math.round(innerHeight * (T + n * S)), pin: true, invalidateOnRefresh: true,
         onUpdate: sT => {
-          const f = Math.min(n - .0001, sT.progress * n), i = Math.floor(f), fr = f - i;
+          slide(sT.progress);
+          const q = Math.max(0, (sT.progress - p1) / (1 - p1));
+          const f = Math.min(n - .0001, q * n), i = Math.floor(f), fr = f - i;
           show(i);
           // o relógio fica parado no horário da cena e só corre no trecho final, até o horário da cena seguinte
           const run = Math.max(0, (fr - .72) / .28), t = Math.round(mins[i] + ((mins[i + 1] || mins[i]) - mins[i]) * run * run);
           clock.textContent = String(Math.floor(t / 60)).padStart(2, "0") + ":" + String(t % 60).padStart(2, "0");
-          prog.style.transform = `scaleX(${sT.progress})`;
+          prog.style.transform = `scaleX(${q})`;
         }
       });
-      show(0);
+      show(0); slide(0);
+      // "Explore" do hero leva ao começo das cenas (o destino padrão seria a seção seguinte, que aqui está dentro do bloco preso)
+      const cue2 = heroEl && $(".page-cue", heroEl);
+      if (cue2) cue2.addEventListener("click", e => {
+        e.preventDefault(); e.stopImmediatePropagation();
+        const y = st.start + (st.end - st.start) * (p1 + (1 - p1) * (.4 / n));
+        lenis ? lenis.scrollTo(y, { duration: 1.4 }) : scrollTo({ top: y, behavior: "smooth" });
+      }, true);
       btns.forEach((b, i) => b.addEventListener("click", () => {
-        const y = st.start + (st.end - st.start) * ((i + .5) / n);
+        const y = st.start + (st.end - st.start) * (p1 + (1 - p1) * ((i + .5) / n));
         lenis ? lenis.scrollTo(y, { duration: 1.2 }) : scrollTo({ top: y, behavior: "smooth" });
       }));
       // Fora da tela nenhum vídeo toca
-      new IntersectionObserver(([en]) => { seen = en.isIntersecting; if (seen) { load(cur); load(cur + 1); play(cur); } else pauseAll(-1); }, { rootMargin: "200px 0px" }).observe(day2);
+      new IntersectionObserver(([en]) => { inView = en.isIntersecting; see(); }, { rootMargin: "200px 0px" }).observe(stage || day2);
     } else if (!lite) {
       // Sem animação mas com vídeo permitido (GSAP ausente): as cenas ficam empilhadas e cada vídeo toca quando a cena está na tela
       const io2 = new IntersectionObserver(es => es.forEach(en => { const i = scenes.indexOf(en.target); if (en.isIntersecting) { load(i); play(i); } else { const v = vid(i); if (v) v.pause(); } }), { threshold: .35 });
@@ -1497,7 +1520,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.70`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.71`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {

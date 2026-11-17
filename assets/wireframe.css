@@ -2665,3 +2665,18 @@ body { background-image: none; }
   .d2-title { font-size: clamp(30px, 9.4vw, 46px); }
 }
 .d2-hud .eyebrow { color: rgba(244, 245, 247, .82); text-shadow: 0 1px 10px rgba(8, 12, 22, .6); }
+
+/* ---------- v5.71: Onde atuamos, o hero vai direto para o palco do dia com uma transição lateral presa à rolagem ---------- */
+/* Sem degradê na base da foto do hero: a cena entra pelo lado, não por baixo */
+.day-stage .page-hero.photo::after { display: none; }
+.day-stage.live { position: relative; height: 100svh; overflow: hidden; background: var(--night); }
+.day-stage.live > .page-hero, .day-stage.live > .day2 { position: absolute; inset: 0; will-change: transform; }
+.day-stage.live > .page-hero { min-height: 0; height: 100%; z-index: 1; }
+.day-stage.live > .day2 { z-index: 2; transform: translate3d(100%, 0, 0); }
+.day-stage.live .day2-pin { height: 100%; }
+/* Fio amarelo na borda da cena enquanto ela entra */
+.day-stage.live > .day2::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--yellow); z-index: 5; opacity: var(--seam, 0); pointer-events: none; }
+/* O bloco sobe para baixo do header (como o hero faz sozinho) e o hero perde a margem negativa dentro dele */
+.day-stage.live { margin-top: -73px; }
+.day-stage.live > .page-hero { margin-top: 0; }
+@media (min-width: 901px) { .day-stage.live { margin-top: calc(-1 * (var(--hdr) + 1px)); } }
