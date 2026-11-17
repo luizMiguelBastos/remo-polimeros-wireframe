@@ -1469,10 +1469,13 @@
         const y = st.start + (st.end - st.start) * (p1 + (1 - p1) * (.4 / n));
         lenis ? lenis.scrollTo(y, { duration: 1.4 }) : scrollTo({ top: y, behavior: "smooth" });
       }, true);
-      btns.forEach((b, i) => b.addEventListener("click", () => {
+      const goScene = i => {
         const y = st.start + (st.end - st.start) * (p1 + (1 - p1) * ((i + .5) / n));
         lenis ? lenis.scrollTo(y, { duration: 1.2 }) : scrollTo({ top: y, behavior: "smooth" });
-      }));
+      };
+      btns.forEach((b, i) => b.addEventListener("click", () => goScene(i)));
+      // Prévia das cenas no hero: cada miniatura leva direto à sua cena
+      $$(".day-prev [data-i]", stage || document).forEach(a => a.addEventListener("click", e => { e.preventDefault(); goScene(+a.dataset.i); }));
       // Fora da tela nenhum vídeo toca
       new IntersectionObserver(([en]) => { inView = en.isIntersecting; see(); }, { rootMargin: "200px 0px" }).observe(stage || day2);
     } else if (!lite) {
@@ -1520,7 +1523,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.71`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.72`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {

@@ -2680,3 +2680,25 @@ body { background-image: none; }
 .day-stage.live { margin-top: -73px; }
 .day-stage.live > .page-hero { margin-top: 0; }
 @media (min-width: 901px) { .day-stage.live { margin-top: calc(-1 * (var(--hdr) + 1px)); } }
+
+/* ---------- v5.72: Onde atuamos, prévia das seis cenas no hero com a chamada para rolar (substitui o "Explore" nesta página) ---------- */
+.day-stage .page-hero .ph-wrap > .page-cue { display: none; }
+.day-prev { margin-top: clamp(22px, 3.4vh, 40px); display: grid; gap: 14px; justify-items: start; }
+.dp-call { display: inline-flex; align-items: center; gap: 12px; font: 12px var(--f-mono); text-transform: uppercase; letter-spacing: .1em; color: rgba(244, 245, 247, .88); }
+.dp-call::before { content: ""; width: 22px; height: 2px; background: var(--yellow); }
+.dp-call .arr { display: inline-block; animation: dp-nudge 1.9s var(--ease) infinite; }
+@keyframes dp-nudge { 0%, 100% { translate: 0 0; } 50% { translate: 9px 0; } }
+@media (prefers-reduced-motion: reduce) { .dp-call .arr { animation: none; } }
+.dp-row { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; width: min(100%, 900px); }
+.dp-card { position: relative; display: block; aspect-ratio: 16 / 9; border-radius: 6px; overflow: hidden; background: center / cover no-repeat; border: 1px solid rgba(244, 245, 247, .2); color: var(--white); text-decoration: none; transition: translate .5s var(--ease), border-color .4s var(--ease); }
+.dp-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(8, 12, 22, .78) 0%, rgba(8, 12, 22, .1) 58%, rgba(8, 12, 22, 0) 100%); transition: opacity .4s var(--ease); }
+.dp-card span { position: absolute; left: 9px; bottom: 7px; z-index: 1; font: 11px var(--f-mono); letter-spacing: .08em; }
+.dp-card:hover, .dp-card:focus-visible { translate: 0 -4px; border-color: rgba(244, 245, 247, .75); }
+.dp-card:hover::after { opacity: .7; }
+.dp-card:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
+@media (max-width: 900px) {
+  .day-prev { width: 100%; }
+  .dp-row { display: flex; width: auto; max-width: none; overflow-x: auto; gap: 8px; margin-right: -16px; padding-right: 16px; scrollbar-width: none; -webkit-overflow-scrolling: touch; align-self: stretch; justify-self: stretch; }
+  .dp-row::-webkit-scrollbar { display: none; }
+  .dp-card { flex: 0 0 104px; }
+}

@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Onde atuamos · Remo Polímeros · Wireframe v5.71</title>
+  <title>Onde atuamos · Remo Polímeros · Wireframe v5.72</title>
   <meta name="description" content="Segmentos e aplicações atendidos pela Remo Polímeros: automotivo, eletroeletrônicos, linha branca, construção civil e cosméticos.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
   <script>try{if(sessionStorage.getItem("remo-nav")==="1")document.documentElement.classList.add("tx-in")}catch(e){}</script>
   <link rel="preload" as="image" href="assets/img/sec-onde-atuamos.jpg">
-  <link rel="icon" type="image/svg+xml" href="assets/logo/remo-simbolo.svg?v=5.71">
-  <link rel="stylesheet" href="assets/wireframe.css?v=5.71">
+  <link rel="icon" type="image/svg+xml" href="assets/logo/remo-simbolo.svg?v=5.72">
+  <link rel="stylesheet" href="assets/wireframe.css?v=5.72">
 </head>
 <body>
 
@@ -20,18 +20,18 @@
 <div class="sheet" id="sheet" aria-hidden="true">
   <canvas class="sheet-mol" id="sheet-mol"></canvas>
   <div class="sheet-inner sheet-lockup">
-    <img src="assets/logo/remo-simbolo.svg?v=5.71" alt="" class="sheet-mark">
+    <img src="assets/logo/remo-simbolo.svg?v=5.72" alt="" class="sheet-mark">
     <div class="word sheet-big"><span class="wm"></span></div>
     <div class="sheet-meta"><span class="sheet-dest mono" id="sheet-dest"></span></div>
   </div>
 </div>
 <div class="cursor" id="cursor" aria-hidden="true"><span id="cursor-label"></span></div>
 
-<!-- WIREFRAME v5.71 -->
+<!-- WIREFRAME v5.72 -->
 
 <header class="site-header" id="header">
   <div class="wrap">
-    <a href="index.html" class="logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo-branco.svg?v=5.71" alt="" class="logo-mark" width="40" height="36"><span class="wm" aria-hidden="true"></span>
+    <a href="index.html" class="logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo-branco.svg?v=5.72" alt="" class="logo-mark" width="40" height="36"><span class="wm" aria-hidden="true"></span>
     </a>
     <span class="hdr-sec" id="hdr-sec" aria-hidden="true"></span>
     <nav class="nav" id="nav" aria-label="Principal">
@@ -61,9 +61,20 @@
       </h1>
       <span class="h-sep" aria-hidden="true"></span>
       <div class="ph-side">
-        <p class="lead" data-reveal>Acompanhe um dia comum, das 07:00 às 22:00, e veja onde a Remo aparece.</p>
+        <p class="lead" data-reveal>Você provavelmente já tocou em uma peça feita com resinas da Remo hoje. Role e veja onde.</p>
       </div>
     </div>
+    <nav class="day-prev" aria-label="As seis cenas, clique para ir direto a uma" data-reveal>
+      <span class="dp-call">Role para começar <span class="arr" aria-hidden="true">→</span></span>
+      <div class="dp-row">
+        <a class="dp-card" href="#cena-0700" data-i="0" style="background-image:url(assets/img/dia-0700.webp)" aria-label="07:00: A tampa do creme no banheiro" data-cursor="Ir"><span>07:00</span></a>
+        <a class="dp-card" href="#cena-0810" data-i="1" style="background-image:url(assets/img/dia-0810.webp)" aria-label="08:10: O painel do carro a caminho do trabalho" data-cursor="Ir"><span>08:10</span></a>
+        <a class="dp-card" href="#cena-0900" data-i="2" style="background-image:url(assets/img/dia-0900.webp)" aria-label="09:00: A tomada onde o notebook carrega" data-cursor="Ir"><span>09:00</span></a>
+        <a class="dp-card" href="#cena-1230" data-i="3" style="background-image:url(assets/img/dia-1230.webp)" aria-label="12:30: O micro-ondas do almoço" data-cursor="Ir"><span>12:30</span></a>
+        <a class="dp-card" href="#cena-1900" data-i="4" style="background-image:url(assets/img/dia-1900.webp)" aria-label="19:00: A gaveta transparente da geladeira" data-cursor="Ir"><span>19:00</span></a>
+        <a class="dp-card" href="#cena-2200" data-i="5" style="background-image:url(assets/img/dia-2200.webp)" aria-label="22:00: O controle remoto no sofá" data-cursor="Ir"><span>22:00</span></a>
+      </div>
+    </nav>
     <a href="#" class="hero-scroll scroll-cue page-cue" data-cursor="Rolar" data-next><i></i>Explore</a>
   </div>
 </section>
@@ -71,7 +82,7 @@
 <!-- Um dia com a Remo: palco preso à rolagem, uma cena por horário; o vídeo de cada cena toca sozinho quando ela está ativa -->
 <section class="day2" id="dia" aria-label="Um dia com a Remo, em seis cenas">
   <div class="day2-pin">
-    <article class="d2-scene on" data-time="07:00">
+    <article class="d2-scene on" data-time="07:00" id="cena-0700">
       <div class="d2-media" style="background-image:url(assets/img/dia-0700.webp)" role="img" aria-label="A tampa do creme no banheiro"><video muted loop playsinline preload="none" data-src="assets/video/dia-0700.mp4" aria-hidden="true"></video></div>
       <div class="wrap d2-body">
         <span class="d2-time mono">07:00</span>
@@ -80,7 +91,7 @@
         <a class="d2-link" href="#segmentos" data-cursor="Ver">Ver os segmentos <span class="arr" aria-hidden="true">→</span></a>
       </div>
     </article>
-    <article class="d2-scene" data-time="08:10">
+    <article class="d2-scene" data-time="08:10" id="cena-0810">
       <div class="d2-media" style="background-image:url(assets/img/dia-0810.webp)" role="img" aria-label="O painel do carro a caminho do trabalho"><video muted loop playsinline preload="none" data-src="assets/video/dia-0810.mp4" aria-hidden="true"></video></div>
       <div class="wrap d2-body">
         <span class="d2-time mono">08:10</span>
@@ -89,7 +100,7 @@
         <a class="d2-link" href="#segmentos" data-cursor="Ver">Ver os segmentos <span class="arr" aria-hidden="true">→</span></a>
       </div>
     </article>
-    <article class="d2-scene" data-time="09:00">
+    <article class="d2-scene" data-time="09:00" id="cena-0900">
       <div class="d2-media" style="background-image:url(assets/img/dia-0900.webp)" role="img" aria-label="A tomada onde o notebook carrega"><video muted loop playsinline preload="none" data-src="assets/video/dia-0900.mp4" aria-hidden="true"></video></div>
       <div class="wrap d2-body">
         <span class="d2-time mono">09:00</span>
@@ -98,7 +109,7 @@
         <a class="d2-link" href="#segmentos" data-cursor="Ver">Ver os segmentos <span class="arr" aria-hidden="true">→</span></a>
       </div>
     </article>
-    <article class="d2-scene" data-time="12:30">
+    <article class="d2-scene" data-time="12:30" id="cena-1230">
       <div class="d2-media" style="background-image:url(assets/img/dia-1230.webp)" role="img" aria-label="O micro-ondas do almoço"><video muted loop playsinline preload="none" data-src="assets/video/dia-1230.mp4" aria-hidden="true"></video></div>
       <div class="wrap d2-body">
         <span class="d2-time mono">12:30</span>
@@ -107,7 +118,7 @@
         <a class="d2-link" href="#segmentos" data-cursor="Ver">Ver os segmentos <span class="arr" aria-hidden="true">→</span></a>
       </div>
     </article>
-    <article class="d2-scene" data-time="19:00">
+    <article class="d2-scene" data-time="19:00" id="cena-1900">
       <div class="d2-media" style="background-image:url(assets/img/dia-1900.webp)" role="img" aria-label="A gaveta transparente da geladeira"><video muted loop playsinline preload="none" data-src="assets/video/dia-1900.mp4" aria-hidden="true"></video></div>
       <div class="wrap d2-body">
         <span class="d2-time mono">19:00</span>
@@ -116,7 +127,7 @@
         <a class="d2-link" href="#segmentos" data-cursor="Ver">Ver os segmentos <span class="arr" aria-hidden="true">→</span></a>
       </div>
     </article>
-    <article class="d2-scene" data-time="22:00">
+    <article class="d2-scene" data-time="22:00" id="cena-2200">
       <div class="d2-media" style="background-image:url(assets/img/dia-2200.webp)" role="img" aria-label="O controle remoto no sofá"><video muted loop playsinline preload="none" data-src="assets/video/dia-2200.mp4" aria-hidden="true"></video></div>
       <div class="wrap d2-body">
         <span class="d2-time mono">22:00</span>
@@ -324,7 +335,7 @@
 <footer class="footer" data-mol="ink">
   <div class="wrap">
     <div class="f-top">
-      <a href="index.html" class="f-logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo.svg?v=5.71" alt="" class="f-mark"><span class="wm" aria-hidden="true"></span></a>
+      <a href="index.html" class="f-logo" aria-label="Remo Polímeros, início"><img src="assets/logo/remo-simbolo.svg?v=5.72" alt="" class="f-mark"><span class="wm" aria-hidden="true"></span></a>
       <p class="f-tag">Polímeros de engenharia,<br>feitos sob medida.</p>
       <a href="contato.html" class="btn f-cta">Fale com um especialista <span class="arr">→</span></a>
     </div>
@@ -353,7 +364,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<script src="assets/data.js?v=5.71"></script>
-<script src="assets/wireframe.js?v=5.71"></script>
+<script src="assets/data.js?v=5.72"></script>
+<script src="assets/wireframe.js?v=5.72"></script>
 </body>
 </html>
