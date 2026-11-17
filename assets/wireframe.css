@@ -2551,3 +2551,19 @@ body { background-image: none; }
 .pj.on .arr { opacity: 1; translate: 0 0; }
 .pj:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
 @media (max-width: 600px) { .ph-jump { gap: 4px; } .pj { flex: 1 1 100%; justify-content: space-between; padding: 14px 16px; border-color: rgba(244, 245, 247, .22); } }
+
+/* ---------- v5.65: sem animação (movimento reduzido ou GSAP ausente), as esteiras do desktop ganham rolagem lateral comum ---------- */
+@media (min-width: 901px) {
+  .no-motion .tl-scroll, .no-motion .steps, .no-motion .rail:not(.rail-free) .rail-track { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; scrollbar-color: rgba(11, 18, 32, .28) transparent; padding-bottom: 16px; }
+  .no-motion .steps, .no-motion .rail:not(.rail-free) .rail-track { width: auto; }
+  .no-motion .light .steps, .no-motion .tl-scroll, .no-motion .rail.light .rail-track { scrollbar-color: rgba(11, 18, 32, .28) transparent; }
+  .no-motion section:not(.light) .steps { scrollbar-color: rgba(244, 245, 247, .3) transparent; }
+  .no-motion .tl-scroll:focus-visible, .no-motion .steps:focus-visible { outline: 2px solid var(--yellow); outline-offset: -2px; }
+  /* sem a rolagem para marcar o passo ativo, os quatro passos ficam iguais e inteiros */
+  .no-motion .steps { padding-top: 12px; }
+  .no-motion .step, .no-motion .step:hover, .no-motion .step.active { transform: none; opacity: 1; cursor: default; }
+  .no-motion .step .bar::after { transform: scaleX(1); }
+  .no-motion #step-count, .no-motion .tl-fill { display: none; }
+}
+.no-motion .step { opacity: 1; }
+@media (min-width: 901px) { .no-motion .steps { align-items: stretch; } }

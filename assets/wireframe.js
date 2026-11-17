@@ -8,6 +8,15 @@
   const hasGsap = !!(window.gsap && window.ScrollTrigger);
   const motion = hasGsap && !reduced;
   if (hasGsap) gsap.registerPlugin(ScrollTrigger);
+  // Sem animação (movimento reduzido no sistema ou GSAP ausente): as esteiras presas à rolagem viram rolagem lateral comum
+  if (!motion) {
+    document.documentElement.classList.add("no-motion");
+    const tlEl = $("#timeline");
+    if (tlEl) { const sc = document.createElement("div"); sc.className = "tl-scroll"; tlEl.before(sc); sc.append(tlEl); }
+    [[$(".tl-scroll"), "Linha do tempo"], [$("#steps"), "Como trabalhamos"]].forEach(([el, name]) => {
+      if (el) { el.tabIndex = 0; el.setAttribute("role", "region"); el.setAttribute("aria-label", name + ", role para o lado"); }
+    });
+  }
 
   // Aparência de cada resina no card flutuante do índice (sem imagens nesta fase)
   const LOOK = {
@@ -1290,7 +1299,7 @@
       ScrollTrigger.create({ trigger: vr, start: "top 75%", end: "bottom 25%", onToggle: s => { visible = s.isActive; sync(); } });
       gsap.timeline({ scrollTrigger: { trigger: vr, start: "top 80%" } })
         .from($$(".vr-head > *", vr), { y: 20, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.08 })
-        .from($$(".vr-list li:not(.vr-ind)", vr), { x: -24, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.04 }, 0.1)
+        .fromTo($$(".vr-list li:not(.vr-ind)", vr), { x: -24, opacity: 0 }, { x: 0, opacity: 1, duration: 0.8, ease: "expo.out", stagger: 0.04 }, 0.1)
         .fromTo(card, { clipPath: "inset(100% 0 0 0 round 10px)", y: 60 }, { clipPath: "inset(0% 0 0 0 round 10px)", y: 0, duration: 1.3, ease: "expo.inOut" }, 0.2)
         .from($$(".vr-cota, .vr-title, .vr-lbl, .vr-proof, .vr-foot", card), { y: 30, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.07 }, 0.8);
     }
@@ -1401,7 +1410,7 @@
   if (pp) {
     const id = new URLSearchParams(location.search).get("linha") || "abs";
     const m = M.find(x => x.id === id) || M[0];
-    document.title = `${m.name} · Remo Polímeros · Wireframe v5.64`;
+    document.title = `${m.name} · Remo Polímeros · Wireframe v5.65`;
     // Nome sempre em uma linha: a fonte diminui até caber e a altura do título não muda entre as linhas
     const nameEl = $(".p-hero .big");
     const fitName = () => {
@@ -1495,6 +1504,8 @@
       $$(".eyebrow, h2, h3, .lead, .note, .btn, article, figure, li, dl > div, table, form .field, [class*='-card'], .f-logo, .footer .grid > div", sec).forEach(el => {
         // fora também o que está oculto na carga (conteúdo de sanfona, notas): nunca entraria na tela e ficaria invisível ao abrir
         if (el.closest(SKIP) || el.style.transform || el.style.opacity || el.style.clipPath || !el.offsetWidth || !el.offsetHeight) return;
+        // fora o que a própria seção já anima com GSAP: duas entradas no mesmo elemento deixavam-no preso invisível
+        if (hasGsap && gsap.getTweensOf(el).length) return;
         if (el.parentElement.closest(".rv")) return;
         const n = seen.get(el.parentElement) || 0;
         seen.set(el.parentElement, n + 1);
